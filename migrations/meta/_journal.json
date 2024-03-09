@@ -1,0 +1,27 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1709951661143,
+      "tag": "0000_flippant_morbius",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1709952065725,
+      "tag": "0001_nasty_scream",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1709952243379,
+      "tag": "0002_fresh_jocasta",
+      "breakpoints": true
+    }
+  ]
+}
