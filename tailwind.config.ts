@@ -19,6 +19,10 @@ const config = {
     },
     extend: {
       colors: {
+        neonGreeen:"rgba(57, 255, 20, 1)",
+        electricBlue:"rgba(0, 255, 255, 1)",
+        hotPink:"rgba(255, 15, 192, 1)",
+        brightYellow: "rgba(255, 255, 0, 1)",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

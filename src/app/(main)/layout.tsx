@@ -1,5 +1,5 @@
 "use client";
-import Navbar from '@/components/main/Navbar';
+import Header from '@/components/main/Header';
 import React from 'react'
 
 interface LayoutProps{
@@ -12,7 +12,7 @@ const layout:React.FC<LayoutProps> = ({
   return (
 
       <main>
-        <Navbar/>
+        <Header/>
             {children}
       </main>
   )
