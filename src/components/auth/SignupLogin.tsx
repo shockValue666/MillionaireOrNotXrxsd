@@ -120,7 +120,7 @@ export function SignupLogin() {
             <div className="space-y-1">
               <Label htmlFor="newpassword">Repeat Password</Label>
               <Input id="newpassword" type="password" onChange={e=>{if(e.target.value!==newPassword){setMatch(false);}else{setMatch(true);}}}/>
-              {!match && <p className="text-red-500 text-xs mt-1">passwords don't match</p>}
+              {!match && <p className="text-red-500 text-xs mt-1">passwords dont match</p>}
               {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
             </div>
           </CardContent>
