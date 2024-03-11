@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SlotCounter from 'react-slot-counter';
 import { Button } from '../ui/button';
 import { FaArrowAltCircleDown, FaArrowAltCircleUp } from "react-icons/fa";
@@ -10,6 +10,7 @@ import {zodResolver} from '@hookform/resolvers/zod'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Input } from '../ui/input';
 import { useToast } from '../ui/use-toast';
+import { useSupabaseUser } from '@/lib/providers/supabase-user-provider';
 
 
 const BiggerOrSmaller = () => {
@@ -17,7 +18,9 @@ const BiggerOrSmaller = () => {
     const [choice,setChoice] = useState<string | null>(null);   
     const [amount, setAmount] = useState<string | null>(null);
     const [reset,setReset] = useState<boolean>(false);
+    const [disabled,setDisabled] = useState<boolean>(true);
     const {toast} = useToast();
+    const {user} = useSupabaseUser();
 
     const form = useForm<z.infer<typeof BiggerOrSmallerSchema>>({
         mode:"onSubmit",
@@ -37,6 +40,14 @@ const BiggerOrSmaller = () => {
         <span key={num}
         >{num}</span>
     );
+
+    useEffect(()=>{
+        if(!user){
+            setDisabled(true)
+        }else{
+            setDisabled(false)
+        }
+    },[user])
 
     const getRandomWinner = async () => {
         const drand = Math.floor(Math.random() * 100000);
@@ -76,14 +87,14 @@ const BiggerOrSmaller = () => {
 
                 </div>
                 <div className=' flex w-[50%] justify-around items-center'>
-                    <Button onClick={()=>setChoice("bigger")} className='bg-green-500'>BIGGER</Button>
-                    <Button onClick={()=>setChoice("smaller")} className='bg-red-500'>SMALLER</Button>
+                    <Button onClick={()=>setChoice("bigger")} disabled={disabled} className='bg-green-500'>BIGGER</Button>
+                    <Button onClick={()=>setChoice("smaller")} disabled={disabled} className='bg-red-500'>SMALLER</Button>
                 </div>
                 {/*  */}
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-x-8 flex items-center">
                         <FormField
-                        disabled = {!choice}
+                        disabled = {!choice || disabled}
                         control={form.control}
                         name="amount"
                         render={({ field }) => (
@@ -99,15 +110,15 @@ const BiggerOrSmaller = () => {
                             </FormItem>
                         )}
                         />
-                        <Button disabled={!choice} type="submit">set</Button>
+                        <Button disabled={!choice || disabled} type="submit">set</Button>
                     </form>
                 </Form>
                 {/*  */}
-                {!reset && <Button disabled={!amount} className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
+                {!reset && <Button disabled={!amount || disabled} className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
                 onClick={() => {getRandomWinner(); console.log("pressed winner: ", winner);}}>
                     ROLL
                 </Button>}
-                {reset && <Button disabled={!amount} className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
+                {reset && <Button disabled={!amount || disabled} className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
                 onClick={() => {resetTheGame();}}>
                     RESET
                 </Button>}
