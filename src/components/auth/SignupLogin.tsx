@@ -46,7 +46,7 @@ export function SignupLogin() {
             })
             return;
         }
-        router.replace(`/play`)
+        router.replace(`/profile`)
     }
 
     const signupClick = async () => {
@@ -64,7 +64,7 @@ export function SignupLogin() {
                 })
             }else{
                 console.log("response: ",response)
-                {router.replace(`/play`)}
+                {router.replace(`/profile`)}
             };
         } catch (error) {
             console.log("error at signing up user: ", error)
