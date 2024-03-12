@@ -1,6 +1,7 @@
-import { profiles } from "../../../migrations/schema";
+"use server";
+import { gamble, privateTab, profiles } from "../../../migrations/schema";
 import db from "./db";
-import { Profile, Subscription } from "./supabase.types";
+import { Gamble, PrivInfo, Profile, Subscription } from "./supabase.types";
 
 
 export const addProfile = async (profile:Profile) => {
@@ -8,6 +9,12 @@ export const addProfile = async (profile:Profile) => {
     return response;
 }
 
+export const getProfile = async (userId:string) => { 
+    const response = await db.query.profiles.findFirst({
+        where:((profile,{eq})=> eq(profile.id,userId))
+    })
+    return response;
+}
 
 export const getUserSubscriptionStatus = async (userId:string) =>{
 
@@ -33,4 +40,35 @@ export const getUserSubscriptionStatus = async (userId:string) =>{
             error:`Error: ${error}`
         }
     }
+}
+
+export const addGamble = async (_gamble:Gamble) => {
+    try
+    {
+        const response = await db.insert(gamble).values(_gamble)
+        console.log("successfully created gamble: ",response)   
+        return {data:response,error:null}
+    }
+    catch(err){
+        console.log("error at creating gamble: ",err)
+        return {data:null,error:err}
+    }
+}
+
+export const addNewPrivInfo = async (priv:PrivInfo) => {
+    try {
+        const response = await db.insert(privateTab).values(priv)
+        console.log("successfully created privInfo: ",response)   
+        return {data:response,error:null}
+    } catch (error) {
+        console.log("error at creating privInfo: ",error)
+        return {data:null,error:error}
+    }
+}
+
+export const getUserFromUsersTable = async (userId:string) => {
+    const response = await db.query.users.findFirst({
+        where:((user,{eq})=> eq(user.id,userId))
+    })
+    return response;
 }

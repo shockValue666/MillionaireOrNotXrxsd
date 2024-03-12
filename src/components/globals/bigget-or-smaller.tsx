@@ -11,6 +11,8 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from '../ui/input';
 import { useToast } from '../ui/use-toast';
 import { useSupabaseUser } from '@/lib/providers/supabase-user-provider';
+import { addGamble } from '@/lib/supabase/queries';
+import { v4 } from 'uuid';
 
 
 const BiggerOrSmaller = () => {
@@ -52,6 +54,17 @@ const BiggerOrSmaller = () => {
     const getRandomWinner = async () => {
         const drand = Math.floor(Math.random() * 100000);
         setWinner(drand);
+        if(!user?.id || !amount || !choice) return;
+        const res = await addGamble({
+            userId:user?.id,
+            amount:amount,
+            choice:choice,
+            winner:drand.toString(),
+            id:v4(),
+            createdAt:new Date().toISOString(),
+            status: drand>50000 && choice === "bigger" || drand<50000 && choice === "smaller"
+        });
+        console.log("res: ",res)
         await new Promise(resolve=>setTimeout(resolve, 2000));
         if(drand>50000 && choice === "bigger" || drand<50000 && choice === "smaller"){
             toast({title:"You won!", description:"You guessed right"})

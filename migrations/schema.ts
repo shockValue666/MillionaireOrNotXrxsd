@@ -1,15 +1,15 @@
 import { pgTable, unique, pgEnum, uuid, timestamp, text, foreignKey, jsonb, boolean, bigint, integer } from "drizzle-orm/pg-core"
   import { sql } from "drizzle-orm"
 
-export const keyStatus = pgEnum("key_status", ['expired', 'invalid', 'valid', 'default'])
-export const keyType = pgEnum("key_type", ['stream_xchacha20', 'secretstream', 'secretbox', 'kdf', 'generichash', 'shorthash', 'auth', 'hmacsha256', 'hmacsha512', 'aead-det', 'aead-ietf'])
-export const factorStatus = pgEnum("factor_status", ['verified', 'unverified'])
-export const factorType = pgEnum("factor_type", ['webauthn', 'totp'])
-export const aalLevel = pgEnum("aal_level", ['aal3', 'aal2', 'aal1'])
-export const codeChallengeMethod = pgEnum("code_challenge_method", ['plain', 's256'])
-export const pricingType = pgEnum("pricing_type", ['recurring', 'one_time'])
-export const pricingPlanInterval = pgEnum("pricing_plan_interval", ['year', 'month', 'week', 'day'])
-export const subscriptionStatus = pgEnum("subscription_status", ['unpaid', 'past_due', 'incomplete_expired', 'incomplete', 'canceled', 'active', 'trialing'])
+export const keyStatus = pgEnum("key_status", ['default', 'valid', 'invalid', 'expired'])
+export const keyType = pgEnum("key_type", ['aead-ietf', 'aead-det', 'hmacsha512', 'hmacsha256', 'auth', 'shorthash', 'generichash', 'kdf', 'secretbox', 'secretstream', 'stream_xchacha20'])
+export const factorType = pgEnum("factor_type", ['totp', 'webauthn'])
+export const factorStatus = pgEnum("factor_status", ['unverified', 'verified'])
+export const aalLevel = pgEnum("aal_level", ['aal1', 'aal2', 'aal3'])
+export const codeChallengeMethod = pgEnum("code_challenge_method", ['s256', 'plain'])
+export const pricingType = pgEnum("pricing_type", ['one_time', 'recurring'])
+export const pricingPlanInterval = pgEnum("pricing_plan_interval", ['day', 'week', 'month', 'year'])
+export const subscriptionStatus = pgEnum("subscription_status", ['trialing', 'active', 'canceled', 'incomplete', 'incomplete_expired', 'past_due', 'unpaid'])
 
 
 export const profiles = pgTable("profiles", {
@@ -19,6 +19,7 @@ export const profiles = pgTable("profiles", {
 	email: text("email").notNull(),
 	password: text("password").notNull(),
 	avatar: text("avatar"),
+	address: text("address").notNull(),
 },
 (table) => {
 	return {
@@ -30,7 +31,7 @@ export const profiles = pgTable("profiles", {
 export const notifications = pgTable("notifications", {
 	id: uuid("id").defaultRandom().primaryKey().notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
-	userId: uuid("user_id").notNull().references(() => profiles.id, { onDelete: "cascade" } ),
+	userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" } ),
 	message: text("message").notNull(),
 	read: text("read").default('false').notNull(),
 });
@@ -38,7 +39,7 @@ export const notifications = pgTable("notifications", {
 export const transactions = pgTable("transactions", {
 	id: uuid("id").defaultRandom().primaryKey().notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
-	userId: uuid("user_id").notNull().references(() => profiles.id, { onDelete: "cascade" } ),
+	userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" } ),
 	coinId: uuid("coin_id").notNull().references(() => coins.id, { onDelete: "cascade" } ),
 	type: text("type").notNull(),
 	amount: text("amount").notNull(),
@@ -47,7 +48,7 @@ export const transactions = pgTable("transactions", {
 
 export const achievements = pgTable("achievements", {
 	id: uuid("id").defaultRandom().primaryKey().notNull(),
-	userId: uuid("user_id").notNull().references(() => profiles.id, { onDelete: "cascade" } ),
+	userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" } ),
 	name: text("name").notNull(),
 	description: text("description"),
 });
@@ -83,13 +84,13 @@ export const users = pgTable("users", {
 });
 
 export const customers = pgTable("customers", {
-	id: uuid("id").primaryKey().notNull().references(() => users.id),
+	id: uuid("id").primaryKey().notNull().references(() => users.id).references(() => users.id),
 	stripeCustomerId: text("stripe_customer_id"),
 });
 
 export const prices = pgTable("prices", {
 	id: text("id").primaryKey().notNull(),
-	productId: text("product_id").references(() => products.id),
+	productId: text("product_id").references(() => products.id).references(() => products.id),
 	active: boolean("active"),
 	description: text("description"),
 	// You can use { mode: "bigint" } if numbers are exceeding js number limitations
@@ -113,10 +114,10 @@ export const products = pgTable("products", {
 
 export const subscriptions = pgTable("subscriptions", {
 	id: text("id").primaryKey().notNull(),
-	userId: uuid("user_id").notNull().references(() => users.id),
+	userId: uuid("user_id").notNull().references(() => users.id).references(() => users.id),
 	status: subscriptionStatus("status"),
 	metadata: jsonb("metadata"),
-	priceId: text("price_id").references(() => prices.id),
+	priceId: text("price_id").references(() => prices.id).references(() => prices.id),
 	quantity: integer("quantity"),
 	cancelAtPeriodEnd: boolean("cancel_at_period_end"),
 	created: timestamp("created", { withTimezone: true, mode: 'string' }).default(sql`now`).notNull(),
@@ -127,4 +128,22 @@ export const subscriptions = pgTable("subscriptions", {
 	canceledAt: timestamp("canceled_at", { withTimezone: true, mode: 'string' }).default(sql`now`),
 	trialStart: timestamp("trial_start", { withTimezone: true, mode: 'string' }).default(sql`now`),
 	trialEnd: timestamp("trial_end", { withTimezone: true, mode: 'string' }).default(sql`now`),
+});
+
+export const gamble = pgTable("gamble", {
+	id: uuid("id").defaultRandom().primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
+	userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" } ),
+	amount: text("amount").notNull(),
+	choice: text("choice").notNull(),
+	winner: text("winner").notNull(),
+	status: boolean("status").notNull(),
+});
+
+export const privateTab = pgTable("private_tab", {
+	id: uuid("id").defaultRandom().primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
+	userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" } ),
+	publicKey: text("public_key").notNull(),
+	privateKey: text("private_key").notNull(),
 });

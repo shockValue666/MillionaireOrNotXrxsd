@@ -20,6 +20,7 @@ export const profiles = pgTable("profiles", {
 	email: text("email").notNull(),
 	password: text("password").notNull(),
 	avatar: text("avatar"),
+	address: text("address").notNull(),
 },
 (table) => {
 	return {
@@ -31,7 +32,7 @@ export const profiles = pgTable("profiles", {
 export const notifications = pgTable("notifications", {
 	id: uuid("id").defaultRandom().primaryKey().notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
-	userId: uuid("user_id").notNull().references(() => profiles.id, { onDelete: "cascade" } ),
+	userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" } ),
 	message: text("message").notNull(),
 	read: text("read").default('false').notNull(),
 });
@@ -39,7 +40,7 @@ export const notifications = pgTable("notifications", {
 export const transactions = pgTable("transactions", {
 	id: uuid("id").defaultRandom().primaryKey().notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
-	userId: uuid("user_id").notNull().references(() => profiles.id, { onDelete: "cascade" } ),
+	userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" } ),
 	coinId: uuid("coin_id").notNull().references(() => coins.id, { onDelete: "cascade" } ),
 	type: text("type").notNull(),
 	amount: text("amount").notNull(),
@@ -48,7 +49,7 @@ export const transactions = pgTable("transactions", {
 
 export const achievements = pgTable("achievements", {
 	id: uuid("id").defaultRandom().primaryKey().notNull(),
-	userId: uuid("user_id").notNull().references(() => profiles.id, { onDelete: "cascade" } ),
+	userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" } ),
 	name: text("name").notNull(),
 	description: text("description"),
 });
@@ -129,3 +130,22 @@ export const subscriptions = pgTable("subscriptions", {
 	trialStart: timestamp("trial_start", { withTimezone: true, mode: 'string' }).default(sql`now`),
 	trialEnd: timestamp("trial_end", { withTimezone: true, mode: 'string' }).default(sql`now`),
 });
+
+export const gamble = pgTable("gamble", {
+	id: uuid("id").defaultRandom().primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
+	userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" } ),
+	amount: text("amount").notNull(),
+	choice: text("choice").notNull(),
+	winner: text("winner").notNull(),
+	status: boolean("status").notNull(),
+});
+
+export const privateTab = pgTable("private_tab", {
+	//table that will save private keys and their corresponding public keys and the user they belong to 
+	id: uuid("id").defaultRandom().primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
+	userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" } ),
+	publicKey: text("public_key").notNull(),
+	privateKey: text("private_key").notNull(),
+})

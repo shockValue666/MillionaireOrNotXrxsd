@@ -2,6 +2,8 @@
 import {createRouteHandlerClient} from '@supabase/auth-helpers-nextjs'
 import { cookies } from "next/headers";
 import {v4} from 'uuid'
+import { addNewPrivInfo, addProfile } from '../supabase/queries';
+import {Keypair} from '@solana/web3.js'
 
 export async function actionLogCock(){
     console.log("cockies: ",cookies().getAll())
@@ -49,6 +51,29 @@ export async function actionSignUpUser({email,password}:{email:string,password:s
             emailRedirectTo:`${process.env.NEXT_PUBLIC_SITE_URL}api/auth/callback`
         }
     })
+    //generate solana address
+    const keypair = Keypair.generate();
+    const publicAddress = keypair.publicKey.toBase58();
+    //idk where i should store the secret key... maybe in the profiles table? or in some private table?
+    const secretKey = keypair.secretKey;
+    if(response.data?.user?.id){
+        await addProfile({
+            id:response.data?.user?.id,
+            email,
+            username:email.split("@")[0],
+            createdAt:new Date().toISOString(),
+            avatar:null,
+            password:password,
+            address:publicAddress
+        })
+        await addNewPrivInfo({
+            id:v4(),
+            userId:response.data?.user?.id,
+            privateKey:secretKey.toString(),
+            publicKey:publicAddress,
+            createdAt:new Date().toISOString()
+        })
+    }
     return response;
 }
 

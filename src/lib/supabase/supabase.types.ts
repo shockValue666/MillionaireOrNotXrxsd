@@ -1,5 +1,6 @@
 import { InferSelectModel } from "drizzle-orm"
-import { profiles, subscriptions, users } from "../../../migrations/schema"
+import { privateTab, profiles, subscriptions, users } from "../../../migrations/schema"
+import { gamble } from "./schema"
 
 export type Json =
   | string
@@ -478,3 +479,5 @@ export type Enums<
   export type User = InferSelectModel<typeof users>
   export type Profile = InferSelectModel<typeof profiles>
   export type Subscription = InferSelectModel<typeof subscriptions>
+  export type Gamble = InferSelectModel<typeof gamble>
+  export type PrivInfo = InferSelectModel<typeof privateTab>

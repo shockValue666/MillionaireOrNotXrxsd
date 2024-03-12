@@ -10,11 +10,13 @@ import { useSupabaseUser } from '@/lib/providers/supabase-user-provider';
 
 const Header = () => {
     const [username,setUsername] = useState<string | null>(null);
+    const [userId,setUserId] = useState<string | null>(null);
     const {user} = useSupabaseUser();
     useEffect(()=>{
         console.log("user: ",user)
         if(user?.user_metadata?.email){
             setUsername(user.user_metadata.email.split("@")[0])
+            setUserId(user.id)
         }
     },[user])
   return (
@@ -52,7 +54,7 @@ const Header = () => {
                 </li>
                 <li>
                     {username && (
-                        <Link href="" className='flex hover:bg-accent hover:text-accent-foreground rounded-xl'>
+                        <Link href={`/profile/${userId}`} className='flex hover:bg-accent hover:text-accent-foreground rounded-xl'>
                             <div className='flex items-center p-4'>
                                 <p className="text-xl font-extrabold tracking-tight text-center text-hotPink uppercase">{username}</p>
                             </div>
