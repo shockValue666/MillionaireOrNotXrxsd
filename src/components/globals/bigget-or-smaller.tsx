@@ -65,7 +65,7 @@ const BiggerOrSmaller = () => {
             status: drand>50000 && choice === "bigger" || drand<50000 && choice === "smaller"
         });
         console.log("res: ",res)
-        await new Promise(resolve=>setTimeout(resolve, 2000));
+        await new Promise(resolve=>setTimeout(resolve, 1050));
         if(drand>50000 && choice === "bigger" || drand<50000 && choice === "smaller"){
             toast({title:"You won!", description:"You guessed right"})
         }else if(drand<50000 && choice === "bigger" || drand>50000 && choice === "smaller"){
