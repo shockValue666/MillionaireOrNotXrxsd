@@ -36,7 +36,7 @@ export function SignupLogin() {
     const loginInClick = async () => {
         console.log('email: ', email, " password: ",password);
         if(!email || !password) return;
-        const {error} = await actionLoginUser({email,password});
+        const {data,error} = await actionLoginUser({email,password});
         if(error) {
             console.log("error: ",error)
             toast({
@@ -46,7 +46,7 @@ export function SignupLogin() {
             })
             return;
         }
-        router.replace(`/profile`)
+        router.replace(`/profile/${data?.user.id}`)
     }
 
     const signupClick = async () => {
@@ -64,7 +64,7 @@ export function SignupLogin() {
                 })
             }else{
                 console.log("response: ",response)
-                {router.replace(`/profile`)}
+                {router.replace(`/profile${response.data?.user?.id}`)}
             };
         } catch (error) {
             console.log("error at signing up user: ", error)
