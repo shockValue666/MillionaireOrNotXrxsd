@@ -5,6 +5,9 @@ import Image from 'next/image'
 import WalletAddress from '@/components/profile/WalletAddress';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import PnL from '@/components/profile/PnL';
+import Loader from '@/components/globals/Loader';
+import PlayButton from "../../../../../public/playbutton.png"
+import PlayButton3 from "../../../../../public/playbutton3.jpg"
 
 const Page = () => {
     const [newProfilePicture, setNewProfilePicture] = useState<string | null>(null);
@@ -43,8 +46,16 @@ const Page = () => {
           <div className="ml-auto font-medium">+$1,999.00</div>
         </div>
       </div>
+      <div className='flex gap-x-8 w-[50%] items-center'>
 
-      {profile?.address && <WalletAddress address={profile?.address}/>}
+        address:{!profile && <Loader/>} {profile?.address && <WalletAddress address={profile?.address}/>}
+      </div>
+      <div>
+      <button className="relative overflow-hidden" onClick={()=>{console.log("yooo")}}>
+        <Image src={PlayButton3} height={150} width={150} alt="Button Image" className="transition-transform duration-300 ease-in-out transform hover:scale-95" />
+      </button>
+
+      </div>
       <PnL/>
     </div>
   )

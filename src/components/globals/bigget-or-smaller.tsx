@@ -65,12 +65,13 @@ const BiggerOrSmaller = () => {
             status: drand>50000 && choice === "bigger" || drand<50000 && choice === "smaller"
         });
         console.log("res: ",res)
-        await new Promise(resolve=>setTimeout(resolve, 1050));
+        await new Promise(resolve=>setTimeout(resolve, 525));
         if(drand>50000 && choice === "bigger" || drand<50000 && choice === "smaller"){
             toast({title:"You won!", description:"You guessed right"})
         }else if(drand<50000 && choice === "bigger" || drand>50000 && choice === "smaller"){
             toast({title:"You Lost!", description:"You guessed wrong", variant:"destructive"})
         }
+        setDisabled(true);
         setReset(true);
     }
 
@@ -79,6 +80,7 @@ const BiggerOrSmaller = () => {
         setChoice(null);
         setAmount(null);
         setWinner(50000);
+        setDisabled(false);
     }
 
     return (
@@ -89,7 +91,7 @@ const BiggerOrSmaller = () => {
                     <SlotCounter
                         key={winner} // Use winner as key to force re-render
                         value={slotValues}
-                        duration={1}
+                        duration={0.5}
                         startValue={'?????'}
                         charClassName='text-4xl'
                         sequentialAnimationMode={true}
@@ -127,11 +129,11 @@ const BiggerOrSmaller = () => {
                     </form>
                 </Form>
                 {/*  */}
-                {!reset && <Button disabled={!amount || disabled} className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
+                {!reset && <Button disabled={!amount} className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
                 onClick={() => {getRandomWinner(); console.log("pressed winner: ", winner);}}>
                     ROLL
                 </Button>}
-                {reset && <Button disabled={!amount || disabled} className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
+                {reset && <Button disabled={!amount} className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
                 onClick={() => {resetTheGame();}}>
                     RESET
                 </Button>}

@@ -72,3 +72,31 @@ export const getUserFromUsersTable = async (userId:string) => {
     })
     return response;
 }
+
+export const calculatePNLForUser = async (userId: string) => {
+    // Fetch all gambles for the specific user
+    // const userGambles = await gamble.find({ userId });
+    const userGambles = await db.query.gamble.findMany({
+        where: ((g, { eq }) => eq(g.userId, userId))
+    })
+
+    // Separate gambles based on status (true or false)
+    const winningGambles = userGambles.filter(g => g.status === true);
+    const losingGambles = userGambles.filter(g => g.status === false);
+
+    // Calculate profit and loss
+    const profit = winningGambles.reduce((acc, g) => acc + parseFloat(g.amount), 0);
+    const loss = losingGambles.reduce((acc, g) => acc + parseFloat(g.amount), 0);
+
+    // Calculate PNL
+    const pnl = profit - loss;
+
+    return pnl;
+}
+
+export const getGamesPlayed = async (userId: string) => {
+    const gamesPlayed = await db.query.gamble.findMany({
+        where: ((g, { eq }) => eq(g.userId, userId))
+    })
+    return gamesPlayed.length;
+}

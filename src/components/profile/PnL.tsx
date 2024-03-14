@@ -1,7 +1,24 @@
-import React from 'react'
+"use client";
+import React, { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
+import { calculatePNLForUser, getGamesPlayed } from '@/lib/supabase/queries';
+import { useSupabaseUser } from '@/lib/providers/supabase-user-provider';
 
 const PnL = () => {
+    const [pnl,setPnl] = useState(0);
+    const [gamesPlayed,setGamesPlayed] = useState(0);
+    const {user} = useSupabaseUser();
+    useEffect(()=>{
+        if(!user) return;
+        const getPnl = async () => {
+            const pnl = await calculatePNLForUser(user?.id)   
+            const gamesPlayed = await getGamesPlayed(user?.id);
+            setPnl(pnl)
+            setGamesPlayed(gamesPlayed)
+        }
+
+        getPnl();
+    },[user])
   return (
     <div className='flex flex-col md:flex-row gap-y-4 gap-x-4'>
         <Card>
@@ -47,7 +64,7 @@ const PnL = () => {
             </svg>
             </CardHeader>
             <CardContent>
-            <div className="text-2xl font-bold">$45,231.89</div>
+            <div className="text-2xl font-bold">${pnl}</div>
             <p className="text-xs text-muted-foreground">
                 +20.1% from last month
             </p>
@@ -74,7 +91,7 @@ const PnL = () => {
             </svg>
             </CardHeader>
             <CardContent>
-            <div className="text-2xl font-bold">+2350</div>
+            <div className="text-2xl font-bold">{gamesPlayed}</div>
             <p className="text-xs text-muted-foreground">
                 +180.1% from last month
             </p>
