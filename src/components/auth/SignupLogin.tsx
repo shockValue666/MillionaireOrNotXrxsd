@@ -64,7 +64,7 @@ export function SignupLogin() {
                 })
             }else{
                 console.log("response: ",response)
-                {router.replace(`/profile${response.data?.user?.id}`)}
+                {router.replace(`/profile/${response.data?.user?.id}`)}
             };
         } catch (error) {
             console.log("error at signing up user: ", error)
