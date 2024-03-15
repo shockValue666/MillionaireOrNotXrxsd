@@ -50,12 +50,12 @@ const Page = () => {
 
         address:{!profile && <Loader/>} {profile?.address && <WalletAddress address={profile?.address}/>}
       </div>
-      <div>
+      {/* <div>
       <button className="relative overflow-hidden" onClick={()=>{console.log("yooo")}}>
         <Image src={PlayButton3} height={150} width={150} alt="Button Image" className="transition-transform duration-300 ease-in-out transform hover:scale-95" />
       </button>
 
-      </div>
+      </div> */}
       <PnL/>
     </div>
   )
