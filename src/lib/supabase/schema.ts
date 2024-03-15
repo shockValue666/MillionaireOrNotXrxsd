@@ -149,3 +149,10 @@ export const privateTab = pgTable("private_tab", {
 	publicKey: text("public_key").notNull(),
 	privateKey: text("private_key").notNull(),
 })
+
+export const hookTransactions = pgTable("hook_transactions", {
+	id: uuid("id").defaultRandom().primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
+	content: text("content").notNull(),
+})
+

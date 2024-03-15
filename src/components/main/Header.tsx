@@ -20,7 +20,7 @@ const Header = () => {
         }
     },[user])
   return (
-    <div className="flex justify-center items-center border border-b-white">
+    <div className="hidden md:flex justify-center items-center border border-b-white">
         <Link href="/" className=' flex gap-2 justify-left items-center hover:bg-accent hover:text-accent-foreground rounded-xl'>
             <div className='flex items-center p-4'>
                 <Image src={Logo} alt="logo" height={70} width={70} className='rounded-full'/>

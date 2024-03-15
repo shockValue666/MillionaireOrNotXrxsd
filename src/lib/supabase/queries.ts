@@ -1,7 +1,7 @@
 "use server";
-import { gamble, privateTab, profiles } from "../../../migrations/schema";
+import { gamble, hookTransactions, privateTab, profiles } from "../../../migrations/schema";
 import db from "./db";
-import { Gamble, PrivInfo, Profile, Subscription } from "./supabase.types";
+import { Gamble, HookTransaction, PrivInfo, Profile, Subscription } from "./supabase.types";
 
 
 export const addProfile = async (profile:Profile) => {
@@ -99,4 +99,15 @@ export const getGamesPlayed = async (userId: string) => {
         where: ((g, { eq }) => eq(g.userId, userId))
     })
     return gamesPlayed.length;
+}
+
+export const saveTransactionHook = async (transactionHook:HookTransaction) => {
+    try {
+        const response = await db.insert(hookTransactions).values(transactionHook)
+        console.log("successfully created transactionHook: ",response)
+        return {data:response,error:null}
+    } catch (error) {
+        console.log("error at creating transactionHook: ",error)
+        return {data:null,error:error}
+    }
 }
