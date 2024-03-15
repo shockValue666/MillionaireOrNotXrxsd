@@ -40,9 +40,3 @@ export async function POST(req:Request){
     console.log("body: ", await req.json())
         return NextResponse.json({message:"some message"})
 }
-export const config = {
-    api: {
-      bodyParser: true,
-    },
-  }
-  
