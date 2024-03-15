@@ -84,9 +84,9 @@ const BiggerOrSmaller = () => {
     }
 
     return (
-        <div className='flex flex-col justify-center align-center border w-[50%] border-white rounded-lg gap-4 p-4'>
+        <div className='flex flex-col justify-center align-center border w-[100%] md:w-[50%] border-white rounded-lg gap-4 p-4'>
             <p className='w-full text-center'>bigger or smaller than</p>
-            <div className='w-full flex flex-col items-center gap-y-6'>
+            <div className='w-full flex flex-col items-center gap-y-6'> 
                 <div className='flex items-center gap-x-4'>
                     <SlotCounter
                         key={winner} // Use winner as key to force re-render
@@ -101,7 +101,7 @@ const BiggerOrSmaller = () => {
                     {choice === "bigger" && <FaArrowAltCircleUp size={40} color='green'/>}
 
                 </div>
-                <div className=' flex w-[50%] justify-around items-center'>
+                <div className=' flex flex-col md:flex-row gap-4 w-[50%] justify-around items-center '>
                     <Button onClick={()=>setChoice("bigger")} disabled={disabled} className='bg-green-500'>BIGGER</Button>
                     <Button onClick={()=>setChoice("smaller")} disabled={disabled} className='bg-red-500'>SMALLER</Button>
                 </div>
