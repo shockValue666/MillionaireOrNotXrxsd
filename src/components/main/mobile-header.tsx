@@ -10,6 +10,8 @@ import { Input } from '../ui/input'
 import { CgMenuRound } from "react-icons/cg";
 import { useSupabaseUser } from '@/lib/providers/supabase-user-provider';
 import { Auth } from '../auth/auth'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+
 
 const SHEET_SIDES = ["top", "right", "bottom", "left"] as const
  
@@ -19,6 +21,7 @@ type SheetSide = (typeof SHEET_SIDES)[number]
 const MobileHeader = () => {
     const [username,setUsername] = useState<string | null>(null);
     const [userId,setUserId] = useState<string | null>(null);
+    const supabase = createClientComponentClient()
     const {user} = useSupabaseUser();
     useEffect(()=>{
         console.log("user: ",user)
@@ -79,6 +82,18 @@ const MobileHeader = () => {
                                         <Auth>Login/signup</Auth>
                                     </div>
                                 </Link>}
+                                {username && (
+                                    <Link href="" className='flex hover:bg-accent hover:text-accent-foreground rounded-xl'>
+
+                                        <Button
+                                        onClick={async ()=>{
+                                            await supabase.auth.signOut();
+                                        }}
+                                        className='flex hover:bg-accent hover:text-accent-foreground rounded-xl items-center p-4 text-xl font-extrabold tracking-tight text-center text-hotPink uppercase bg-black'>
+                                            Logout
+                                        </Button>
+                                    </Link>
+                                )}
                             </li>
                         </ul>
                     </div>
