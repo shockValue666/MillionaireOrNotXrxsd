@@ -48,8 +48,9 @@ export const SupabaseUserProvider:React.FC<SupabaseUserProviderProps> = ({childr
                     setUserFromUsersTable(userFromUsersTable);
                 }
                 const profile = await getProfile(user.id);
-                if(profile){
-                    setProfile(profile)
+                console.log("profile: ",profile)
+                if(profile?.data){
+                    setProfile(profile.data)
                 }
                 // const {data,error} = await getUserSubscriptionStatus(user.id)
                 // if(data){
@@ -65,7 +66,7 @@ export const SupabaseUserProvider:React.FC<SupabaseUserProviderProps> = ({childr
 
         }
         getUser();
-    },[supabase,toast,profile])
+    },[supabase,toast])
     return (<SupabaseUserContext.Provider value={{user,subscription,userFromUsersTable,profile}}>
         {children}
     </SupabaseUserContext.Provider>)

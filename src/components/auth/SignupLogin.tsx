@@ -20,6 +20,7 @@ import { actionLoginUser, actionSignUpUser } from "@/lib/server-actions/auth-act
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useToast } from "../ui/use-toast";
+import { useAppState } from "@/lib/providers/state-provider";
 
 export function SignupLogin() {
     const [email,setEmail] = useState<string | null>(null)
@@ -32,6 +33,7 @@ export function SignupLogin() {
     const [error,setError] = useState<string | null>(null)
     const router = useRouter();
     const {toast} = useToast();
+    const {dispatch, userId} = useAppState()
 
     const loginInClick = async () => {
         console.log('email: ', email, " password: ",password);
@@ -46,6 +48,7 @@ export function SignupLogin() {
             })
             return;
         }
+
         router.replace(`/profile/${data?.user.id}`)
     }
 

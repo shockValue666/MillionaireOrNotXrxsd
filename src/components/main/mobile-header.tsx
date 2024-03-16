@@ -24,6 +24,7 @@ const MobileHeader = () => {
     const supabase = createClientComponentClient()
     const {user} = useSupabaseUser();
     useEffect(()=>{
+        
         console.log("user: ",user)
         if(user?.user_metadata?.email){
             setUsername(user.user_metadata.email.split("@")[0])
@@ -77,23 +78,25 @@ const MobileHeader = () => {
                                         </div>
                                     </Link>
                                 )}
-                                {!username && <Link href="" className='flex hover:bg-accent hover:text-accent-foreground rounded-xl'>
+                                {username ? 
+                                <Link href="" className='flex hover:bg-accent hover:text-accent-foreground rounded-xl'>
+
+                                    <Button
+                                    onClick={async ()=>{
+                                        await supabase.auth.signOut();
+                                    }}
+                                    className='flex hover:bg-accent hover:text-accent-foreground rounded-xl items-center p-4 text-xl font-extrabold tracking-tight text-center text-hotPink uppercase bg-black'>
+                                        Logout
+                                    </Button>
+                                </Link>
+                                :
+                                <Link href="" className='flex hover:bg-accent hover:text-accent-foreground rounded-xl'>
                                     <div className='flex items-center p-4 text-xl font-extrabold tracking-tight text-center text-hotPink uppercase'>
                                         <Auth>Login/signup</Auth>
                                     </div>
-                                </Link>}
-                                {username && (
-                                    <Link href="" className='flex hover:bg-accent hover:text-accent-foreground rounded-xl'>
-
-                                        <Button
-                                        onClick={async ()=>{
-                                            await supabase.auth.signOut();
-                                        }}
-                                        className='flex hover:bg-accent hover:text-accent-foreground rounded-xl items-center p-4 text-xl font-extrabold tracking-tight text-center text-hotPink uppercase bg-black'>
-                                            Logout
-                                        </Button>
-                                    </Link>
-                                )}
+                                </Link>
+                                
+                                }
                             </li>
                         </ul>
                     </div>

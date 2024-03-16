@@ -6,6 +6,10 @@ import { ThemeProvider } from "@/lib/providers/next-theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { SupabaseUserProvider } from "@/lib/providers/supabase-user-provider";
 db;
+import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/next"
+import AppStateProvider from "@/lib/providers/state-provider";
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,10 +27,14 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
       <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-        <SupabaseUserProvider>
-          {children}
-          <Toaster />
-        </SupabaseUserProvider>
+        <AppStateProvider>
+          <SupabaseUserProvider>
+            {children}
+            <Analytics/>
+            <SpeedInsights/>
+            <Toaster />
+          </SupabaseUserProvider>
+        </AppStateProvider>
       </ThemeProvider>
       </body>
     </html>
