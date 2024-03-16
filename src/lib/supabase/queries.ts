@@ -10,10 +10,15 @@ export const addProfile = async (profile:Profile) => {
 }
 
 export const getProfile = async (userId:string) => { 
-    const response = await db.query.profiles.findFirst({
-        where:((profile,{eq})=> eq(profile.id,userId))
-    })
-    return response;
+    try {
+        const response = await db.query.profiles.findFirst({
+            where:((profile,{eq})=> eq(profile.id,userId))
+        })
+        return {data:response,error:null}
+    } catch (error) {
+        console.log('error at getting the profile: ',error);
+        return {data:null,error:error}
+    }
 }
 
 export const getUserSubscriptionStatus = async (userId:string) =>{
