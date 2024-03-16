@@ -1,6 +1,7 @@
 "use client";
 import Header from '@/components/main/Header';
 import MobileHeader from '@/components/main/mobile-header';
+import AppStateProvider from '@/lib/providers/state-provider';
 import React from 'react'
 
 interface LayoutProps{
@@ -15,7 +16,7 @@ const layout:React.FC<LayoutProps> = ({
       <main>
         <Header/>
         <MobileHeader/>
-            {children}
+        {children}
       </main>
   )
 }
