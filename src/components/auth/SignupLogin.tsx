@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useToast } from "../ui/use-toast";
 import { useAppState } from "@/lib/providers/state-provider";
+import { getProfile } from "@/lib/supabase/queries";
 
 export function SignupLogin() {
     const [email,setEmail] = useState<string | null>(null)
@@ -48,8 +49,15 @@ export function SignupLogin() {
             })
             return;
         }
+        
+        if(data.user.id){
+            const profile = await getProfile(data.user.id);
+            console.log("profile: ",profile)
+            if(profile.error || !profile.data || !profile.data.id) return;
+            dispatch({type:"SET_USER",payload:profile.data})
+            router.push(`/profile/${data?.user.id}`)
+        }
 
-        router.replace(`/profile/${data?.user.id}`)
     }
 
     const signupClick = async () => {
@@ -66,8 +74,15 @@ export function SignupLogin() {
                     variant:"destructive"
                 })
             }else{
-                console.log("response: ",response)
-                {router.replace(`/profile/${response.data?.user?.id}`)}
+              if(response.data?.user?.id){
+                  const profile = await getProfile(response.data.user.id);
+                  console.log("profile: ",profile)
+                  if(profile.error || !profile.data || !profile.data.id) return;
+                  dispatch({type:"SET_USER",payload:profile.data})
+                  router.push(`/profile/${response.data?.user.id}`)
+              }
+                // console.log("response: ",response)
+                // router.push(`/profile/${response.data?.user?.id}`)
             };
         } catch (error) {
             console.log("error at signing up user: ", error)

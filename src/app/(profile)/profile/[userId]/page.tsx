@@ -1,6 +1,6 @@
 "use client";
 import { useSupabaseUser } from '@/lib/providers/supabase-user-provider';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import WalletAddress from '@/components/profile/WalletAddress';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -8,11 +8,15 @@ import PnL from '@/components/profile/PnL';
 import Loader from '@/components/globals/Loader';
 import PlayButton from "../../../../../public/playbutton.png"
 import PlayButton3 from "../../../../../public/playbutton3.jpg"
+import { useAppState } from '@/lib/providers/state-provider';
+import { getProfile } from '@/lib/supabase/queries';
 
 const Page = () => {
     const [newProfilePicture, setNewProfilePicture] = useState<string | null>(null);
     const [amountToSend, setAmountToSend] = useState('');
     const {userFromUsersTable,profile,user} = useSupabaseUser();
+    const [address,setAddress] = useState<string | null>(null)
+    const {userId} = useAppState();
 
     // Function to handle profile picture upload
     const handleProfilePictureUpload = async () => {
@@ -28,6 +32,21 @@ const Page = () => {
         // await sendMoney(user.address, amountToSend);
         // Optionally, display a success message or update user balance
     };
+    // useEffect(()=>{
+    //     if(profile?.address){
+    //         setAddress(profile?.address)
+    //     }
+    // },[profile])
+    useEffect(()=>{
+      console.log("userId from page.tsx in side the profile route: ",userId)
+      const setTheAddie = async () => {
+        if(!userId) return;
+        const addie = await getProfile(userId)
+        if(addie?.data?.address) setAddress(addie?.data?.address)
+        console.log("set the addie")
+      }
+      setTheAddie();
+    },[userId])
   return (
     <div className='flex justify-center items-center flex-col gap-y-16'>
       <h1>Welcome!</h1>
@@ -48,7 +67,7 @@ const Page = () => {
       </div>
       <div className='flex gap-x-8 w-[50%] items-center'>
 
-        address:{!profile && <Loader/>} {profile?.address && <WalletAddress address={profile?.address}/>}
+        address:{!address && <Loader/>} {address && <WalletAddress address={address}/>}
       </div>
       {/* <div>
       <button className="relative overflow-hidden" onClick={()=>{console.log("yooo")}}>

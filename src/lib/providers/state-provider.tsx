@@ -33,6 +33,7 @@ const appReducer = (
   ): AppState => {
     switch (action.type) {
         case "SET_USER":
+          console.log("user setted gamw ti poutana m")
             return { ...state, userLocal: action.payload };
         case "UPDATE_USER":
             return { ...state, userLocal: action.payload };
@@ -115,6 +116,6 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
     if (!context) {
       throw new Error('useAppState must be used within an AppStateProvider');
     }
-    console.log("contextxxxxxxx: ",context)
+    // console.log("contextxxxxxxx: ",context)
     return context;
   };
