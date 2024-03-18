@@ -8,11 +8,20 @@ const PnL = () => {
     const [pnl,setPnl] = useState(0);
     const [gamesPlayed,setGamesPlayed] = useState(0);
     const {user} = useSupabaseUser();
+    const [balance,setBalance] = useState(0);
     useEffect(()=>{
         if(!user) return;
         const getPnl = async () => {
             const pnl = await calculatePNLForUser(user?.id)   
             const gamesPlayed = await getGamesPlayed(user?.id);
+            const balance = await fetch('http://localhost:3000/api/balance',{
+                method:'GET'
+            });
+            if(balance){
+                const data = await balance.json()
+                console.log("data: ",data.balance);
+                setBalance(data.balance)
+            }
             setPnl(pnl)
             setGamesPlayed(gamesPlayed)
         }
@@ -39,7 +48,7 @@ const PnL = () => {
             </svg>
             </CardHeader>
             <CardContent>
-            <div className="text-2xl font-bold">+12,234</div>
+            <div className="text-2xl font-bold">{balance/1000000000}</div>
             <p className="text-xs text-muted-foreground">
                 +19% from last month
             </p>

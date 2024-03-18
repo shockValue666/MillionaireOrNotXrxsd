@@ -21,6 +21,7 @@ export const profiles = pgTable("profiles", {
 	password: text("password").notNull(),
 	avatar: text("avatar"),
 	address: text("address").notNull(),
+	balance: text("balance"),
 },
 (table) => {
 	return {
@@ -155,4 +156,5 @@ export const hookTransactions = pgTable("hook_transactions", {
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
 	content: text("content").notNull(),
 })
+
 

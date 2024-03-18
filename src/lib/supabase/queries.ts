@@ -1,7 +1,9 @@
 "use server";
+import { profile } from "console";
 import { gamble, hookTransactions, privateTab, profiles } from "../../../migrations/schema";
 import db from "./db";
 import { Gamble, HookTransaction, PrivInfo, Profile, Subscription } from "./supabase.types";
+import { eq } from "drizzle-orm";
 
 
 export const addProfile = async (profile:Profile) => {
@@ -113,6 +115,16 @@ export const saveTransactionHook = async (transactionHook:HookTransaction) => {
         return {data:response,error:null}
     } catch (error) {
         console.log("error at creating transactionHook: ",error)
+        return {data:null,error:error}
+    }
+}
+
+export const getAndSetBalance = async (profile:Partial<Profile>,profileId:string) => {
+    try {
+        const result = await db.update(profiles).set(profile).where(eq(profiles.id,profileId));
+        return {data:result,error:null}   
+    } catch (error) {
+        console.log("error at updating balance: ",error)
         return {data:null,error:error}
     }
 }

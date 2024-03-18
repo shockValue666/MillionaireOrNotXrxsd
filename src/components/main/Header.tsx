@@ -53,6 +53,13 @@ const Header = () => {
                     </Link>
                 </li>
                 <li>
+                <Link href="/play" className='flex hover:bg-accent hover:text-accent-foreground rounded-xl'>
+                        <div className='flex items-center p-4'>
+                            <p className="text-xl font-extrabold tracking-tight text-center text-hotPink uppercase">play</p>
+                        </div>
+                    </Link>
+                </li>
+                <li>
                     {username && (
                         <Link href={`/profile/${userId}`} className='flex hover:bg-accent hover:text-accent-foreground rounded-xl'>
                             <div className='flex items-center p-4'>
