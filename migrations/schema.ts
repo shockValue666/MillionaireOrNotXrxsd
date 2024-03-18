@@ -20,6 +20,7 @@ export const profiles = pgTable("profiles", {
 	password: text("password").notNull(),
 	avatar: text("avatar"),
 	address: text("address").notNull(),
+	balance: text("balance"),
 },
 (table) => {
 	return {

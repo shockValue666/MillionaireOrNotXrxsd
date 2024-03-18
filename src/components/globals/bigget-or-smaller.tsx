@@ -11,11 +11,16 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from '../ui/input';
 import { useToast } from '../ui/use-toast';
 import { useSupabaseUser } from '@/lib/providers/supabase-user-provider';
-import { addGamble } from '@/lib/supabase/queries';
+import { addGamble, getAndSetBalance } from '@/lib/supabase/queries';
 import { v4 } from 'uuid';
 
+interface BiggerOrSmallerProps {
+    checkBalance:boolean;
+}
 
-const BiggerOrSmaller = () => {
+const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
+    checkBalance
+}) => {
     const [winner, setWinner] = useState(50000);
     const [choice,setChoice] = useState<string | null>(null);   
     const [amount, setAmount] = useState<string | null>(null);
@@ -50,6 +55,11 @@ const BiggerOrSmaller = () => {
             setDisabled(false)
         }
     },[user])
+    useEffect(()=>{
+        if(!checkBalance || !user) return;
+        
+
+    },[user])
 
     const getRandomWinner = async () => {
         const drand = Math.floor(Math.random() * 100000);
@@ -67,7 +77,8 @@ const BiggerOrSmaller = () => {
         console.log("res: ",res)
         await new Promise(resolve=>setTimeout(resolve, 525));
         if(drand>50000 && choice === "bigger" || drand<50000 && choice === "smaller"){
-            toast({title:"You won!", description:"You guessed right"})
+            toast({title:"You won!", description:"You guessed right"});
+            await getAndSetBalance({balance:"bet"},user?.id);
         }else if(drand<50000 && choice === "bigger" || drand>50000 && choice === "smaller"){
             toast({title:"You Lost!", description:"You guessed wrong", variant:"destructive"})
         }
