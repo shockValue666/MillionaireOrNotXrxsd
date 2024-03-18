@@ -15,7 +15,7 @@ import { addGamble, getAndSetBalance } from '@/lib/supabase/queries';
 import { v4 } from 'uuid';
 
 interface BiggerOrSmallerProps {
-    checkBalance:boolean;
+    checkBalance?:boolean;
 }
 
 const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
