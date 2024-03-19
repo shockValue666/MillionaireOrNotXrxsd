@@ -48,7 +48,7 @@ export const SupabaseUserProvider:React.FC<SupabaseUserProviderProps> = ({childr
                     setUserFromUsersTable(userFromUsersTable);
                 }
                 const profile = await getProfile(user.id);
-                console.log("profile: ",profile)
+                // console.log("profile: ",profile)
                 if(profile?.data){
                     setProfile(profile.data)
                 }

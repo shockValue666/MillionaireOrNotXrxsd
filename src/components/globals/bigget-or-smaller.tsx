@@ -13,6 +13,7 @@ import { useToast } from '../ui/use-toast';
 import { useSupabaseUser } from '@/lib/providers/supabase-user-provider';
 import { addGamble, getAndSetBalance } from '@/lib/supabase/queries';
 import { v4 } from 'uuid';
+import { Auth } from '../auth/auth';
 
 interface BiggerOrSmallerProps {
     checkBalance?:boolean;
@@ -95,59 +96,64 @@ const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
     }
 
     return (
-        <div className='flex flex-col justify-center align-center border w-[100%] md:w-[50%] border-white rounded-lg gap-4 p-4'>
-            <p className='w-full text-center'>bigger or smaller than</p>
-            <div className='w-full flex flex-col items-center gap-y-6'> 
-                <div className='flex items-center gap-x-4'>
-                    <SlotCounter
-                        key={winner} // Use winner as key to force re-render
-                        value={slotValues}
-                        duration={0.5}
-                        startValue={'?????'}
-                        charClassName='text-4xl'
-                        sequentialAnimationMode={true}
-                        startValueOnce={true}
-                    />
-                    {choice === "smaller" && <FaArrowAltCircleDown size={40} color='red'/>}
-                    {choice === "bigger" && <FaArrowAltCircleUp size={40} color='green'/>}
-
-                </div>
-                <div className=' flex flex-col md:flex-row gap-4 w-[50%] justify-around items-center '>
-                    <Button onClick={()=>setChoice("bigger")} disabled={disabled} className='bg-green-500'>BIGGER</Button>
-                    <Button onClick={()=>setChoice("smaller")} disabled={disabled} className='bg-red-500'>SMALLER</Button>
-                </div>
-                {/*  */}
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-x-8 flex items-center">
-                        <FormField
-                        disabled = {!choice || disabled}
-                        control={form.control}
-                        name="amount"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>Amount</FormLabel>
-                            <FormControl>
-                                <Input placeholder="shadcn" {...field} />
-                            </FormControl>
-                            <FormDescription>
-                                Bet amount in $$$
-                            </FormDescription>
-                            <FormMessage />
-                            </FormItem>
-                        )}
+        <div className='w-[100%] md:w-[50%] text-center'>
+            <div className='tracking-tight text-center text-hotPink bg-black hover:bg-accent hover:text-accent-foreground rounded-xl' onClick={()=>{console.log("kenta")}}>
+                <Auth>LOG IN TO PLAY</Auth>
+            </div>
+            <div className={`flex flex-col justify-center align-center border w-[100%] border-white rounded-lg gap-4 p-4 ${!user ? 'blur-sm' : ""}`}>
+                <p className='w-full text-center'>bigger or smaller than</p>
+                <div className='w-full flex flex-col items-center gap-y-6'> 
+                    <div className='flex items-center gap-x-4'>
+                        <SlotCounter
+                            key={winner} // Use winner as key to force re-render
+                            value={slotValues}
+                            duration={0.5}
+                            startValue={'?????'}
+                            charClassName='text-4xl'
+                            sequentialAnimationMode={true}
+                            startValueOnce={true}
                         />
-                        <Button disabled={!choice || disabled} type="submit">set</Button>
-                    </form>
-                </Form>
-                {/*  */}
-                {!reset && <Button disabled={!amount} className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
-                onClick={() => {getRandomWinner(); console.log("pressed winner: ", winner);}}>
-                    ROLL
-                </Button>}
-                {reset && <Button disabled={!amount} className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
-                onClick={() => {resetTheGame();}}>
-                    RESET
-                </Button>}
+                        {choice === "smaller" && <FaArrowAltCircleDown size={40} color='red'/>}
+                        {choice === "bigger" && <FaArrowAltCircleUp size={40} color='green'/>}
+
+                    </div>
+                    <div className=' flex flex-col md:flex-row gap-4 w-[50%] justify-around items-center '>
+                        <Button onClick={()=>setChoice("bigger")} disabled={disabled} className='bg-green-500'>BIGGER</Button>
+                        <Button onClick={()=>setChoice("smaller")} disabled={disabled} className='bg-red-500'>SMALLER</Button>
+                    </div>
+                    {/*  */}
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-x-8 flex items-center">
+                            <FormField
+                            disabled = {!choice || disabled}
+                            control={form.control}
+                            name="amount"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Amount</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="shadcn" {...field} />
+                                </FormControl>
+                                <FormDescription>
+                                    Bet amount in $$$
+                                </FormDescription>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                            />
+                            <Button disabled={!choice || disabled} type="submit">set</Button>
+                        </form>
+                    </Form>
+                    {/*  */}
+                    {!reset && <Button disabled={!amount} className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
+                    onClick={() => {getRandomWinner(); console.log("pressed winner: ", winner);}}>
+                        ROLL
+                    </Button>}
+                    {reset && <Button disabled={!amount} className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
+                    onClick={() => {resetTheGame();}}>
+                        RESET
+                    </Button>}
+                </div>
             </div>
         </div>
     );
