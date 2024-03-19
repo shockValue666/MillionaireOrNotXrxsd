@@ -14,7 +14,6 @@ import React, {
 import {Profile, User} from '../supabase/supabase.types'
 import { usePathname } from 'next/navigation';
 import { getProfile, getUserSubscriptionStatus } from '../supabase/queries';
-import { useSupabaseUser } from './supabase-user-provider';
 
 interface AppState {
     userLocal: Profile | Profile[] | [];
@@ -24,7 +23,6 @@ type Action =
     | {type:"SET_USER",payload:Profile}
     | {type:"UPDATE_USER",payload:Profile}
     | {type:"DELETE_USER",payload:Profile}
-    
 
 
 const initialState: AppState = { userLocal: [] };
@@ -40,8 +38,7 @@ const appReducer = (
         case "UPDATE_USER":
             return { ...state, userLocal: action.payload };
         case "DELETE_USER":
-          console.log("delete user",state)
-            return {  ...state, userLocal: action.payload };
+            return { ...state, userLocal: action.payload };
         default:
             return state;
     }
@@ -67,11 +64,9 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
     //the intitial state is the initial state of the global state
     const pathname = usePathname();
     //returns the current pathname of the URL
-
   
     const profileId = useMemo(() => {
       const urlSegments = pathname?.split('/').filter(Boolean);//split the pathname by / and remove any empty strings
-      console.log("urlSegment: ",urlSegments)
       if (urlSegments)
         if (urlSegments.length > 1) {
           return urlSegments[1];//return the second element of the array
@@ -82,7 +77,6 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
   
   
     useEffect(() => {
-      console.log("profile id: ",profileId)
       if (!profileId) return;
       const fetchProfile = async () => {
         const { error: filesError, data } = await getProfile(profileId);
@@ -100,7 +94,7 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
     //in order to make it more optimized
   
     useEffect(() => {
-      console.log('App State Changed', state);
+      // console.log('App State Changed', state);
     }, [state]);
   
     return (
