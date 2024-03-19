@@ -29,16 +29,16 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
       <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-        <AppStateProvider>
-          <SupabaseUserProvider>
-            {/* <WalletContextProvider> */}
-              {children}
-            {/* </WalletContextProvider> */}
-            <Analytics/>
-            <SpeedInsights/>
-            <Toaster />
-          </SupabaseUserProvider>
-        </AppStateProvider>
+      <SupabaseUserProvider>
+          <AppStateProvider>
+              {/* <WalletContextProvider> */}
+                {children}
+              {/* </WalletContextProvider> */}
+              <Analytics/>
+              <SpeedInsights/>
+              <Toaster />
+          </AppStateProvider>
+        </SupabaseUserProvider>
       </ThemeProvider>
       </body>
     </html>
