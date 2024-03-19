@@ -38,7 +38,8 @@ const appReducer = (
         case "UPDATE_USER":
             return { ...state, userLocal: action.payload };
         case "DELETE_USER":
-            return { ...state, userLocal: action.payload };
+          console.log("delete user",state)
+            return {  userLocal: [] };
         default:
             return state;
     }
@@ -67,6 +68,7 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
   
     const profileId = useMemo(() => {
       const urlSegments = pathname?.split('/').filter(Boolean);//split the pathname by / and remove any empty strings
+      console.log("urlSegment: ",urlSegments)
       if (urlSegments)
         if (urlSegments.length > 1) {
           return urlSegments[1];//return the second element of the array

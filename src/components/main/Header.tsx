@@ -6,19 +6,21 @@ import Logo from '../../../public/logo.png'
 import { Auth } from '../auth/auth'
 import { Button } from '../ui/button'
 import { useSupabaseUser } from '@/lib/providers/supabase-user-provider';
+import { useAppState } from '@/lib/providers/state-provider';
 
 
 const Header = () => {
     const [username,setUsername] = useState<string | null>(null);
     const [userId,setUserId] = useState<string | null>(null);
     const {user} = useSupabaseUser();
+    const {userId:userIdAppState} = useAppState();
     useEffect(()=>{
-        console.log("user: ",user)
+        // console.log("user: ",user)
         if(user?.user_metadata?.email){
             setUsername(user.user_metadata.email.split("@")[0])
             setUserId(user.id)
         }
-    },[user])
+    },[user,userIdAppState])
   return (
     <div className="hidden md:flex justify-center items-center border border-b-white">
         <Link href="/" className=' flex gap-2 justify-left items-center hover:bg-accent hover:text-accent-foreground rounded-xl'>
@@ -55,7 +57,7 @@ const Header = () => {
                 <li>
                 <Link href="/play" className='flex hover:bg-accent hover:text-accent-foreground rounded-xl'>
                         <div className='flex items-center p-4'>
-                            <p className="text-xl font-extrabold tracking-tight text-center text-hotPink uppercase">play</p>
+                            <p className="text-xl font-extrabold tracking-tight text-center text-hotPink uppercase">playc</p>
                         </div>
                     </Link>
                 </li>
