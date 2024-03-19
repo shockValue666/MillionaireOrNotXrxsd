@@ -32,11 +32,25 @@ const MobileHeader = () => {
     const router = useRouter();
     const {dispatch} = useAppState();
     useEffect(()=>{
-        
+        console.log("use effect other: ",user?.id)
         if(userIdFromAppState){
+            console.log("userIdFromAppState exists, : ",userIdFromAppState)
             const getProfileFromDatabase = async ()=>{
                 const pro = await getProfile(userIdFromAppState);
                 if(pro.data){
+                    console.log("pro.data: ",pro.data)
+                    setUsername(pro.data?.email.split("@")[0])
+                    setProprof(pro.data)
+                }
+            }
+            getProfileFromDatabase();
+        }else if (user?.id) 
+        {
+            console.log("userIdFromAppState exists, : ",user?.id)
+            const getProfileFromDatabase = async ()=>{
+                const pro = await getProfile(user?.id);
+                if(pro.data){
+                    console.log("pro.data: ",pro.data)
                     setUsername(pro.data?.email.split("@")[0])
                     setProprof(pro.data)
                 }
@@ -46,7 +60,11 @@ const MobileHeader = () => {
             setUsername(null);
         }
 
-    },[userIdFromAppState])
+    },[userIdFromAppState,user])
+
+    useEffect(()=>{
+        console.log("username useeffect: ",username)
+    },[username])
   return (
     <div className='flex md:hidden justify-between w-full items-center'>
         <Link href="/" className=' flex gap-2 justify-left items-center hover:bg-accent hover:text-accent-foreground rounded-xl'>
@@ -87,6 +105,13 @@ const MobileHeader = () => {
                                 </Link>
                             </li>
                             <li>
+                                <Link href="/play" className='flex hover:bg-accent hover:text-accent-foreground rounded-xl'>
+                                    <div className='flex items-center p-4 text-xl font-extrabold tracking-tight text-center text-hotPink uppercase'>
+                                        <>PLAY</>
+                                    </div>
+                                </Link>
+                            </li>
+                            <li>
                                 {username && (
                                     <Link href={`/profile/${userId}`} className='flex hover:bg-accent hover:text-accent-foreground rounded-xl'>
                                         <div className='flex items-center p-4'>
@@ -109,13 +134,16 @@ const MobileHeader = () => {
                                     </Button>
                                 </Link>
                                 :
-                                <Link href="" className='flex hover:bg-accent hover:text-accent-foreground rounded-xl'>
-                                    <div className='flex items-center p-4 text-xl font-extrabold tracking-tight text-center text-hotPink uppercase'>
-                                        <Auth>Login/signup</Auth>
-                                    </div>
-                                </Link>
+                                <>
+                                    <Link href="" className='flex hover:bg-accent hover:text-accent-foreground rounded-xl'>
+                                        <div className='flex items-center p-4 text-xl font-extrabold tracking-tight text-center text-hotPink uppercase'>
+                                            <Auth>Login/signup</Auth>
+                                        </div>
+                                    </Link>
+                                </>
                                 
                                 }
+
                             </li>
                         </ul>
                     </div>
