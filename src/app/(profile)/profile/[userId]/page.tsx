@@ -16,7 +16,7 @@ const Page = () => {
     const [amountToSend, setAmountToSend] = useState('');
     const {userFromUsersTable,profile,user} = useSupabaseUser();
     const [address,setAddress] = useState<string | null>(null)
-    const {userId} = useAppState();
+    const {userId,profile:appStateProfile} = useAppState();
     const [amountInDollars,setAmountInDollars] = useState<string>("0");
 
     // Function to handle profile picture upload
@@ -43,17 +43,14 @@ const Page = () => {
     const solToDollars = async (amount:string):Promise<string> => {
       return "2";
     }
+
     useEffect(()=>{
-      console.log("userId from page.tsx in side the profile route: ",userId)
-      const setTheAddie = async () => {
-        if(!userId) return;
-        const addie = await getProfile(userId)
-        if(addie?.data?.address) setAddress(addie?.data?.address)
-        if(addie.data?.balance) getAndSetBalance
-        console.log("set the addie")
+      console.log("appstateprofile: ",appStateProfile)
+      if(appStateProfile){
+        console.log("appStateProfile?.address: ",appStateProfile?.address)
+        setAddress(appStateProfile?.address)
       }
-      setTheAddie();
-    },[userId])
+    },[appStateProfile])
 
     useEffect(()=>{
       if(profile?.balance){

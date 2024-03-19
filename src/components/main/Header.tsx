@@ -7,6 +7,8 @@ import { Auth } from '../auth/auth'
 import { Button } from '../ui/button'
 import { useSupabaseUser } from '@/lib/providers/supabase-user-provider';
 import { useAppState } from '@/lib/providers/state-provider';
+import Adapter from '@/lib/wallet/adapter';
+import WalletContextProvider from '@/lib/providers/wallet-context-provider';
 
 
 const Header = () => {
@@ -60,6 +62,15 @@ const Header = () => {
                             <p className="text-xl font-extrabold tracking-tight text-center text-hotPink uppercase">playc</p>
                         </div>
                     </Link>
+                </li>
+                <li>
+
+                    <div className='bg-black flex items-center p-4 text-xl font-extrabold tracking-tight text-center text-hotPink uppercase'>
+                        <WalletContextProvider>
+                            <Adapter/>
+                        </WalletContextProvider>
+                    </div>
+
                 </li>
                 <li>
                     {username && (
