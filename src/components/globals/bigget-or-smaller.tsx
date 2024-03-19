@@ -97,9 +97,12 @@ const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
 
     return (
         <div className='w-[100%] md:w-[50%] text-center'>
-            <div className='tracking-tight text-center text-hotPink bg-black hover:bg-accent hover:text-accent-foreground rounded-xl' onClick={()=>{console.log("kenta")}}>
-                <Auth>LOG IN TO PLAY</Auth>
-            </div>
+            {
+                !user &&
+                <div className='tracking-tight text-center text-hotPink bg-black hover:bg-accent hover:text-accent-foreground rounded-xl' onClick={()=>{console.log("kenta")}}>
+                    <Auth>LOG IN TO PLAY</Auth>
+                </div>
+            }
             <div className={`flex flex-col justify-center align-center border w-[100%] border-white rounded-lg gap-4 p-4 ${!user ? 'blur-sm' : ""}`}>
                 <p className='w-full text-center'>bigger or smaller than</p>
                 <div className='w-full flex flex-col items-center gap-y-6'> 
