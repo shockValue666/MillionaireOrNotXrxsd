@@ -28,43 +28,17 @@ const MobileHeader = () => {
     const [proprof,setProprof] = useState<Profile | null>(null);
     const supabase = createClientComponentClient()
     const {user} = useSupabaseUser();
-    const {userId:userIdFromAppState} = useAppState()
+    const {userId:userIdFromAppState,profile:appStateProfile} = useAppState()
     const router = useRouter();
-    const {dispatch} = useAppState();
-    useEffect(()=>{
-        console.log("use effect other: ",user?.id)
-        if(userIdFromAppState){
-            console.log("userIdFromAppState exists, : ",userIdFromAppState)
-            const getProfileFromDatabase = async ()=>{
-                const pro = await getProfile(userIdFromAppState);
-                if(pro.data){
-                    console.log("pro.data: ",pro.data)
-                    setUsername(pro.data?.email.split("@")[0])
-                    setProprof(pro.data)
-                }
-            }
-            getProfileFromDatabase();
-        }else if (user?.id) 
-        {
-            console.log("userIdFromAppState exists, : ",user?.id)
-            const getProfileFromDatabase = async ()=>{
-                const pro = await getProfile(user?.id);
-                if(pro.data){
-                    console.log("pro.data: ",pro.data)
-                    setUsername(pro.data?.email.split("@")[0])
-                    setProprof(pro.data)
-                }
-            }
-            getProfileFromDatabase();
-        }else{
-            setUsername(null);
-        }
+    const {dispatch} = useAppState()
 
-    },[userIdFromAppState,user])
 
     useEffect(()=>{
-        console.log("username useeffect: ",username)
-    },[username])
+        console.log("username useeffect appStateProfileappStateProfileappStateProfile: ",appStateProfile)
+        setProprof(appStateProfile)
+        if(appStateProfile?.username) setUsername(appStateProfile?.username);
+
+    },[appStateProfile])
   return (
     <div className='flex md:hidden justify-between w-full items-center'>
         <Link href="/" className=' flex gap-2 justify-left items-center hover:bg-accent hover:text-accent-foreground rounded-xl'>

@@ -16,7 +16,7 @@ import { usePathname } from 'next/navigation';
 import { getProfile, getUserSubscriptionStatus } from '../supabase/queries';
 
 interface AppState {
-    userLocal: Profile | Profile[] | [];
+    userLocal: Profile | null;
 }
 
 type Action = 
@@ -25,7 +25,7 @@ type Action =
     | {type:"DELETE_USER",payload:Profile}
 
 
-const initialState: AppState = { userLocal: [] };
+const initialState: AppState = { userLocal: null };
 
 const appReducer = (
     state: AppState = initialState,
@@ -33,10 +33,10 @@ const appReducer = (
   ): AppState => {
     switch (action.type) {
         case "SET_USER":
-          console.log("user setted gamw ti poutana m")
+          // console.log("user setted gamw ti poutana m", state, action.payload)
             return { ...state, userLocal: action.payload };
         case "UPDATE_USER":
-            return { ...state, userLocal: action.payload };
+            return { ...state, userLocal:action.payload };
         case "DELETE_USER":
             return { ...state, userLocal: action.payload };
         default:
@@ -49,6 +49,7 @@ const AppStateContext = createContext<
       state: AppState;
       dispatch: Dispatch<Action>;
       userId: string | undefined;
+      profile:Profile | null;
     }
   | undefined
 >(undefined);
@@ -74,9 +75,13 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
     }, [pathname]);
     //the useMemo hook is used to memorize the value of the workspaceId
     //between renders. It only changes when the pathname changes
-  
+
+    const usProf= useMemo(()=>{
+      return state.userLocal
+    },[state])
   
     useEffect(() => {
+      // console.log("state from useEffect: ",state)
       if (!profileId) return;
       const fetchProfile = async () => {
         const { error: filesError, data } = await getProfile(profileId);
@@ -99,7 +104,7 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
   
     return (
       <AppStateContext.Provider
-        value={{ state, dispatch, userId: profileId}}
+        value={{ state, dispatch, userId: profileId, profile:usProf}}
       >
         {children}
       </AppStateContext.Provider>
