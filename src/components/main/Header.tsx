@@ -14,15 +14,16 @@ import WalletContextProvider from '@/lib/providers/wallet-context-provider';
 const Header = () => {
     const [username,setUsername] = useState<string | null>(null);
     const [userId,setUserId] = useState<string | null>(null);
-    const {user} = useSupabaseUser();
-    const {userId:userIdAppState} = useAppState();
+    // const {user} = useSupabaseUser();
+    const {userId:userIdAppState,profile:appStateProfile} = useAppState();
+
     useEffect(()=>{
-        // console.log("user: ",user)
-        if(user?.user_metadata?.email){
-            setUsername(user.user_metadata.email.split("@")[0])
-            setUserId(user.id)
+        console.log("appstate profile: ",appStateProfile)
+        if(appStateProfile){
+            setUsername(appStateProfile.username)
+            setUserId(appStateProfile.id)
         }
-    },[user,userIdAppState])
+    },[appStateProfile])
   return (
     <div className="hidden md:flex justify-center items-center border border-b-white">
         <Link href="/" className=' flex gap-2 justify-left items-center hover:bg-accent hover:text-accent-foreground rounded-xl'>

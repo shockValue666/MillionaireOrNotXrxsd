@@ -11,9 +11,10 @@ import React, {
   useReducer,
 } from 'react';
 // import { Users } from '../supabase/supabase.types';
-import {Profile, User} from '../supabase/supabase.types'
+import {Profile} from '../supabase/supabase.types'
 import { usePathname } from 'next/navigation';
-import { getProfile, getUserSubscriptionStatus } from '../supabase/queries';
+import { getProfile } from '../supabase/queries';
+import { useSupabaseUser } from './supabase-user-provider';
 
 interface AppState {
     userLocal: Profile | null;
@@ -65,14 +66,27 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
     //the intitial state is the initial state of the global state
     const pathname = usePathname();
     //returns the current pathname of the URL
+    const {userFromUsersTable} = useSupabaseUser();
+
+    useEffect(()=>{
+      console.log("user form appstate provider: ",userFromUsersTable)
+      if(userFromUsersTable?.id){
+
+      }
+    },[userFromUsersTable,pathname])
+    const profileId = useMemo(()=>{
+      if(userFromUsersTable){
+        return userFromUsersTable.id
+      }
+    },[userFromUsersTable]);
   
-    const profileId = useMemo(() => {
-      const urlSegments = pathname?.split('/').filter(Boolean);//split the pathname by / and remove any empty strings
-      if (urlSegments)
-        if (urlSegments.length > 1) {
-          return urlSegments[1];//return the second element of the array
-        }
-    }, [pathname]);
+    // const profileId = useMemo(() => {
+    //   const urlSegments = pathname?.split('/').filter(Boolean);//split the pathname by / and remove any empty strings
+    //   if (urlSegments)
+    //     if (urlSegments.length > 1) {
+    //       return urlSegments[1];//return the second element of the array
+    //     }
+    // }, [pathname]);
     //the useMemo hook is used to memorize the value of the workspaceId
     //between renders. It only changes when the pathname changes
 
@@ -99,7 +113,7 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
     //in order to make it more optimized
   
     useEffect(() => {
-      // console.log('App State Changed', state);
+      console.log('App State Changed', state);
     }, [state]);
   
     return (

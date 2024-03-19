@@ -41,7 +41,7 @@ export const SupabaseUserProvider:React.FC<SupabaseUserProviderProps> = ({childr
         const getUser = async () => {
             const {data:{user}} = await supabase.auth.getUser();
             if(user) {
-                // console.log("user from my cock provider: ",user)
+                // console.log("user from my cock provider ",user)
                 setUser(user);
                 const userFromUsersTable = await getUserFromUsersTable(user.id);
                 if(userFromUsersTable){
