@@ -14,6 +14,8 @@ import { useSupabaseUser } from '@/lib/providers/supabase-user-provider';
 import { addGamble, getAndSetBalance } from '@/lib/supabase/queries';
 import { v4 } from 'uuid';
 import { Auth } from '../auth/auth';
+import { useAppState } from '@/lib/providers/state-provider';
+import { Profile } from '@/lib/supabase/supabase.types';
 
 interface BiggerOrSmallerProps {
     checkBalance?:boolean;
@@ -29,6 +31,8 @@ const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
     const [disabled,setDisabled] = useState<boolean>(true);
     const {toast} = useToast();
     const {user} = useSupabaseUser();
+    const {profile} = useAppState()
+    const [stateProfile,setStateProfile] = useState<Profile | null>(null);
 
     const form = useForm<z.infer<typeof BiggerOrSmallerSchema>>({
         mode:"onSubmit",
@@ -50,12 +54,13 @@ const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
     );
 
     useEffect(()=>{
-        if(!user){
-            setDisabled(true)
-        }else{
+        if(profile) {
+            setStateProfile(profile)
             setDisabled(false)
+        }else{
+            setDisabled(true)
         }
-    },[user])
+    },[profile])
     useEffect(()=>{
         if(!checkBalance || !user) return;
         
@@ -96,14 +101,14 @@ const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
     }
 
     return (
-        <div className='w-[100%] md:w-[50%] text-center'>
+        <div className='w-[90%] md:w-[50%] text-center'>
             {
                 !user &&
                 <div className='tracking-tight text-center text-hotPink bg-black hover:bg-accent hover:text-accent-foreground rounded-xl' onClick={()=>{console.log("kenta")}}>
                     <Auth>LOG IN TO PLAY</Auth>
                 </div>
             }
-            <div className={`flex flex-col justify-center align-center border w-[100%] border-white rounded-lg gap-4 p-4 ${!user ? 'blur-sm' : ""}`}>
+            <div className={`flex flex-col justify-center align-center border w-[100%] border-white rounded-lg gap-4 p-4 ${!profile ? 'blur-sm' : ""}`}>
                 <p className='w-full text-center'>bigger or smaller than</p>
                 <div className='w-full flex flex-col items-center gap-y-6'> 
                     <div className='flex items-center gap-x-4'>

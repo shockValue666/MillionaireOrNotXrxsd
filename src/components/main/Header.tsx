@@ -9,13 +9,19 @@ import { useSupabaseUser } from '@/lib/providers/supabase-user-provider';
 import { useAppState } from '@/lib/providers/state-provider';
 import Adapter from '@/lib/wallet/adapter';
 import WalletContextProvider from '@/lib/providers/wallet-context-provider';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { Profile } from '@/lib/supabase/supabase.types';
+import { useRouter } from 'next/navigation';
 
 
 const Header = () => {
     const [username,setUsername] = useState<string | null>(null);
     const [userId,setUserId] = useState<string | null>(null);
     // const {user} = useSupabaseUser();
-    const {userId:userIdAppState,profile:appStateProfile} = useAppState();
+    const {userId:userIdAppState,profile:appStateProfile,dispatch} = useAppState();
+    const supabase = createClientComponentClient()
+    const [proprof,setProprof] = useState<Profile | null>(null);
+    const router = useRouter();
 
     useEffect(()=>{
         console.log("appstate profile: ",appStateProfile)
@@ -23,6 +29,12 @@ const Header = () => {
             setUsername(appStateProfile.username)
             setUserId(appStateProfile.id)
         }
+    },[appStateProfile])
+    useEffect(()=>{
+        console.log("username useeffect appStateProfileappStateProfileappStateProfile: ",appStateProfile)
+        setProprof(appStateProfile)
+        if(appStateProfile?.username) setUsername(appStateProfile?.username);
+
     },[appStateProfile])
   return (
     <div className="hidden md:flex justify-center items-center border border-b-white">
@@ -86,6 +98,20 @@ const Header = () => {
                             <Auth>Login/signup</Auth>
                         </div>
                     </Link>}
+                    {username && (<Link href="" className='flex hover:bg-accent hover:text-accent-foreground rounded-xl'>
+
+                        <Button
+                        onClick={async ()=>{
+                            await supabase.auth.signOut();
+                            console.log("proprof: ",proprof)
+                            if(!proprof) {console.log("no proprof: ");return};
+                            dispatch({type:"DELETE_USER",payload:proprof})
+                            router.replace('/profile');
+                        }}
+                        className='flex hover:bg-accent hover:text-accent-foreground rounded-xl items-center p-4 text-xl font-extrabold tracking-tight text-center text-hotPink uppercase bg-black'>
+                            Logout
+                        </Button>
+                        </Link>)}
                 </li>
             </ul>
         </div>

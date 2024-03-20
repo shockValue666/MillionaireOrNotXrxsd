@@ -28,15 +28,13 @@ const MobileHeader = () => {
     const [proprof,setProprof] = useState<Profile | null>(null);
     const supabase = createClientComponentClient()
     const {user} = useSupabaseUser();
-    const {userId:userIdFromAppState,profile:appStateProfile} = useAppState()
+    const {userId:userIdFromAppState,profile:appStateProfile,dispatch} = useAppState()
     const router = useRouter();
-    const {dispatch} = useAppState()
 
 
     useEffect(()=>{
         console.log("username useeffect appStateProfileappStateProfileappStateProfile: ",appStateProfile)
-        setProprof(appStateProfile)
-        if(appStateProfile?.username) setUsername(appStateProfile?.username);
+        if(appStateProfile?.username) {setUsername(appStateProfile?.username); setProprof(appStateProfile)};
 
     },[appStateProfile])
   return (
