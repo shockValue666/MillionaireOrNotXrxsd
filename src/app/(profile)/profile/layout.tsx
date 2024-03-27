@@ -13,7 +13,7 @@ const layout:React.FC<LayoutProps> = ({
 }) => {
   return (
 
-      <main>
+      <main className=''>
         <Header/>
         <MobileHeader/>
         {children}
