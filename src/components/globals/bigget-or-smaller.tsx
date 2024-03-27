@@ -106,7 +106,7 @@ const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
     return (
         <div className='w-[90%] md:w-[50%] text-center'>
             {
-                !user &&
+                !profile &&
                 <div className='tracking-tight text-center text-hotPink bg-black hover:bg-accent hover:text-accent-foreground rounded-xl' onClick={()=>{console.log("kenta")}}>
                     <Auth>LOG IN TO PLAY</Auth>
                 </div>
