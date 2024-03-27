@@ -5,78 +5,22 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1709951661143,
-      "tag": "0000_flippant_morbius",
+      "when": 1711157266905,
+      "tag": "0000_tidy_leader",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "5",
-      "when": 1709952065725,
-      "tag": "0001_nasty_scream",
+      "when": 1711157414370,
+      "tag": "0001_gifted_toad",
       "breakpoints": true
     },
     {
       "idx": 2,
       "version": "5",
-      "when": 1709952243379,
-      "tag": "0002_fresh_jocasta",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1710201494650,
-      "tag": "0003_awesome_kronos",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1710201558121,
-      "tag": "0004_real_dagger",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "5",
-      "when": 1710202024303,
-      "tag": "0005_free_radioactive_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "5",
-      "when": 1710202374167,
-      "tag": "0006_stiff_radioactive_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "5",
-      "when": 1710205996010,
-      "tag": "0007_flaky_yellowjacket",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "5",
-      "when": 1710206391155,
-      "tag": "0008_violet_zuras",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "5",
-      "when": 1710454882720,
-      "tag": "0009_fine_sprite",
-      "breakpoints": true
-    },
-    {
-      "idx": 10,
-      "version": "5",
-      "when": 1710647953372,
-      "tag": "0010_workable_mysterio",
+      "when": 1711157476959,
+      "tag": "0002_powerful_joystick",
       "breakpoints": true
     }
   ]

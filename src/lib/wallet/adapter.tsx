@@ -1,4 +1,5 @@
-import React from 'react'
+"use client";
+import React, { useEffect } from 'react'
 import * as web3 from '@solana/web3.js';
 import * as walletAdapterReact from '@solana/wallet-adapter-react'
 // import * as walletAdapterWallets from '@solana/wallet-adapter-wallets';
@@ -25,7 +26,7 @@ const Adapter = () => {
     const { publicKey } = useWallet();
 
     // when the status of `connection` or `publicKey` changes, we execute the code block below
-    React.useEffect(() => {
+    useEffect(() => {
         const getInfo = async () => {
             if (connection && publicKey) {
                 // we get the account info for the user's wallet data store and set the balance in our application's state

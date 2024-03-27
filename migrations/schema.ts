@@ -21,6 +21,8 @@ export const profiles = pgTable("profiles", {
 	avatar: text("avatar"),
 	address: text("address").notNull(),
 	balance: text("balance"),
+	realBalance: text("real_balance"),
+	calculatedBalance: text("calculated_balance"),
 },
 (table) => {
 	return {
@@ -35,16 +37,6 @@ export const notifications = pgTable("notifications", {
 	userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" } ),
 	message: text("message").notNull(),
 	read: text("read").default('false').notNull(),
-});
-
-export const transactions = pgTable("transactions", {
-	id: uuid("id").defaultRandom().primaryKey().notNull(),
-	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
-	userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" } ),
-	coinId: uuid("coin_id").notNull().references(() => coins.id, { onDelete: "cascade" } ),
-	type: text("type").notNull(),
-	amount: text("amount").notNull(),
-	price: text("price").notNull(),
 });
 
 export const achievements = pgTable("achievements", {
@@ -153,4 +145,14 @@ export const hookTransactions = pgTable("hook_transactions", {
 	id: uuid("id").defaultRandom().primaryKey().notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
 	content: text("content").notNull(),
+});
+
+export const transactions = pgTable("transactions", {
+	id: uuid("id").defaultRandom().primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
+	from: text("from").notNull(),
+	to: text("to").notNull(),
+	coin: text("coin").notNull(),
+	amount: text("amount").notNull(),
+	signature: text("signature"),
 });

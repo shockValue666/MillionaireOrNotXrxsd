@@ -1,1 +1,0 @@
-ALTER TABLE "profiles" ADD COLUMN "address" text NOT NULL;
