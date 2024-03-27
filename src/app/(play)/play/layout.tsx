@@ -12,10 +12,23 @@ const layout:React.FC<LayoutProps> = ({
 }) => {
   return (
 
-      <main className='border border-yellow-500'>
+      <main className='border border-yellow-500 us'>
         <Header/>
         <MobileHeader/>
             {children}
+            <style jsx>{`
+                input, textarea {
+                    font-size: 16px; /* Example font size */
+                    /* Other styling for input fields */
+                    touch-action: manipulation;
+                    -ms-touch-action: manipulation;
+                    user-select: none;
+                    -webkit-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
+                    -webkit-tap-highlight-color: rgba(0,0,0,0);
+                }
+            `}</style>
       </main>
   )
 }
