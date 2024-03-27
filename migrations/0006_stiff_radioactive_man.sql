@@ -1,1 +1,0 @@
-ALTER TABLE "gamble" ADD COLUMN "status" boolean NOT NULL;

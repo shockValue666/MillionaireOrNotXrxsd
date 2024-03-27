@@ -1,110 +1,91 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { useRef, useState } from 'react'
+import { FaArrowAltCircleDown, FaArrowAltCircleUp } from 'react-icons/fa';
 import SlotCounter from 'react-slot-counter';
-import { Button } from '../ui/button';
-import { FaArrowAltCircleDown, FaArrowAltCircleUp } from "react-icons/fa";
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { set, z } from 'zod';
+import { z } from 'zod';
 import { BiggerOrSmallerSchema } from '@/lib/types';
-import {zodResolver} from '@hookform/resolvers/zod'
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useSupabaseUser } from '@/lib/providers/supabase-user-provider';
+import { Auth } from '../auth/auth';
+import { Button } from '../ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Input } from '../ui/input';
-import { useToast } from '../ui/use-toast';
-import { useSupabaseUser } from '@/lib/providers/supabase-user-provider';
 import { addGamble, getAndSetBalance } from '@/lib/supabase/queries';
 import { v4 } from 'uuid';
-import { Auth } from '../auth/auth';
+import { useToast } from '../ui/use-toast';
 import { useAppState } from '@/lib/providers/state-provider';
-import { Profile } from '@/lib/supabase/supabase.types';
 
-interface BiggerOrSmallerProps {
-    checkBalance?:boolean;
-}
+const emojis = ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇", "🙂", "🙃", "😉", "😌", "😍", "😘", "😗", "😙", "😚", "😋", "😛", "😜", "😝", "🤑", "🤗", "🤓", "😎", "🤡", "🤠", "😏", "😒", "😞", "😔", "😟", "😕", "🙁", "☹️", "😣", "😖", "😫", "😩", "😤", "😠", "😡", "😶", "😐", "😑", "😯", "😦", "😧", "😮", "😲", "😵", "😳", "😱", "😨", "😰", "😢", "😥", "🤤", "😭", "😓", "😪", "😴", "🙄", "🤔", "🤥", "😬", "🤐", "🤢", "🤧", "😷", "🤒", "🤕", "😈", "👿", "👹", "👺", "💀", "👻", "👽", "👾", "🤖", "💩", "😺", "😸", "😹", "😻", "😼", "😽", "🙀", "😿", "😾"];
 
-const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
-    checkBalance
-}) => {
-    const [winner, setWinner] = useState(50000);
-    const [choice,setChoice] = useState<string | null>(null);   
+
+
+
+const EmojiSlots = () => {
+    const [winner, setWinner] = useState<string>("50000");
+    const [disabled,setDisabled] = useState<boolean>(false);
     const [amount, setAmount] = useState<string | null>(null);
     const [reset,setReset] = useState<boolean>(false);
-    const [disabled,setDisabled] = useState<boolean>(true);
     const {toast} = useToast();
     const {user} = useSupabaseUser();
     const {profile} = useAppState()
-    const [stateProfile,setStateProfile] = useState<Profile | null>(null);
-    const [loading, setLoading] = useState<boolean>(false);
+
 
     const form = useForm<z.infer<typeof BiggerOrSmallerSchema>>({
         mode:"onSubmit",
         resolver:zodResolver(BiggerOrSmallerSchema),
         defaultValues:{amount:"1"}
     })
-    const isLoading = form.formState.isSubmitting;
 
     const onSubmit:SubmitHandler<z.infer<typeof BiggerOrSmallerSchema>> = async (data) => {
         console.log("data: ", data);
         setAmount(data.amount);
     }
-    
-    // Use the winner state directly to trigger animations.
-    // If necessary, convert winner to a format that SlotCounter expects.
+
     const slotValues = winner.toString().split('').map(num => 
         <span key={num}
         >{num}</span>
     );
 
-    useEffect(()=>{
-        if(profile) {
-            setStateProfile(profile)
-            setDisabled(false)
-        }else{
-            setDisabled(true)
-        }
-    },[profile])
-    useEffect(()=>{
-        if(!checkBalance || !user) return;
-        
-
-    },[user])
 
     const getRandomWinner = async () => {
-        // setLoading(true);
         setDisabled(true);
-        const drand = Math.floor(Math.random() * 100000);
-        setWinner(drand);
-        if(!user?.id || !amount || !choice) return;
-        const res = await addGamble({
-            userId:user?.id,
-            amount:amount,
-            choice:choice,
-            winner:drand.toString(),
-            id:v4(),
-            createdAt:new Date().toISOString(),
-            status: drand>50000 && choice === "bigger" || drand<50000 && choice === "smaller"
-        });
-        console.log("res: ",res)
-        await new Promise(resolve=>setTimeout(resolve, 525));
-        if(drand>50000 && choice === "bigger" || drand<50000 && choice === "smaller"){
-            toast({title:"You won!", description:"You guessed right"});
-            await getAndSetBalance({balance:"bet"},user?.id);
-        }else if(drand<50000 && choice === "bigger" || drand>50000 && choice === "smaller"){
-            toast({title:"You Lost!", description:"You guessed wrong", variant:"destructive"})
-        }
-        // setDisabled(true);
+        const drand = Array.from({ length: 5 }, () => Math.floor(Math.random() * 92));
+        const emojisArray = drand.map(index => emojis[index]);
+        const answer = emojisArray.join('');
+        setWinner(answer);
+        console.log("Generated emojis: ", answer);
+        console.log("slot values: ",slotValues)
+        // if(!user?.id || !amount || !choice) return;
+        // const res = await addGamble({
+        //     userId:user?.id,
+        //     amount:amount,
+        //     choice:choice,
+        //     winner:drand.toString(),
+        //     id:v4(),
+        //     createdAt:new Date().toISOString(),
+        //     status: drand>50000 && choice === "bigger" || drand<50000 && choice === "smaller"
+        // });
+        // console.log("res: ",res)
+        // await new Promise(resolve=>setTimeout(resolve, 525));
+        // if(drand>50000 && choice === "bigger" || drand<50000 && choice === "smaller"){
+        //     toast({title:"You won!", description:"You guessed right"});
+        //     await getAndSetBalance({balance:"bet"},user?.id);
+        // }else if(drand<50000 && choice === "bigger" || drand>50000 && choice === "smaller"){
+        //     toast({title:"You Lost!", description:"You guessed wrong", variant:"destructive"})
+        // }
         setReset(true);
     }
 
     const resetTheGame = () => {
         setReset(false);
-        setChoice(null);
         setAmount(null);
-        setWinner(50000);
+        setWinner("50000");
         setDisabled(false);
     }
 
-    return (
-        <div className='w-[90%] md:w-[50%] text-center'>
+  return (
+    <div className='w-[90%] md:w-[50%] text-center'>
             {
                 !user &&
                 <div className='tracking-tight text-center text-hotPink bg-black hover:bg-accent hover:text-accent-foreground rounded-xl' onClick={()=>{console.log("kenta")}}>
@@ -123,20 +104,15 @@ const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
                             charClassName='text-4xl'
                             sequentialAnimationMode={true}
                             startValueOnce={true}
+                            dummyCharacters={emojis}
                         />
-                        {choice === "smaller" && <FaArrowAltCircleDown size={40} color='red'/>}
-                        {choice === "bigger" && <FaArrowAltCircleUp size={40} color='green'/>}
 
-                    </div>
-                    <div className=' flex flex-col md:flex-row gap-4 w-[50%] justify-around items-center '>
-                        <Button onClick={()=>setChoice("bigger")} disabled={disabled} className='bg-green-500'>BIGGER</Button>
-                        <Button onClick={()=>setChoice("smaller")} disabled={disabled} className='bg-red-500'>SMALLER</Button>
                     </div>
                     {/*  */}
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-x-8 flex items-center">
                             <FormField
-                            disabled = {!choice || disabled}
+                            disabled = {disabled}
                             control={form.control}
                             name="amount"
                             render={({ field }) => (
@@ -152,7 +128,7 @@ const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
                                 </FormItem>
                             )}
                             />
-                            <Button disabled={!choice || disabled} type="submit">set</Button>
+                            <Button disabled={disabled} type="submit">set</Button>
                         </form>
                     </Form>
                     {/*  */}
@@ -167,7 +143,7 @@ const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
                 </div>
             </div>
         </div>
-    );
-};
+  )
+}
 
-export default BiggerOrSmaller;
+export default EmojiSlots
