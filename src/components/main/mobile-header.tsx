@@ -38,7 +38,7 @@ const MobileHeader = () => {
 
     },[appStateProfile])
   return (
-    <div className='flex md:hidden justify-between w-full items-center'>
+    <div className='flex md:hidden justify-between w-[100%] items-center'>
         <Link href="/" className=' flex gap-2 justify-left items-center hover:bg-accent hover:text-accent-foreground rounded-xl'>
             <div className='flex items-center p-4'>
                 <Image src={Logo} alt="logo" height={70} width={70} className='rounded-full'/>

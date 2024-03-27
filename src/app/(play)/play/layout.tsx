@@ -12,7 +12,7 @@ const layout:React.FC<LayoutProps> = ({
 }) => {
   return (
 
-      <main>
+      <main className='border border-yellow-500'>
         <Header/>
         <MobileHeader/>
             {children}
