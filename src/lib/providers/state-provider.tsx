@@ -11,22 +11,25 @@ import React, {
   useReducer,
 } from 'react';
 // import { Users } from '../supabase/supabase.types';
-import {Profile} from '../supabase/supabase.types'
+import {EmojiSlot, Profile} from '../supabase/supabase.types'
 import { usePathname } from 'next/navigation';
-import { getProfile } from '../supabase/queries';
+import { getEmojiSlotLatest, getProfile } from '../supabase/queries';
 import { useSupabaseUser } from './supabase-user-provider';
 
 interface AppState {
     userLocal: Profile | null;
+    emojiSlotLocal:EmojiSlot | null;
 }
 
 type Action = 
     | {type:"SET_USER",payload:Profile}
     | {type:"UPDATE_USER",payload:Profile}
     | {type:"DELETE_USER",payload:Profile}
+    | {type:"SET_EMOJI_SLOT",payload:EmojiSlot}
+    | {type:"UPDATE_EMOJI_SLOT",payload:EmojiSlot}
+    | {type:"DELETE_EMOJI_SLOT",payload:EmojiSlot | null}
 
-
-const initialState: AppState = { userLocal: null };
+const initialState: AppState = { userLocal: null, emojiSlotLocal:null};
 
 const appReducer = (
     state: AppState = initialState,
@@ -40,6 +43,12 @@ const appReducer = (
             return { ...state, userLocal:action.payload };
         case "DELETE_USER":
             return { ...state, userLocal: action.payload };
+        case "SET_EMOJI_SLOT":
+            return { ...state, emojiSlotLocal: action.payload };
+        case "UPDATE_EMOJI_SLOT":
+            return { ...state, emojiSlotLocal: action.payload };
+        case "DELETE_EMOJI_SLOT":
+            return { ...state, emojiSlotLocal: null };
         default:
             return state;
     }
@@ -51,6 +60,7 @@ const AppStateContext = createContext<
       dispatch: Dispatch<Action>;
       userId: string | undefined;
       profile:Profile | null;
+      emojiSlot:EmojiSlot | null;
     }
   | undefined
 >(undefined);
@@ -69,7 +79,7 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
     const {userFromUsersTable} = useSupabaseUser();
 
     useEffect(()=>{
-      console.log("user form appstate provider: ",userFromUsersTable)
+      // console.log("user form appstate provider: ",userFromUsersTable)
       if(userFromUsersTable?.id){
 
       }
@@ -93,6 +103,10 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
     const usProf= useMemo(()=>{
       return state.userLocal
     },[state])
+    const usEmojiSlot = useMemo(()=>{
+      return state.emojiSlotLocal
+    },[state])
+
   
     useEffect(() => {
       // console.log("state from useEffect: ",state)
@@ -107,6 +121,17 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
           type: 'SET_USER',
           payload: { ...data },
         });
+
+        const {error:emojiSlotError, data:emojiSlotData} = await getEmojiSlotLatest(profileId);
+        if(emojiSlotError){
+          console.log(emojiSlotError)
+        }
+        if(!emojiSlotData) {console.log("no data");return;};
+        console.log("emojislotdata: ",emojiSlotData)
+        dispatch({
+          type:"SET_EMOJI_SLOT",
+          payload:{...emojiSlotData}
+        })
       };
       fetchProfile();
     }, [profileId]);//fetch the files when the folderId or the workspaceId changes
@@ -118,7 +143,7 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
   
     return (
       <AppStateContext.Provider
-        value={{ state, dispatch, userId: profileId, profile:usProf}}
+        value={{ state, dispatch, userId: profileId, profile:usProf, emojiSlot:usEmojiSlot}}
       >
         {children}
       </AppStateContext.Provider>

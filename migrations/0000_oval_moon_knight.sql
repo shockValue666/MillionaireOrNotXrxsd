@@ -73,6 +73,14 @@ CREATE TABLE IF NOT EXISTS "customers" (
 	"stripe_customer_id" text
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "emoji_slot" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"created_at" timestamp with time zone,
+	"amount" integer NOT NULL,
+	"spinz" integer NOT NULL,
+	"profile_id" uuid NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "gamble" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"created_at" timestamp with time zone,
@@ -187,6 +195,12 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "customers" ADD CONSTRAINT "customers_id_users_id_fk" FOREIGN KEY ("id") REFERENCES "users"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "emoji_slot" ADD CONSTRAINT "emoji_slot_profile_id_profiles_id_fk" FOREIGN KEY ("profile_id") REFERENCES "profiles"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

@@ -1,9 +1,9 @@
 "use server";
 import { profile } from "console";
-import { gamble, hookTransactions, privateTab, profiles } from "../../../migrations/schema";
+import { emojiSlot, gamble, hookTransactions, privateTab, profiles } from "../../../migrations/schema";
 import db from "./db";
-import { Gamble, HookTransaction, PrivInfo, Profile, Subscription } from "./supabase.types";
-import { eq } from "drizzle-orm";
+import { EmojiSlot, Gamble, HookTransaction, PrivInfo, Profile, Subscription } from "./supabase.types";
+import { desc, eq } from "drizzle-orm";
 
 
 export const addProfile = async (profile:Profile) => {
@@ -125,6 +125,56 @@ export const getAndSetBalance = async (profile:Partial<Profile>,profileId:string
         return {data:result,error:null}   
     } catch (error) {
         console.log("error at updating balance: ",error)
+        return {data:null,error:error}
+    }
+}
+
+export const getEmojiSlot = async (profileId:string) => {
+    try {
+        const result = await db.query.emojiSlot.findFirst({
+            where:((emojiSlot,{eq})=> eq(emojiSlot.profileId,profileId))
+        })
+        return {data:result,error:null}
+    } catch (error) {
+        console.log("error at getting emoji slot: ",error)
+        return {data:null,error:error}
+    }
+}
+
+export const getEmojiSlotLatest = async (profileId:string) => {
+    try {
+        // const result = await db.query.emojiSlot.findFirst({
+        //     where:((emojiSlot,{eq})=> eq(emojiSlot.profileId,profileId))
+        // })
+        const result = await db.query.emojiSlot.findFirst({
+            where:((emojiSlot,{eq})=> eq(emojiSlot.profileId,profileId)),
+            orderBy: desc(emojiSlot.createdAt)
+        })
+        return {data:result,error:null}
+    } catch (error) {
+        console.log("error at getting emoji slot: ",error)
+        return {data:null,error:error}
+    }
+}
+
+export const createEmojiSlot = async (emojiSlotInstance:EmojiSlot) => {
+    try {
+        const result = await db.insert(emojiSlot).values(emojiSlotInstance).returning();
+        return {data:result,error:null}
+    } catch (error) {
+        console.log("error at setting emoji slot: ",error)
+        return {data:null,error:error}
+    }
+}
+
+
+export const updateEmojiSlot = async (emojiSlotInstance:Partial<EmojiSlot>) => {
+    if(emojiSlotInstance.id === undefined) return {data:null,error:"id is required"}
+    try {
+        const result = await db.update(emojiSlot).set(emojiSlotInstance).where(eq(emojiSlot.id,emojiSlotInstance.id));
+        return {data:result,error:null}
+    } catch (error) {
+        console.log("error at updating emoji slot: ",error)
         return {data:null,error:error}
     }
 }

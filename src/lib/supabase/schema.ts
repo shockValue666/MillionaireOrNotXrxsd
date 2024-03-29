@@ -161,4 +161,16 @@ export const hookTransactions = pgTable("hook_transactions", {
 	content: text("content").notNull(),
 })
 
+export const emojiSlot = pgTable("emoji_slot", {
+	id: uuid("id").defaultRandom().primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
+	
+	amount: integer("amount").notNull(),
+	spinz: integer("spinz").notNull(),
+	currentAmount: integer("current_amount").default(0).notNull(),
+	currentSpin: integer("current_spin").default(0).notNull(),
+	
+	profileId: uuid("profile_id").notNull().references(() => profiles.id, { onDelete: "cascade" } ),
+	currentEmojis: text("current_emojis").default('["🤑", "🤑", "🤑", "🤑", "🤑"]').notNull(),
 
+})

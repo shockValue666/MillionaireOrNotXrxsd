@@ -6,6 +6,15 @@ export const BiggerOrSmallerSchema = z.object(
     }
 )
 
+
+export const EmojiSlotSchema = z.object(
+    {
+        amount:z.string().describe("amount"),
+        spinz:z.string().describe("spinz")
+    }
+)
+
+
 export const LoginSchema = z.object(
     {
         email:z.string().describe("Email").email({message:"Invalid Emaillllll"}),
