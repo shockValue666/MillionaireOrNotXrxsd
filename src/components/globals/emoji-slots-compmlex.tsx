@@ -72,7 +72,18 @@ const EmojiSlotsComplex = () => {
         setAmount(parseInt(data.amount));
         setSpinz(parseInt(data.spinz))
         setAmountToChange(parseInt(data.amount)/parseInt(data.spinz))
-        const res = await createEmojiSlot({id:v4(),amount:parseInt(data.amount),spinz:parseInt(data.spinz),createdAt:new Date().toISOString(),profileId:profile?.id,currentAmount:0,currentSpin:0,currentEmojis:emojisArray.toString(),payPerSpin:parseInt(data.amount)/parseInt(data.spinz)})
+        const res = await createEmojiSlot({
+            id: v4(),
+            amount: parseFloat(data.amount),
+            spinz: parseInt(data.spinz),
+            createdAt: new Date().toISOString(),
+            profileId: profile?.id,
+            currentAmount: 0,
+            currentSpin: 0,
+            currentEmojis: emojisArray.toString(),
+            payPerSpin: parseFloat(data.amount)/parseInt(data.spinz),
+            entryAmount: parseFloat(data.amount) // Add the missing entryAmount property
+        });
         if(res.data){
             setSavedEmojiSlot(true);
             // toast({title:"Success",description:"Slot created successfully"})
