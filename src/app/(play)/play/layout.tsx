@@ -1,4 +1,5 @@
 "use client";
+import Balance from '@/components/globals/Balance';
 import Header from '@/components/main/Header';
 import MobileHeader from '@/components/main/mobile-header';
 import React from 'react'
@@ -15,6 +16,7 @@ const layout:React.FC<LayoutProps> = ({
       <main className='border border-yellow-500 us'>
         <Header/>
         <MobileHeader/>
+        <Balance/>
             {children}
             <style jsx>{`
                 input, textarea {

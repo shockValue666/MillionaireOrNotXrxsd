@@ -1,5 +1,5 @@
 //NOTE: idk i just copied the web/migrations/schema.ts file it may work better with type safety
-import { pgTable, unique, pgEnum, uuid, timestamp, text, foreignKey, jsonb, boolean, bigint, integer } from "drizzle-orm/pg-core"
+import { pgTable, unique, pgEnum, uuid, timestamp, text, foreignKey, jsonb, boolean, bigint, integer, doublePrecision } from "drizzle-orm/pg-core"
   import { sql } from "drizzle-orm"
 
 export const keyStatus = pgEnum("key_status", ['expired', 'invalid', 'valid', 'default'])
@@ -165,12 +165,15 @@ export const emojiSlot = pgTable("emoji_slot", {
 	id: uuid("id").defaultRandom().primaryKey().notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
 	
-	amount: integer("amount").notNull(),
+	amount: doublePrecision("amount").notNull(),
 	spinz: integer("spinz").notNull(),
-	currentAmount: integer("current_amount").default(0).notNull(),
+	currentAmount: doublePrecision("current_amount").default(0).notNull(),
 	currentSpin: integer("current_spin").default(0).notNull(),
 	
 	profileId: uuid("profile_id").notNull().references(() => profiles.id, { onDelete: "cascade" } ),
 	currentEmojis: text("current_emojis").default('["🤑", "🤑", "🤑", "🤑", "🤑"]').notNull(),
 
+	payPerSpin: doublePrecision("pay_per_spin").notNull(),
+
+	entryAmount: doublePrecision("entry_amount").notNull()
 })

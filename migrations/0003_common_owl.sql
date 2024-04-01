@@ -1,0 +1,1 @@
+ALTER TABLE "emoji_slot" ALTER COLUMN "pay_per_spin" SET DATA TYPE double precision;

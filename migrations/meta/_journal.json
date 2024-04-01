@@ -15,6 +15,27 @@
       "when": 1711594655341,
       "tag": "0001_yellow_red_hulk",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1711762838121,
+      "tag": "0002_rapid_weapon_omega",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1711763306138,
+      "tag": "0003_common_owl",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1711880971125,
+      "tag": "0004_zippy_donald_blake",
+      "breakpoints": true
     }
   ]
 }

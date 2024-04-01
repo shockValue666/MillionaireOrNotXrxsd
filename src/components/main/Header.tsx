@@ -34,14 +34,14 @@ const Header = () => {
     const router = useRouter();
 
     useEffect(()=>{
-        console.log("appstate profile: ",appStateProfile)
+        // console.log("appstate profile: ",appStateProfile)
         if(appStateProfile){
             setUsername(appStateProfile.username)
             setUserId(appStateProfile.id)
         }
     },[appStateProfile])
     useEffect(()=>{
-        console.log("username useeffect appStateProfileappStateProfileappStateProfile: ",appStateProfile)
+        // console.log("username useeffect appStateProfileappStateProfileappStateProfile: ",appStateProfile)
         setProprof(appStateProfile)
         if(appStateProfile?.username) setUsername(appStateProfile?.username);
 
@@ -123,7 +123,7 @@ const Header = () => {
                                 <Button
                                 onClick={async ()=>{
                                     await supabase.auth.signOut();
-                                    console.log("proprof: ",proprof)
+                                    // console.log("proprof: ",proprof)
                                     if(!proprof) {console.log("no proprof: ");return};
                                     dispatch({type:"DELETE_USER",payload:proprof})
                                     router.replace('/profile');

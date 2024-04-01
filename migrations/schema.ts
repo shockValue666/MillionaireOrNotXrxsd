@@ -1,4 +1,4 @@
-import { pgTable, unique, pgEnum, uuid, timestamp, text, foreignKey, jsonb, boolean, bigint, integer } from "drizzle-orm/pg-core"
+import { pgTable, unique, pgEnum, uuid, timestamp, text, foreignKey, jsonb, boolean, bigint, integer, doublePrecision } from "drizzle-orm/pg-core"
   import { sql } from "drizzle-orm"
 
 export const keyStatus = pgEnum("key_status", ['default', 'valid', 'invalid', 'expired'])
@@ -160,10 +160,12 @@ export const transactions = pgTable("transactions", {
 export const emojiSlot = pgTable("emoji_slot", {
 	id: uuid("id").defaultRandom().primaryKey().notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
-	amount: integer("amount").notNull(),
+	amount: doublePrecision("amount").notNull(),
 	spinz: integer("spinz").notNull(),
 	profileId: uuid("profile_id").notNull().references(() => profiles.id, { onDelete: "cascade" } ),
-	currentAmount: integer("current_amount").default(0).notNull(),
+	currentAmount: doublePrecision("current_amount").notNull(),
 	currentSpin: integer("current_spin").default(0).notNull(),
 	currentEmojis: text("current_emojis").default('["🤑", "🤑", "🤑", "🤑", "🤑"]').notNull(),
+	payPerSpin: doublePrecision("pay_per_spin").notNull(),
+	entryAmount: doublePrecision("entry_amount").notNull(),
 });

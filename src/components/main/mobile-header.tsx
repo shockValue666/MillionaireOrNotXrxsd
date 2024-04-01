@@ -33,7 +33,7 @@ const MobileHeader = () => {
 
 
     useEffect(()=>{
-        console.log("username useeffect appStateProfileappStateProfileappStateProfile: ",appStateProfile)
+        // console.log("username useeffect appStateProfileappStateProfileappStateProfile: ",appStateProfile)
         if(appStateProfile?.username) {setUsername(appStateProfile?.username); setProprof(appStateProfile)};
 
     },[appStateProfile])
