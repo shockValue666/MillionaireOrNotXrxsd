@@ -117,7 +117,7 @@ const EmojiSlots = () => {
                 return amountPerSpin*1.15;
             }
             if(Object.values(emojiCount).includes(2)){
-                return amountPerSpin;
+                return amountPerSpin*0.888;
             }
         }else if (uniqueEmojis === 4) {
             return -amountPerSpin*0.5;
