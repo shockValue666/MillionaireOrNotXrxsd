@@ -35,6 +35,8 @@ const EmojiSlots = () => {
     const [disabledRollButton,setDisabledRollButton] = useState(false)
     const [disableInputs, setDisableInputs] = useState(false)
     const [amountWonOrLostState, setAmountWonOrLostState] = useState<number | null>(null)
+    const [resetRewardsButtonVisibility, setResetRewardsButtonVisibility] = useState(true)
+    const [airdropButtonVisibility, setAirdropButtonVisibility] = useState(true)
 
     const {toast} = useToast();
     const [amountNotification, setAmountNotification] = useState<boolean>(false)
@@ -200,6 +202,23 @@ const EmojiSlots = () => {
             type:"DELETE_EMOJI_SLOT",
             payload:null
         })
+    }
+
+    //renew the balance
+    const reNewTheBalance = async () => {
+        setResetRewardsButtonVisibility(false)
+        if(!profile) return;
+        const {data,error} = await getAndSetBalance({balance:"0"},profile.id);
+        dispatch({type:"UPDATE_USER",payload:{...profile, balance:"0"}})
+        setResetRewardsButtonVisibility(true)
+    }
+    //airdrop amount
+    const airdropAmount = async () => {
+        setAirdropButtonVisibility(false)
+        if(!profile || !profile.balance) return;
+        const {data,error} = await getAndSetBalance({balance:(parseFloat(profile.balance)+1000).toString()},profile.id);
+        dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(profile.balance)+1000).toString()}})
+        setAirdropButtonVisibility(true)
     }
     //check if there is a saved Emoji slot game and either set it to the saved game or a new game
     useEffect(()=>{
@@ -381,6 +400,21 @@ const EmojiSlots = () => {
                         className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
                         onClick={() => {resetTheGame();}}>
                             RESET
+                        </Button>
+
+                        <Button 
+                        // disabled={!amount} 
+                        disabled={!resetRewardsButtonVisibility}
+                        className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
+                        onClick={() => {reNewTheBalance();}}>
+                            RENEW BALANCE
+                        </Button>
+                        <Button 
+                        // disabled={!amount} 
+                        disabled={!airdropButtonVisibility}
+                        className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
+                        onClick={() => {airdropAmount();}}>
+                            AIRDROP 1000
                         </Button>
                 </div>
             </div>
