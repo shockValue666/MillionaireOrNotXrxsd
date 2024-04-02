@@ -148,7 +148,6 @@ const EmojiSlots = () => {
             if(amountWonOrLost === undefined) return;
             setAmountWonOrLostState(amountWonOrLost)
             setAmountNotification(true)
-            console.log("amount won or lost: ",amountWonOrLost)
             dispatch({
                 type:"UPDATE_EMOJI_SLOT",
                 payload:{
@@ -173,8 +172,9 @@ const EmojiSlots = () => {
                         console.log("error updating balance: ",profileError)
                     }
                     if([profileData]){
-                        console.log("successfully updated the balance: ",profileData)
-                        dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(userBalance)+(amountPerSpin+amountWonOrLost)).toString()}})    
+                        // console.log("successfully updated the balance: ",profileData)
+                        console.log("amount won or lost plus the balance: ",(parseFloat(userBalance)+(amountPerSpin+amountWonOrLost)), " amountWonOrLost: ",amountWonOrLost)
+                        dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(userBalance)+amountWonOrLost).toString()}})    
                     }
                 }
                 setDisabledRollButton(false)
