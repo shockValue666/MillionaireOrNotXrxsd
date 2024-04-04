@@ -41,7 +41,7 @@ export function SignupLogin() {
         if(!email || !password) return;
         const {data,error} = await actionLoginUser({email,password});
         if(error) {
-            console.log("error: ",error)
+            console.log("error at logging in user: ",error)
             toast({
                 title: "Error",
                 description: error.message,

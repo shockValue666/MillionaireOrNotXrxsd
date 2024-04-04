@@ -73,7 +73,7 @@ const Header = () => {
                     </Link>
                 </li>
                 <li>
-                <Link href="/buy" className='flex hover:bg-accent hover:text-accent-foreground rounded-xl'>
+                <Link aria-disabled href="/buy" className='flex hover:bg-accent hover:text-accent-foreground rounded-xl'>
                         <div className='flex items-center p-4'>
                             <p className="text-xl font-extrabold tracking-tight text-center text-hotPink uppercase">buy</p>
                         </div>

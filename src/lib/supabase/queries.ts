@@ -121,7 +121,7 @@ export const saveTransactionHook = async (transactionHook:HookTransaction) => {
 
 export const getAndSetBalance = async (profile:Partial<Profile>,profileId:string) => {
     try {
-        const result = await db.update(profiles).set(profile).where(eq(profiles.id,profileId));
+        const result = await db.update(profiles).set(profile).where(eq(profiles.id,profileId)).returning();
         return {data:result,error:null}   
     } catch (error) {
         console.log("error at updating balance: ",error)
