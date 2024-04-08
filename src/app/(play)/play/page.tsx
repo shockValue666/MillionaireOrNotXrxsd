@@ -3,14 +3,38 @@ import EmojiSlotsComplex from '@/components/globals/emoji-slots-compmlex'
 import EmojiSlots from '@/components/globals/emoji-slots'
 import PnL from '@/components/profile/PnL'
 import React from 'react'
+import Link from 'next/link'
+import GameGrid from '@/components/play/game-grid'
+// import SletsIcon from "../../public/emojislots.png"
+// import BiggerOrSmallerIcon from "../../public/biggerOrSmaller.png"
+import SletsIcon from '../../../../public/emojislots.png'
+import BiggerOrSmallerIcon from '../../../../public/biggerOrSmaller.png'
+
+
+const games = [
+  {
+    title: 'Game 1',
+    description: 'Description of Game 1...',
+    image: SletsIcon,
+    url: '/play/slem'
+    // Add more details as needed
+  },
+  {
+    title: 'Game 2',
+    description: 'Description of Game 2...',
+    url: '/play/biggerOrSmaller',
+    image:BiggerOrSmallerIcon
+    // Add more details as needed
+  },
+  // Add more games as needed
+];
 
 const Page = () => {
   return (
     <div className='flex w-full flex-col items-center mt-8'>
       {/* <BiggerOrSmaller checkBalance={false}/>
       <EmojiSlotsComplex/> */}
-
-      <EmojiSlots/>
+      <GameGrid games={games}/>
     </div>
   )
 }

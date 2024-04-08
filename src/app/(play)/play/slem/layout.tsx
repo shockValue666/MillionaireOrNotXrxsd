@@ -13,9 +13,9 @@ const layout:React.FC<LayoutProps> = ({
 }) => {
   return (
 
-      <main className='us'>
-        <Header/>
-        <MobileHeader/>
+      <main className='border border-yellow-500 us'>
+        {/* <Header/>
+        <MobileHeader/> */}
         <Balance/>
             {children}
             <style jsx>{`

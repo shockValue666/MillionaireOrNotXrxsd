@@ -17,7 +17,7 @@ useEffect(() => {
     console.log("isVisibile from Notification component: ",isVisible)
          const timer = setTimeout(() => {
            setIsVisible(false);
-         },1000); // Change the duration as needed (e.g., 3000 milliseconds for 3 seconds)
+         },999); // Change the duration as needed (e.g., 3000 milliseconds for 3 seconds)
     return () => clearTimeout(timer);
   }, [isVisible]);
 

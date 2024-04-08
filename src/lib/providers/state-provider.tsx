@@ -127,7 +127,7 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
           console.log(emojiSlotError)
         }
         if(!emojiSlotData) {console.log("no data");return;};
-        console.log("emojislotdata: ",emojiSlotData)
+        console.log("emojislotdata from appstate: ",emojiSlotData)
         dispatch({
           type:"SET_EMOJI_SLOT",
           payload:{...emojiSlotData}

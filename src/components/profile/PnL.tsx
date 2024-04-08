@@ -18,6 +18,7 @@ const PnL = () => {
                 method:'GET'
             });
             if(balance){
+                console.log("balance from pnl: ",balance)
                 const data = await balance.json()
                 console.log("data: ",data.balance);
                 setBalance(data.balance)

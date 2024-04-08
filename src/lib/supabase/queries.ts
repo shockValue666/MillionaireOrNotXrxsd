@@ -143,10 +143,7 @@ export const getEmojiSlot = async (profileId:string) => {
 
 export const getEmojiSlotLatest = async (profileId:string) => {
     try {
-        // const result = await db.query.emojiSlot.findFirst({
-        //     where:((emojiSlot,{eq})=> eq(emojiSlot.profileId,profileId))
-        // })
-        const result = await db.query.emojiSlot.findFirst({
+        const result: EmojiSlot | undefined = await db.query.emojiSlot.findFirst({
             where:((emojiSlot,{eq})=> eq(emojiSlot.profileId,profileId)),
             orderBy: desc(emojiSlot.createdAt)
         })
@@ -155,6 +152,19 @@ export const getEmojiSlotLatest = async (profileId:string) => {
         console.log("error at getting emoji slot: ",error)
         return {data:null,error:error}
     }
+}
+
+export const getEmojiSlotById = async (id:string) => {
+    try {
+        const result = await db.query.emojiSlot.findFirst({
+            where:((emojiSlot,{eq})=> eq(emojiSlot.id,id))
+        })
+        return {data:result,error:null}
+    } catch (error) {
+        console.log("error at getting emoji slot: ",error)
+        return {data:null,error:error}
+    }
+
 }
 
 export const createEmojiSlot = async (emojiSlotInstance:EmojiSlot) => {
