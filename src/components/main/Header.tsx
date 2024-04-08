@@ -58,7 +58,7 @@ const Header = () => {
 
         <div className='hidden md:block w-full'>
             <ul className='flex justify-around w-full gap-8'>
-                <li>
+                {/* <li>
                     <Link href="/trading" className='flex hover:bg-accent hover:text-accent-foreground rounded-xl'>
                         <div className='flex items-center p-4'>
                             <p className="text-xl font-extrabold tracking-tight text-center text-hotPink uppercase">Trading</p>
@@ -78,7 +78,7 @@ const Header = () => {
                             <p className="text-xl font-extrabold tracking-tight text-center text-hotPink uppercase">buy</p>
                         </div>
                     </Link>
-                </li>
+                </li> */}
                 <li>
                 <Link href="/play" className='flex hover:bg-accent hover:text-accent-foreground rounded-xl'>
                         <div className='flex items-center p-4'>
