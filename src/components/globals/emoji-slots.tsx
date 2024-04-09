@@ -178,7 +178,7 @@ const EmojiSlots = () => {
             //alright i think the problem is with the amountWonOrLost when it's 0
             console.log("amountWonOrLost from hadnel spin in order to check if the notification works with 0: ",amountWonOrLost)
             setAmountWonOrLostState(amountWonOrLost)
-            // setAmountNotification(true)
+            setAmountNotification(true)
             const newCurAmount = parseFloat(localBalance)-amountPerSpin+amountWonOrLost;
             if(!totalBetAmount) return;
             dispatch({
@@ -212,15 +212,19 @@ const EmojiSlots = () => {
                 //     }
                 // }
                 setDisabledRollButton(false)
-                setAmountWonOrLostState(null)
+                // setAmountWonOrLostState(null)
                 // setAmountNotification(false)
 
                 console.log("localBalance: ",localBalance, "amountWonOrLost: ",amountWonOrLost, "amountPerSpin: ",amountPerSpin, "parseFloat(localBalance)+amountWonOrLost-amountPerSpin: ",(parseFloat(localBalance)-amountPerSpin+amountWonOrLost))
 
                 setLocalBalance((parseFloat(localBalance)-amountPerSpin+amountWonOrLost).toString())
 
-                await new Promise(resolve => setTimeout(resolve, 2500));
-                setAmountNotification(true)
+                // await new Promise(resolve => setTimeout(resolve, 2500));
+                setAmountNotification(false)
+                setAmountWonOrLostState(null)
+                //?
+                // setAmountWonOrLostState(amountWonOrLost)
+                console.log("amount notification is supposed to be set")
             }
 
             // if(!data || )
@@ -516,6 +520,7 @@ const EmojiSlots = () => {
         {amountNotification  && amountWonOrLostState && <AmountNotification visible={amountNotification} message={amountWonOrLostState.toString()}/>}
         {amountWonOrLostState===0 && amountNotification && <AmountNotification visible={amountNotification} message={amountWonOrLostState.toString()}/>}
         {/* {amountNotification && <p className='font-lg border border-yellow-500'>here it is: {amountNotification} {amountWonOrLostState}</p>} */}
+        {amountNotification &&  <div>cocksycker</div>}
             {/* {
                 !user &&
                 <div className='tracking-tight text-center text-hotPink bg-black hover:bg-accent hover:text-accent-foreground rounded-xl' onClick={()=>{console.log("kenta")}}>

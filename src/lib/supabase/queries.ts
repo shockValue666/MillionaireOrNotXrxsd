@@ -208,8 +208,8 @@ export const getTotalSlotCount = async (userId:string) => {
         })
         if(result){
             const slotCount = result.length;
+            return {data:slotCount,error:null}
         }
-        return {data:result,error:null}
     } catch (error) {
         console.log("error at getting total slot count: ",error)
         return {data:null,error:error}

@@ -1,41 +1,43 @@
 "use client";
 import React, { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
-import { calculatePNLForUser, getGamesPlayed, getSlotPnl } from '@/lib/supabase/queries';
-import { useSupabaseUser } from '@/lib/providers/supabase-user-provider';
+import { calculatePNLForUser, getGamesPlayed, getSlotPnl, getTotalSlotCount } from '@/lib/supabase/queries';
+import { useAppState } from '@/lib/providers/state-provider';
 
 const PnL = () => {
     const [pnl,setPnl] = useState(0);
     const [gamesPlayed,setGamesPlayed] = useState(0);
-    const {user} = useSupabaseUser();
+    const {profile} = useAppState();
     const [balance,setBalance] = useState(0);
     useEffect(()=>{
-        if(!user) return;
+        if(!profile) return;
         const getPnl = async () => {
-            const pnl = await calculatePNLForUser(user?.id)   
-            const slotPnl = await getSlotPnl(user?.id);
+            const pnl = await calculatePNLForUser(profile?.id)   
+            const slotPnl = await getSlotPnl(profile?.id);
             if(slotPnl?.data){
                 const realPnl = slotPnl?.data*(-1)
                 console.log('typeof slotpnjl.data*-1',typeof realPnl.toFixed(2) )
                 setPnl(parseFloat(realPnl.toFixed(2)))
             }
             console.log("slotpnl: ",slotPnl)
-            const gamesPlayed = await getGamesPlayed(user?.id);
-            const balance = await fetch('http://localhost:3000/api/balance',{
-                method:'GET'
-            });
+            const gamesPlayed = await getGamesPlayed(profile?.id);
+            // const balance = await fetch('http://localhost:3000/api/balance',{
+            //     method:'GET'
+            // });
+            const balance = profile.balance;
             if(balance){
-                console.log("balance from pnl: ",balance)
-                const data = await balance.json()
-                console.log("data: ",data.balance);
-                setBalance(data.balance)
+                let estimBal =  parseFloat(balance);
+                setBalance(parseFloat(estimBal.toFixed(2)))
             }
             // setPnl(pnl)
-            setGamesPlayed(gamesPlayed)
+            const gamesP = await getTotalSlotCount(profile.id)
+            if(gamesP?.data){
+                setGamesPlayed(gamesP?.data)
+            }
         }
 
         getPnl();
-    },[user])
+    },[profile])
   return (
     <div className='flex flex-col md:flex-row gap-y-4 gap-x-4'>
         <Card>
@@ -56,7 +58,7 @@ const PnL = () => {
             </svg>
             </CardHeader>
             <CardContent>
-            <div className="text-2xl font-bold">{balance/1000000000}</div>
+            <div className="text-2xl font-bold">{balance}</div>
             <p className="text-xs text-muted-foreground">
                 +19% from last month
             </p>
