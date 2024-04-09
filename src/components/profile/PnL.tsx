@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
-import { calculatePNLForUser, getGamesPlayed } from '@/lib/supabase/queries';
+import { calculatePNLForUser, getGamesPlayed, getSlotPnl } from '@/lib/supabase/queries';
 import { useSupabaseUser } from '@/lib/providers/supabase-user-provider';
 
 const PnL = () => {
@@ -13,6 +13,13 @@ const PnL = () => {
         if(!user) return;
         const getPnl = async () => {
             const pnl = await calculatePNLForUser(user?.id)   
+            const slotPnl = await getSlotPnl(user?.id);
+            if(slotPnl?.data){
+                const realPnl = slotPnl?.data*(-1)
+                console.log('typeof slotpnjl.data*-1',typeof realPnl.toFixed(2) )
+                setPnl(parseFloat(realPnl.toFixed(2)))
+            }
+            console.log("slotpnl: ",slotPnl)
             const gamesPlayed = await getGamesPlayed(user?.id);
             const balance = await fetch('http://localhost:3000/api/balance',{
                 method:'GET'
@@ -23,7 +30,7 @@ const PnL = () => {
                 console.log("data: ",data.balance);
                 setBalance(data.balance)
             }
-            setPnl(pnl)
+            // setPnl(pnl)
             setGamesPlayed(gamesPlayed)
         }
 

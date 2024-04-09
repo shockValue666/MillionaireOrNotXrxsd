@@ -72,7 +72,8 @@ const EmojiSlots = () => {
             currentSpin:0,
             currentEmojis:['💰','💰','💰','💰','💰'].toString(),
             payPerSpin:parseFloat(data.amount)/parseInt(data.spinz),
-            entryAmount:parseFloat(data.amount)
+            entryAmount:parseFloat(data.amount),
+            pnl:0
             })
         if(res.data){
             // setSavedEmojiSlot(true);
@@ -178,16 +179,19 @@ const EmojiSlots = () => {
             console.log("amountWonOrLost from hadnel spin in order to check if the notification works with 0: ",amountWonOrLost)
             setAmountWonOrLostState(amountWonOrLost)
             // setAmountNotification(true)
+            const newCurAmount = parseFloat(localBalance)-amountPerSpin+amountWonOrLost;
+            if(!totalBetAmount) return;
             dispatch({
                 type:"UPDATE_EMOJI_SLOT",
                 payload:{
                     ...emojiSlotFromAppState, 
                     currentSpin:currentSpinCount+1,
                     currentEmojis:winnerEmojis.toString(),
-                    currentAmount:parseFloat(localBalance)-amountPerSpin+amountWonOrLost
+                    currentAmount:parseFloat(localBalance)-amountPerSpin+amountWonOrLost,
+                    pnl:totalBetAmount-newCurAmount
                 }
             })
-            const {data,error} = await updateEmojiSlot({id:emojiSlotFromAppState.id,currentSpin:currentSpinCount+1,currentEmojis:winnerEmojis.toString(),currentAmount:(parseFloat(localBalance)-amountPerSpin+amountWonOrLost)});
+            const {data,error} = await updateEmojiSlot({id:emojiSlotFromAppState.id,currentSpin:currentSpinCount+1,currentEmojis:winnerEmojis.toString(),currentAmount:(parseFloat(localBalance)-amountPerSpin+amountWonOrLost),pnl:totalBetAmount-newCurAmount});
             if(error){
                 toast({title:"Error",description:"Failed to update slot",variant:"destructive"})
                 console.log("error updating slot: ",error)
@@ -380,6 +384,12 @@ const EmojiSlots = () => {
             return;
         }
         dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(profile?.balance)+finishedGame?.currentAmount).toString()}})
+        dispatch({type:"UPDATE_EMOJI_SLOT",payload:{...finishedGame, currentAmount:0}})
+        const {data:updateEmojiSlotData,error:updateEmojiSlotError} = await updateEmojiSlot({id:finishedGame.id,currentAmount:0})
+        if(updateEmojiSlotError || !updateEmojiSlotData){
+            console.log("error at updating the emoji slot at reseting, ",updateEmojiSlotError)
+            return;
+        }
         setLocalBalance("0")
 
         console.log("reset")
@@ -412,7 +422,7 @@ const EmojiSlots = () => {
             console.log("emoji slot exists and the game hasn't been finished: ", emojiSlotFromAppState)
             setSetButtonVisibility(false)
             setResetButtonVisibility(false)
-            setTotalBetAmount(parseInt(emojiSlotFromAppState.amount.toString()));
+            setTotalBetAmount(parseInt(emojiSlotFromAppState.entryAmount.toString()));
             setTotalSpinCount(parseInt(emojiSlotFromAppState.spinz.toString()));
             setAmountPerSpin(parseInt(emojiSlotFromAppState.amount.toString())/parseInt(emojiSlotFromAppState.spinz.toString()));
             setCurrentEmojis(emojiSlotFromAppState.currentEmojis.split(","));
@@ -446,6 +456,27 @@ const EmojiSlots = () => {
             setRollButtonVisibility(false)
             setSetButtonVisibility(true)
             setDisableInputs(false)
+            //make the currentAmount 0
+            const updateBalanceFromInsideUseEffect = async () => {
+                const {data:updateBalanceData, error:updateBalanceError} = await getAndSetBalance({balance:(parseFloat(profile?.balance || "0")+emojiSlotFromAppState.currentAmount).toString()},profile?.id || "")
+                if(!updateBalanceData || updateBalanceError || !profile?.balance){
+                    console.log("error updating balance: ",updateBalanceError)
+                    return;
+                }
+                dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(profile.balance)+emojiSlotFromAppState.currentAmount).toString()}})
+
+                const {data:updateEmojiSlotData,error:updateEmojiSlotError} = await updateEmojiSlot({id:emojiSlotFromAppState.id,currentAmount:0})
+                if(updateEmojiSlotError || !updateEmojiSlotData){
+                    console.log("error updating the emoji slot: ",updateEmojiSlotError)
+                    return;
+                }
+                dispatch({type:"UPDATE_EMOJI_SLOT",payload:{...emojiSlotFromAppState, currentAmount:0}})
+                setLocalBalance("0")
+
+            }
+            if(emojiSlotFromAppState.currentAmount>0){
+                updateBalanceFromInsideUseEffect();
+            }
 
         }
         else if(!emojiSlotFromAppState){

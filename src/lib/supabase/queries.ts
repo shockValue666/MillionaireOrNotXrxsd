@@ -188,3 +188,45 @@ export const updateEmojiSlot = async (emojiSlotInstance:Partial<EmojiSlot>) => {
         return {data:null,error:error}
     }
 }
+
+export const getSlotsForUser = async (userId:string) => {
+    try {
+        const result = await db.query.emojiSlot.findMany({
+            where:((emojiSlot,{eq})=> eq(emojiSlot.profileId,userId))
+        })
+        return {data:result,error:null}
+    } catch (error) {
+        console.log("error at getting slots for user: ",error)
+        return {data:null,error:error}
+    }
+}
+
+export const getTotalSlotCount = async (userId:string) => {
+    try {
+        const result = await db.query.emojiSlot.findMany({
+            where:((emojiSlot,{eq})=> eq(emojiSlot.profileId,userId))
+        })
+        if(result){
+            const slotCount = result.length;
+        }
+        return {data:result,error:null}
+    } catch (error) {
+        console.log("error at getting total slot count: ",error)
+        return {data:null,error:error}
+    }
+}
+
+export const getSlotPnl = async (userId:string) => {
+    try {
+        const result = await db.query.emojiSlot.findMany({
+            where:((emojiSlot,{eq})=> eq(emojiSlot.profileId,userId))
+        })
+        if(result){
+            const pnl = result.reduce((acc,slot)=>acc+slot.pnl,0)
+            return {data:pnl,error:null}
+        }
+    } catch (error) {
+        console.log("error at getting slot pnl: ",error)
+        return {data:null,error:error}
+    }
+}

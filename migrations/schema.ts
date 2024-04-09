@@ -170,4 +170,5 @@ export const emojiSlot = pgTable("emoji_slot", {
 	currentEmojis: text("current_emojis").default('["🤑", "🤑", "🤑", "🤑", "🤑"]').notNull(),
 	payPerSpin: doublePrecision("pay_per_spin").notNull(),
 	entryAmount: doublePrecision("entry_amount").notNull(),
+	pnl: doublePrecision("pnl").notNull(),
 });

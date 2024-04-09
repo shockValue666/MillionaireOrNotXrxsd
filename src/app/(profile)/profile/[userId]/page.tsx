@@ -10,6 +10,10 @@ import PlayButton from "../../../../../public/playbutton.png"
 import PlayButton3 from "../../../../../public/playbutton3.jpg"
 import { useAppState } from '@/lib/providers/state-provider';
 import { getAndSetBalance, getProfile } from '@/lib/supabase/queries';
+import {GamesPlayed} from '@/components/profile/GamesPlayed';
+import DemoPage from '@/components/profile/gametable/page';
+
+
 
 const Page = () => {
     const [newProfilePicture, setNewProfilePicture] = useState<string | null>(null);
@@ -88,6 +92,8 @@ const Page = () => {
 
       </div> */}
       <PnL/>
+      {/* <GamesPlayed/> */}
+      <DemoPage/>
     </div>
   )
 }
