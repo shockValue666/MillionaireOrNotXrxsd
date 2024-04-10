@@ -52,8 +52,7 @@ export const getUserSubscriptionStatus = async (userId:string) =>{
 export const addGamble = async (_gamble:Gamble) => {
     try
     {
-        const response = await db.insert(gamble).values(_gamble)
-        console.log("successfully created gamble: ",response)   
+        const response = await db.insert(gamble).values(_gamble).returning()
         return {data:response,error:null}
     }
     catch(err){
@@ -107,6 +106,23 @@ export const getGamesPlayed = async (userId: string) => {
     })
     return gamesPlayed.length;
 }
+
+export const getLatestGamble = async (userId: string) => {
+    try{
+        const latestGamble: Gamble | undefined = await db.query.gamble.findFirst({
+            where: ((g, { eq }) => eq(g.userId, userId)),
+            orderBy: desc(gamble.createdAt)
+        })
+        if(latestGamble){
+            return {data:latestGamble,error:null}
+        }else{
+            return {data:null,error:"No data found"}
+        }
+    }catch(err){
+        return {data:null,error:err}
+    }
+}
+
 
 export const saveTransactionHook = async (transactionHook:HookTransaction) => {
     try {

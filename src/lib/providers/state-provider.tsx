@@ -11,14 +11,16 @@ import React, {
   useReducer,
 } from 'react';
 // import { Users } from '../supabase/supabase.types';
-import {EmojiSlot, Profile} from '../supabase/supabase.types'
+import {EmojiSlot, Gamble, Profile} from '../supabase/supabase.types'
 import { usePathname } from 'next/navigation';
-import { getEmojiSlotLatest, getProfile } from '../supabase/queries';
+import { getEmojiSlotLatest, getLatestGamble, getProfile } from '../supabase/queries';
 import { useSupabaseUser } from './supabase-user-provider';
+import { gamble } from '../../../migrations/schema';
 
 interface AppState {
     userLocal: Profile | null;
     emojiSlotLocal:EmojiSlot | null;
+    gambleLocal:Gamble | null;
 }
 
 type Action = 
@@ -28,8 +30,11 @@ type Action =
     | {type:"SET_EMOJI_SLOT",payload:EmojiSlot}
     | {type:"UPDATE_EMOJI_SLOT",payload:EmojiSlot}
     | {type:"DELETE_EMOJI_SLOT",payload:EmojiSlot | null}
+    | {type:"SET_GAMBLE",payload:Gamble}
+    | {type:"UPDATE_GAMBLE",payload:Gamble}
+    | {type:"DELETE_GAMBLE",payload:Gamble | null}
 
-const initialState: AppState = { userLocal: null, emojiSlotLocal:null};
+const initialState: AppState = { userLocal: null, emojiSlotLocal:null,gambleLocal:null};
 
 const appReducer = (
     state: AppState = initialState,
@@ -49,6 +54,12 @@ const appReducer = (
             return { ...state, emojiSlotLocal: action.payload };
         case "DELETE_EMOJI_SLOT":
             return { ...state, emojiSlotLocal: null };
+          case "SET_GAMBLE":
+            return { ...state, gambleLocal: action.payload };
+        case "UPDATE_GAMBLE":
+            return { ...state, gambleLocal: action.payload };
+        case "DELETE_GAMBLE":
+            return { ...state, gambleLocal: null };
         default:
             return state;
     }
@@ -61,6 +72,7 @@ const AppStateContext = createContext<
       userId: string | undefined;
       profile:Profile | null;
       emojiSlot:EmojiSlot | null;
+      gamble:Gamble | null;
     }
   | undefined
 >(undefined);
@@ -106,6 +118,9 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
     const usEmojiSlot = useMemo(()=>{
       return state.emojiSlotLocal
     },[state])
+    const usGamble = useMemo(()=>{
+      return state.gambleLocal
+    },[state])
 
   
     useEffect(() => {
@@ -132,6 +147,30 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
           type:"SET_EMOJI_SLOT",
           payload:{...emojiSlotData}
         })
+
+        const {data:latestGambleData, error:latestGambleError} = await getLatestGamble(profileId);
+        if(latestGambleError || !latestGambleData){
+          console.log(latestGambleError)
+          return;
+        }
+        // console.log("latestData: ",latestGambleData, " the other shit: ",{
+        //     id:'1',
+        //     createdAt:'2021',
+        //     userId:"",
+        //     amount: "",
+        //     choice: "",
+        //     winner: "",
+        //     status: true
+        //   })
+        dispatch({
+          type:"SET_GAMBLE",
+          payload:{...latestGambleData}
+        })
+        // dispatch({
+        //   type:"SET_GAMBLE",
+        //   payload:{}
+        // })
+
       };
       fetchProfile();
     }, [profileId]);//fetch the files when the folderId or the workspaceId changes
@@ -143,7 +182,7 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
   
     return (
       <AppStateContext.Provider
-        value={{ state, dispatch, userId: profileId, profile:usProf, emojiSlot:usEmojiSlot}}
+        value={{ state, dispatch, userId: profileId, profile:usProf, emojiSlot:usEmojiSlot, gamble:usGamble}}
       >
         {children}
       </AppStateContext.Provider>

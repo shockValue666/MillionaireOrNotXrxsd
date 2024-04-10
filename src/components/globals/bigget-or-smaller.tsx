@@ -31,9 +31,10 @@ const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
     const [disabled,setDisabled] = useState<boolean>(true);
     const {toast} = useToast();
     const {user} = useSupabaseUser();
-    const {profile} = useAppState()
+    const {profile,gamble,dispatch} = useAppState()
     const [stateProfile,setStateProfile] = useState<Profile | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
+    const [localBalance, setLocalBalance] = useState<string | null>(null);
 
     const form = useForm<z.infer<typeof BiggerOrSmallerSchema>>({
         mode:"onSubmit",
@@ -61,6 +62,9 @@ const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
         }else{
             setDisabled(true)
         }
+        if(gamble){
+            console.log("gamble: ",gamble)
+        }
     },[profile])
     useEffect(()=>{
         if(!checkBalance || !user) return;
@@ -73,7 +77,7 @@ const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
         setDisabled(true);
         const drand = Math.floor(Math.random() * 100000);
         setWinner(drand);
-        if(!user?.id || !amount || !choice) return;
+        if(!user?.id || !amount || !choice || !profile || !profile?.balance) return;
         const res = await addGamble({
             userId:user?.id,
             amount:amount,
@@ -83,13 +87,19 @@ const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
             createdAt:new Date().toISOString(),
             status: drand>50000 && choice === "bigger" || drand<50000 && choice === "smaller"
         });
+        if(!res.data) return;
+        dispatch({type:"SET_GAMBLE",payload:res.data[0]})
         console.log("res: ",res)
         await new Promise(resolve=>setTimeout(resolve, 525));
         if(drand>50000 && choice === "bigger" || drand<50000 && choice === "smaller"){
             toast({title:"You won!", description:"You guessed right"});
-            await getAndSetBalance({balance:"bet"},user?.id);
+
+            await getAndSetBalance({balance:(parseFloat(profile?.balance)+parseFloat(amount)).toString()},user?.id);
+            dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(profile?.balance)+parseFloat(amount)).toString()}})
         }else if(drand<50000 && choice === "bigger" || drand>50000 && choice === "smaller"){
             toast({title:"You Lost!", description:"You guessed wrong", variant:"destructive"})
+            await getAndSetBalance({balance:(parseFloat(profile?.balance)-parseFloat(amount)).toString()},user?.id);
+            dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(profile?.balance)-parseFloat(amount)).toString()}})
         }
         // setDisabled(true);
         setReset(true);
@@ -104,7 +114,7 @@ const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
     }
 
     return (
-        <div className='w-[90%] md:w-[50%] text-center'>
+        <div className='w-[90%] md:w-[50%] text-center mt-[10%]'>
             {
                 !profile &&
                 <div className='tracking-tight text-center text-hotPink bg-black hover:bg-accent hover:text-accent-foreground rounded-xl' onClick={()=>{console.log("kenta")}}>
@@ -114,21 +124,33 @@ const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
             <div className={`flex flex-col justify-center align-center border w-[100%] border-white rounded-lg gap-4 p-4 ${!profile ? 'blur-sm' : ""}`}>
                 <p className='w-full text-center'>bigger or smaller than</p>
                 <div className='w-full flex flex-col items-center gap-y-6'> 
-                    <div className='flex items-center gap-x-4'>
-                        <div>balance local</div>
-                        <SlotCounter
-                            key={winner} // Use winner as key to force re-render
+                    <div className="flex items-center justify-between w-full">
+                        <div className="flex-initial">
+                            {localBalance && <p className='text-2xl'>Balance: {localBalance}</p>} bbb
+                        </div>
+
+                        <div className="flex-grow text-center">
+                            <SlotCounter
+                            key={winner} // Assuming 'winner' is a state that changes, triggering re-render
                             value={slotValues}
                             duration={0.5}
                             startValue={'?????'}
                             charClassName='text-4xl'
                             sequentialAnimationMode={true}
                             startValueOnce={true}
-                        />
-                        {choice === "smaller" && <FaArrowAltCircleDown size={40} color='red'/>}
-                        {choice === "bigger" && <FaArrowAltCircleUp size={40} color='green'/>}
+                            />
+                            <div className="inline-block align-middle ml-2"> {/* Wrap arrows in an inline-block for center alignment */}
+                                {choice === "smaller" && <FaArrowAltCircleDown size={40} color='red'/>}
+                                {choice === "bigger" && <FaArrowAltCircleUp size={40} color='green'/>}
+                                </div>
+                            </div>
 
-                    </div>
+                            <div className="flex-initial">
+                                {/* This is a placeholder for right alignment, keeping the balance text on the far left and slot/arrows centered */}
+                                {/* You can place something else here or keep it empty for alignment purposes */}
+                            </div>
+                        </div>
+
                     <div className=' flex flex-col md:flex-row gap-4 w-[50%] justify-around items-center '>
                         <Button onClick={()=>setChoice("bigger")} disabled={disabled} className='bg-green-500'>BIGGER</Button>
                         <Button onClick={()=>setChoice("smaller")} disabled={disabled} className='bg-red-500'>SMALLER</Button>

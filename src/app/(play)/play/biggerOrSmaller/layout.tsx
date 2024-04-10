@@ -13,10 +13,10 @@ const layout:React.FC<LayoutProps> = ({
 }) => {
   return (
 
-      <main className='border border-yellow-500 us'>
+      <main className='us'>
         {/* <Header/>
         <MobileHeader/> */}
-        <Balance/>
+        {/* <Balance/> */}
             {children}
             <style jsx>{`
                 input, textarea {
