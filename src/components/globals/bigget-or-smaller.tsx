@@ -115,6 +115,7 @@ const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
                 <p className='w-full text-center'>bigger or smaller than</p>
                 <div className='w-full flex flex-col items-center gap-y-6'> 
                     <div className='flex items-center gap-x-4'>
+                        <div>balance local</div>
                         <SlotCounter
                             key={winner} // Use winner as key to force re-render
                             value={slotValues}
