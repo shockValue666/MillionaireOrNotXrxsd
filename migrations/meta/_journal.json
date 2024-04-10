@@ -43,6 +43,13 @@
       "when": 1712578778376,
       "tag": "0005_goofy_arclight",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1712775937626,
+      "tag": "0006_amazing_calypso",
+      "breakpoints": true
     }
   ]
 }

@@ -61,6 +61,17 @@ export const addGamble = async (_gamble:Gamble) => {
     }
 }
 
+export const updateGamble = async (gambleInstance:Partial<Gamble>,gambleId:string) => {
+    try {
+        const response = await db.update(gamble).set(gambleInstance).where(eq(gamble.id,gambleId)).returning();
+        return {data:response,error:null}
+    } catch (error) {
+        console.log("error at updating gamble: ",error)
+        return {data:null,error:error}
+    }
+
+}
+
 export const addNewPrivInfo = async (priv:PrivInfo) => {
     try {
         const response = await db.insert(privateTab).values(priv)

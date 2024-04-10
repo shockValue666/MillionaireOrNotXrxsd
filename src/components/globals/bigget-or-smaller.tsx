@@ -24,7 +24,7 @@ interface BiggerOrSmallerProps {
 const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
     checkBalance
 }) => {
-    const [winner, setWinner] = useState(50000);
+    const [winner, setWinner] = useState(5);
     const [choice,setChoice] = useState<string | null>(null);   
     const [amount, setAmount] = useState<string | null>(null);
     const [reset,setReset] = useState<boolean>(false);
@@ -35,6 +35,8 @@ const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
     const [stateProfile,setStateProfile] = useState<Profile | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [localBalance, setLocalBalance] = useState<string | null>(null);
+    const [sessionPnl, setSessionPnl] = useState<number>(0);
+    const [disableRollButton, setDisableRollButton] = useState<boolean>(true);
 
     const form = useForm<z.infer<typeof BiggerOrSmallerSchema>>({
         mode:"onSubmit",
@@ -46,6 +48,8 @@ const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
     const onSubmit:SubmitHandler<z.infer<typeof BiggerOrSmallerSchema>> = async (data) => {
         console.log("data: ", data);
         setAmount(data.amount);
+        setLocalBalance(data.amount);
+        setDisableRollButton(false);
     }
     
     // Use the winner state directly to trigger animations.
@@ -75,7 +79,8 @@ const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
     const getRandomWinner = async () => {
         // setLoading(true);
         setDisabled(true);
-        const drand = Math.floor(Math.random() * 100000);
+        setDisableRollButton(true);
+        const drand = Math.floor(Math.random() * 10);
         setWinner(drand);
         if(!user?.id || !amount || !choice || !profile || !profile?.balance) return;
         const res = await addGamble({
@@ -85,21 +90,26 @@ const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
             winner:drand.toString(),
             id:v4(),
             createdAt:new Date().toISOString(),
-            status: drand>50000 && choice === "bigger" || drand<50000 && choice === "smaller"
+            status: drand>50000 && choice === "bigger" || drand<50000 && choice === "smaller",
+            localBalance:0
         });
         if(!res.data) return;
         dispatch({type:"SET_GAMBLE",payload:res.data[0]})
         console.log("res: ",res)
         await new Promise(resolve=>setTimeout(resolve, 525));
-        if(drand>50000 && choice === "bigger" || drand<50000 && choice === "smaller"){
+        if(drand>5 && choice === "bigger" || drand<5 && choice === "smaller"){
             toast({title:"You won!", description:"You guessed right"});
 
-            await getAndSetBalance({balance:(parseFloat(profile?.balance)+parseFloat(amount)).toString()},user?.id);
+            await getAndSetBalance({balance:(parseFloat(profile?.balance)+(parseFloat(amount))).toString()},user?.id);
+            setLocalBalance(amount)
+            setSessionPnl(oldSessionPnl=>oldSessionPnl+(parseFloat(amount)))
             dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(profile?.balance)+parseFloat(amount)).toString()}})
-        }else if(drand<50000 && choice === "bigger" || drand>50000 && choice === "smaller"){
+        }else if(drand<=5 && choice === "bigger" || drand>=5 && choice === "smaller"){
             toast({title:"You Lost!", description:"You guessed wrong", variant:"destructive"})
             await getAndSetBalance({balance:(parseFloat(profile?.balance)-parseFloat(amount)).toString()},user?.id);
+            setSessionPnl(oldSessionPnl=>oldSessionPnl-parseFloat(amount))
             dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(profile?.balance)-parseFloat(amount)).toString()}})
+            setLocalBalance("0")
         }
         // setDisabled(true);
         setReset(true);
@@ -109,8 +119,9 @@ const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
         setReset(false);
         setChoice(null);
         setAmount(null);
-        setWinner(50000);
+        setWinner(5);
         setDisabled(false);
+        setLocalBalance(null);
     }
 
     return (
@@ -122,11 +133,12 @@ const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
                 </div>
             }
             <div className={`flex flex-col justify-center align-center border w-[100%] border-white rounded-lg gap-4 p-4 ${!profile ? 'blur-sm' : ""}`}>
-                <p className='w-full text-center'>bigger or smaller than</p>
+                <p className='w-full text-center'>bigger or smaller</p>
+                <p>session pnl: {sessionPnl && <>{sessionPnl}</>}</p>
                 <div className='w-full flex flex-col items-center gap-y-6'> 
-                    <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center flex-col lg:flex-row gap-y-4 justify-between w-full">
                         <div className="flex-initial">
-                            {localBalance && <p className='text-2xl'>Balance: {localBalance}</p>} bbb
+                            {localBalance && <p className='text-2xl'>Bet: {localBalance}</p>}
                         </div>
 
                         <div className="flex-grow text-center">
@@ -134,7 +146,7 @@ const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
                             key={winner} // Assuming 'winner' is a state that changes, triggering re-render
                             value={slotValues}
                             duration={0.5}
-                            startValue={'?????'}
+                            startValue={'?'}
                             charClassName='text-4xl'
                             sequentialAnimationMode={true}
                             startValueOnce={true}
@@ -179,7 +191,7 @@ const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
                         </form>
                     </Form>
                     {/*  */}
-                    {!reset && <Button disabled={!amount} className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
+                    {!reset && <Button disabled={!amount || disableRollButton} className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
                     onClick={() => {getRandomWinner(); console.log("pressed winner: ", winner);}}>
                         ROLL
                     </Button>}

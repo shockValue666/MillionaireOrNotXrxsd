@@ -133,6 +133,7 @@ export const gamble = pgTable("gamble", {
 	choice: text("choice").notNull(),
 	winner: text("winner").notNull(),
 	status: boolean("status").notNull(),
+	localBalance: doublePrecision("local_balance").notNull(),
 });
 
 export const privateTab = pgTable("private_tab", {
