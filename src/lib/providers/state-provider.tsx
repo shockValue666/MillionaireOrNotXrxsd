@@ -11,15 +11,16 @@ import React, {
   useReducer,
 } from 'react';
 // import { Users } from '../supabase/supabase.types';
-import {EmojiSlot, Gamble, Profile} from '../supabase/supabase.types'
+import {DoubleSlut, EmojiSlot, Gamble, Profile} from '../supabase/supabase.types'
 import { usePathname } from 'next/navigation';
-import { getEmojiSlotLatest, getLatestGamble, getProfile } from '../supabase/queries';
+import { getDoubleSlutLatest, getEmojiSlotLatest, getLatestGamble, getProfile } from '../supabase/queries';
 import { useSupabaseUser } from './supabase-user-provider';
 import { gamble } from '../../../migrations/schema';
 
 interface AppState {
     userLocal: Profile | null;
     emojiSlotLocal:EmojiSlot | null;
+    doubleSlutLocal:DoubleSlut | null;
     gambleLocal:Gamble | null;
 }
 
@@ -33,8 +34,11 @@ type Action =
     | {type:"SET_GAMBLE",payload:Gamble}
     | {type:"UPDATE_GAMBLE",payload:Gamble}
     | {type:"DELETE_GAMBLE",payload:Gamble | null}
+    | {type:"SET_DOUBLE_SLUT",payload:DoubleSlut}
+    | {type:"UPDATE_DOUBLE_SLUT",payload:DoubleSlut}
+    | {type:"DELETE_DOUBLE_SLUT",payload:DoubleSlut | null}
 
-const initialState: AppState = { userLocal: null, emojiSlotLocal:null,gambleLocal:null};
+const initialState: AppState = { userLocal: null, emojiSlotLocal:null,gambleLocal:null,doubleSlutLocal:null};
 
 const appReducer = (
     state: AppState = initialState,
@@ -60,6 +64,12 @@ const appReducer = (
             return { ...state, gambleLocal: action.payload };
         case "DELETE_GAMBLE":
             return { ...state, gambleLocal: null };
+          case "SET_DOUBLE_SLUT":
+            return { ...state, doubleSlutLocal: action.payload };
+        case "UPDATE_DOUBLE_SLUT":
+            return { ...state, doubleSlutLocal: action.payload };
+        case "DELETE_DOUBLE_SLUT":
+            return { ...state, doubleSlutLocal: null };
         default:
             return state;
     }
@@ -73,6 +83,7 @@ const AppStateContext = createContext<
       profile:Profile | null;
       emojiSlot:EmojiSlot | null;
       gamble:Gamble | null;
+      doubleSlut:DoubleSlut | null;
     }
   | undefined
 >(undefined);
@@ -120,6 +131,9 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
     },[state])
     const usGamble = useMemo(()=>{
       return state.gambleLocal
+    },[state])
+    const usDoubleSlut = useMemo(()=>{
+      return state.doubleSlutLocal
     },[state])
 
   
@@ -171,6 +185,15 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
         //   payload:{}
         // })
 
+        const {data:doubleSlutData, error:doubleSlutError} = await getDoubleSlutLatest(profileId)
+        if(doubleSlutError || !doubleSlutData){
+          console.log("error at getting the latest double slut: ",doubleSlutError)
+          return;
+        }
+        dispatch({
+          type:"SET_DOUBLE_SLUT",
+          payload:{...doubleSlutData}
+        })
       };
       fetchProfile();
     }, [profileId]);//fetch the files when the folderId or the workspaceId changes
@@ -182,7 +205,7 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
   
     return (
       <AppStateContext.Provider
-        value={{ state, dispatch, userId: profileId, profile:usProf, emojiSlot:usEmojiSlot, gamble:usGamble}}
+        value={{ state, dispatch, userId: profileId, profile:usProf, emojiSlot:usEmojiSlot, gamble:usGamble, doubleSlut:usDoubleSlut}}
       >
         {children}
       </AppStateContext.Provider>

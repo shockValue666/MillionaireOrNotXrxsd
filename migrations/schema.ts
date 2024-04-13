@@ -158,6 +158,7 @@ export const transactions = pgTable("transactions", {
 	coin: text("coin").notNull(),
 	amount: text("amount").notNull(),
 	signature: text("signature"),
+	status: text("status").notNull(),
 });
 
 export const emojiSlot = pgTable("emoji_slot", {
@@ -168,6 +169,30 @@ export const emojiSlot = pgTable("emoji_slot", {
 	profileId: uuid("profile_id").notNull().references(() => profiles.id, { onDelete: "cascade" } ),
 	currentAmount: doublePrecision("current_amount").notNull(),
 	currentSpin: integer("current_spin").default(0).notNull(),
+	currentEmojis: text("current_emojis").default('["🤑", "🤑", "🤑", "🤑", "🤑"]').notNull(),
+	payPerSpin: doublePrecision("pay_per_spin").notNull(),
+	entryAmount: doublePrecision("entry_amount").notNull(),
+	pnl: doublePrecision("pnl").notNull(),
+});
+
+export const feeReceivedTransaction = pgTable("fee_received_transaction", {
+	id: uuid("id").defaultRandom().primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
+	amount: doublePrecision("amount").notNull(),
+	profileId: uuid("profile_id").notNull().references(() => profiles.id, { onDelete: "cascade" } ),
+	fee: doublePrecision("fee").notNull(),
+	transactionId: uuid("transaction_id").notNull().references(() => transactions.id, { onDelete: "cascade" } ),
+	signature: text("signature").notNull(),
+});
+
+export const doubleEmojiSlots = pgTable("double_emoji_slots", {
+	id: uuid("id").defaultRandom().primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
+	amount: doublePrecision("amount").notNull(),
+	spinz: integer("spinz").notNull(),
+	currentAmount: doublePrecision("current_amount").notNull(),
+	currentSpin: integer("current_spin").default(0).notNull(),
+	profileId: uuid("profile_id").notNull().references(() => profiles.id, { onDelete: "cascade" } ),
 	currentEmojis: text("current_emojis").default('["🤑", "🤑", "🤑", "🤑", "🤑"]').notNull(),
 	payPerSpin: doublePrecision("pay_per_spin").notNull(),
 	entryAmount: doublePrecision("entry_amount").notNull(),

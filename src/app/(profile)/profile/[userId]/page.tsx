@@ -12,6 +12,8 @@ import { useAppState } from '@/lib/providers/state-provider';
 import { getAndSetBalance, getProfile } from '@/lib/supabase/queries';
 import {GamesPlayed} from '@/components/profile/GamesPlayed';
 import DemoPage from '@/components/profile/gametable/page';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import InputFile from '@/components/globals/input-file';
 
 
 
@@ -22,6 +24,7 @@ const Page = () => {
     const [address,setAddress] = useState<string | null>(null)
     const {userId,profile:appStateProfile} = useAppState();
     const [amountInDollars,setAmountInDollars] = useState<string>("0");
+    const supabase = createClientComponentClient();
 
     // Function to handle profile picture upload
     const handleProfilePictureUpload = async () => {
@@ -62,7 +65,15 @@ const Page = () => {
           setAmountInDollars(res)
         })
       }
-    },[])
+      const getAvatar = async () => {
+        if(profile && profile?.avatar){
+          setNewProfilePicture(profile.avatar)
+          // const {data,error} = await supabase.storage.from('avatars').upload(`${user?.id}.png`,event.target.files?.[0] as File,{upsert:true});
+          // const getIt = supabase.storage.from('avatars').getPublicUrl(response.avatarUrl).data.publicUrl : ""
+          // const getIt = supabase.storage.from('avatars').getPublicUrl()
+        }
+      } 
+    },[profile])
   return (
     <div className='flex justify-center items-center flex-col gap-y-16'>
       <h1>Welcome!</h1>
@@ -80,6 +91,7 @@ const Page = () => {
           </div>
           <div className="ml-auto font-medium">+${amountInDollars}</div>
         </div>
+        <InputFile/>
       </div>
       <div className='flex gap-x-8 w-[50%] items-center'>
 

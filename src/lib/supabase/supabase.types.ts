@@ -1,5 +1,5 @@
 import { InferSelectModel } from "drizzle-orm"
-import { hookTransactions, privateTab, profiles, subscriptions, users, emojiSlot } from "../../../migrations/schema"
+import { hookTransactions, privateTab, profiles, subscriptions, users, emojiSlot,doubleEmojiSlots } from "../../../migrations/schema"
 import { gamble } from "./schema"
 
 export type Json =
@@ -484,3 +484,4 @@ export type Enums<
 
   export type HookTransaction = InferSelectModel<typeof hookTransactions>
   export type EmojiSlot = InferSelectModel<typeof emojiSlot>
+  export type DoubleSlut = InferSelectModel<typeof doubleEmojiSlots>
