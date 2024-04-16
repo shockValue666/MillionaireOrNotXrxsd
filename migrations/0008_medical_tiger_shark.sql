@@ -1,1 +1,0 @@
-ALTER TABLE "fee_received_transaction" ADD COLUMN "signature" text NOT NULL;

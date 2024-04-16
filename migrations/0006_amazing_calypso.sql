@@ -1,1 +1,0 @@
-ALTER TABLE "gamble" ADD COLUMN "local_balance" double precision NOT NULL;

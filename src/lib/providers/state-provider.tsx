@@ -11,9 +11,9 @@ import React, {
   useReducer,
 } from 'react';
 // import { Users } from '../supabase/supabase.types';
-import {DoubleSlut, EmojiSlot, Gamble, Profile} from '../supabase/supabase.types'
+import {DoubleSlut, EmojiSlot, Gamble, Profile, TripleSlut} from '../supabase/supabase.types'
 import { usePathname } from 'next/navigation';
-import { getDoubleSlutLatest, getEmojiSlotLatest, getLatestGamble, getProfile } from '../supabase/queries';
+import { getDoubleSlutLatest, getEmojiSlotLatest, getLatestGamble, getProfile, getTripleSlutLatest } from '../supabase/queries';
 import { useSupabaseUser } from './supabase-user-provider';
 import { gamble } from '../../../migrations/schema';
 
@@ -21,6 +21,7 @@ interface AppState {
     userLocal: Profile | null;
     emojiSlotLocal:EmojiSlot | null;
     doubleSlutLocal:DoubleSlut | null;
+    tripleSlutLocal:TripleSlut | null;
     gambleLocal:Gamble | null;
 }
 
@@ -37,8 +38,11 @@ type Action =
     | {type:"SET_DOUBLE_SLUT",payload:DoubleSlut}
     | {type:"UPDATE_DOUBLE_SLUT",payload:DoubleSlut}
     | {type:"DELETE_DOUBLE_SLUT",payload:DoubleSlut | null}
+    | {type:"SET_TRIPLE_SLUT",payload:TripleSlut}
+    | {type:"UPDATE_TRIPLE_SLUT",payload:TripleSlut}
+    | {type:"DELETE_TRIPLE_SLUT",payload:TripleSlut | null}
 
-const initialState: AppState = { userLocal: null, emojiSlotLocal:null,gambleLocal:null,doubleSlutLocal:null};
+const initialState: AppState = { userLocal: null, emojiSlotLocal:null,gambleLocal:null,doubleSlutLocal:null,tripleSlutLocal:null};
 
 const appReducer = (
     state: AppState = initialState,
@@ -70,6 +74,12 @@ const appReducer = (
             return { ...state, doubleSlutLocal: action.payload };
         case "DELETE_DOUBLE_SLUT":
             return { ...state, doubleSlutLocal: null };
+          case "SET_TRIPLE_SLUT":
+            return { ...state, tripleSlutLocal: action.payload };
+        case "UPDATE_TRIPLE_SLUT":
+            return { ...state, tripleSlutLocal: action.payload };
+        case "DELETE_TRIPLE_SLUT":
+            return { ...state, tripleSlutLocal: null };
         default:
             return state;
     }
@@ -84,6 +94,7 @@ const AppStateContext = createContext<
       emojiSlot:EmojiSlot | null;
       gamble:Gamble | null;
       doubleSlut:DoubleSlut | null;
+      tripleSlut:TripleSlut | null;
     }
   | undefined
 >(undefined);
@@ -134,6 +145,9 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
     },[state])
     const usDoubleSlut = useMemo(()=>{
       return state.doubleSlutLocal
+    },[state])
+    const usTripleSlut = useMemo(()=>{
+      return state.tripleSlutLocal
     },[state])
 
   
@@ -190,10 +204,23 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
           console.log("error at getting the latest double slut: ",doubleSlutError)
           return;
         }
+        console.log("doubleSlut data: ",doubleSlutData)
         dispatch({
           type:"SET_DOUBLE_SLUT",
-          payload:{...doubleSlutData}
+          payload:{...doubleSlutData }
         })
+
+         const {data:tripleSlutData, error:tripleSlutError} = await getTripleSlutLatest(profileId)
+        if(tripleSlutError || !tripleSlutData){
+          console.log("error at getting the latest triple slut: ",tripleSlutError)
+          return;
+        }
+        console.log("tripleSlutData: ",tripleSlutData)
+        dispatch({
+          type:"SET_TRIPLE_SLUT",
+          payload:{...tripleSlutData }
+        })
+        
       };
       fetchProfile();
     }, [profileId]);//fetch the files when the folderId or the workspaceId changes
@@ -205,7 +232,7 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
   
     return (
       <AppStateContext.Provider
-        value={{ state, dispatch, userId: profileId, profile:usProf, emojiSlot:usEmojiSlot, gamble:usGamble, doubleSlut:usDoubleSlut}}
+        value={{ state, dispatch, userId: profileId, profile:usProf, emojiSlot:usEmojiSlot, gamble:usGamble, doubleSlut:usDoubleSlut, tripleSlut:usTripleSlut}}
       >
         {children}
       </AppStateContext.Provider>

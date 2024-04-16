@@ -1,6 +1,6 @@
 {
-  "id": "d02ce544-0deb-4dd4-9b59-03c998aee919",
-  "prevId": "3e978006-b87d-4b7a-b8ed-fd1551e0c9b2",
+  "id": "e74c821e-389f-4ff1-acef-b188092ea366",
+  "prevId": "1fd76007-575f-402c-9f49-0a008e15c2d1",
   "version": "5",
   "dialect": "pg",
   "tables": {
@@ -138,6 +138,101 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "double_emoji_slots": {
+      "name": "double_emoji_slots",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "amount": {
+          "name": "amount",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "spinz": {
+          "name": "spinz",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "current_amount": {
+          "name": "current_amount",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "current_spin": {
+          "name": "current_spin",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "profile_id": {
+          "name": "profile_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "current_emojis_new": {
+          "name": "current_emojis_new",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'[\"🤑\", \"🤑\", \"🤑\", \"🤑\", \"🤑\"]'"
+        },
+        "pay_per_spin": {
+          "name": "pay_per_spin",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "entry_amount": {
+          "name": "entry_amount",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pnl": {
+          "name": "pnl",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "double_emoji_slots_profile_id_profiles_id_fk": {
+          "name": "double_emoji_slots_profile_id_profiles_id_fk",
+          "tableFrom": "double_emoji_slots",
+          "tableTo": "profiles",
+          "columnsFrom": [
+            "profile_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "emoji_slot": {
       "name": "emoji_slot",
       "schema": "",
@@ -157,7 +252,7 @@
         },
         "amount": {
           "name": "amount",
-          "type": "integer",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": true
         },
@@ -169,7 +264,7 @@
         },
         "current_amount": {
           "name": "current_amount",
-          "type": "integer",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": true,
           "default": 0
@@ -193,6 +288,25 @@
           "primaryKey": false,
           "notNull": true,
           "default": "'[\"🤑\", \"🤑\", \"🤑\", \"🤑\", \"🤑\"]'"
+        },
+        "pay_per_spin": {
+          "name": "pay_per_spin",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "entry_amount": {
+          "name": "entry_amount",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pnl": {
+          "name": "pnl",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
         }
       },
       "indexes": {},
@@ -203,6 +317,86 @@
           "tableTo": "profiles",
           "columnsFrom": [
             "profile_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "fee_received_transaction": {
+      "name": "fee_received_transaction",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "amount": {
+          "name": "amount",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "profile_id": {
+          "name": "profile_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fee": {
+          "name": "fee",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "transaction_id": {
+          "name": "transaction_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "signature": {
+          "name": "signature",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "fee_received_transaction_profile_id_profiles_id_fk": {
+          "name": "fee_received_transaction_profile_id_profiles_id_fk",
+          "tableFrom": "fee_received_transaction",
+          "tableTo": "profiles",
+          "columnsFrom": [
+            "profile_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "fee_received_transaction_transaction_id_transactions_id_fk": {
+          "name": "fee_received_transaction_transaction_id_transactions_id_fk",
+          "tableFrom": "fee_received_transaction",
+          "tableTo": "transactions",
+          "columnsFrom": [
+            "transaction_id"
           ],
           "columnsTo": [
             "id"
@@ -258,6 +452,12 @@
         "status": {
           "name": "status",
           "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "local_balance": {
+          "name": "local_balance",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": true
         }
@@ -824,10 +1024,111 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
       "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "triple_emoji_slots": {
+      "name": "triple_emoji_slots",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "amount": {
+          "name": "amount",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "spinz": {
+          "name": "spinz",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "current_amount": {
+          "name": "current_amount",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "current_spin": {
+          "name": "current_spin",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "profile_id": {
+          "name": "profile_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "current_emojis_newer": {
+          "name": "current_emojis_newer",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'[\"🤑\", \"🤑\", \"🤑\", \"🤑\", \"🤑\"]'"
+        },
+        "pay_per_spin": {
+          "name": "pay_per_spin",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "entry_amount": {
+          "name": "entry_amount",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pnl": {
+          "name": "pnl",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "triple_emoji_slots_profile_id_profiles_id_fk": {
+          "name": "triple_emoji_slots_profile_id_profiles_id_fk",
+          "tableFrom": "triple_emoji_slots",
+          "tableTo": "profiles",
+          "columnsFrom": [
+            "profile_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },

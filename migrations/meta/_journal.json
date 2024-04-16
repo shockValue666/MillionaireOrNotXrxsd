@@ -5,78 +5,15 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1711586054792,
-      "tag": "0000_oval_moon_knight",
+      "when": 1713225749754,
+      "tag": "0000_aspiring_wilson_fisk",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "5",
-      "when": 1711594655341,
-      "tag": "0001_yellow_red_hulk",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1711762838121,
-      "tag": "0002_rapid_weapon_omega",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1711763306138,
-      "tag": "0003_common_owl",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1711880971125,
-      "tag": "0004_zippy_donald_blake",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "5",
-      "when": 1712578778376,
-      "tag": "0005_goofy_arclight",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "5",
-      "when": 1712775937626,
-      "tag": "0006_amazing_calypso",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "5",
-      "when": 1712847951008,
-      "tag": "0007_abnormal_quentin_quire",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "5",
-      "when": 1712848264441,
-      "tag": "0008_medical_tiger_shark",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "5",
-      "when": 1712878418041,
-      "tag": "0009_colorful_shocker",
-      "breakpoints": true
-    },
-    {
-      "idx": 10,
-      "version": "5",
-      "when": 1712968776698,
-      "tag": "0010_cold_timeslip",
+      "when": 1713227451291,
+      "tag": "0001_thin_rawhide_kid",
       "breakpoints": true
     }
   ]

@@ -5,7 +5,9 @@ import EmojiSlots from '@/components/globals/emoji-slots'
 import PnL from '@/components/profile/PnL'
 import React from 'react'
 import ConcurrentGamesNav from '@/components/globals/concurrent-games-nav'
-import DoubleSluts from '@/components/globals/double-sluts';
+import SecondSlut from '@/components/globals/second-slut';
+import ThirdSlut from '@/components/globals/third-slut';
+// import DoubleSluts from '@/components/globals/double-sluts';
 
 const Page = () => {
   const [numberOfGames, setNumberOfGames] = React.useState<number>(0)
@@ -16,7 +18,16 @@ const Page = () => {
       <EmojiSlotsComplex/> */}
       <ConcurrentGamesNav setNumberOfGames={setNumberOfGames}/>
       {numberOfGames===1 && (<EmojiSlots/>) }
-      {numberOfGames === 2 && (<DoubleSluts/>)}
+      {numberOfGames === 2 && (<div className='flex flex-col lg:flex-row items-center gap-x-4 gap-y-4 w-full lg:w-[50%]'>
+        <EmojiSlots/>
+        <SecondSlut/>
+      </div>)}
+
+      {numberOfGames ===3 && (<div className='flex flex-col lg:flex-row items-center gap-x-4 gap-y-4 w-full lg:w-[50%]'>
+        <EmojiSlots/>
+        <SecondSlut/>
+        <ThirdSlut/>
+      </div>)}
     </div>
   )
 }

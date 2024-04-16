@@ -73,12 +73,42 @@ CREATE TABLE IF NOT EXISTS "customers" (
 	"stripe_customer_id" text
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "double_emoji_slots" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"created_at" timestamp with time zone,
+	"amount" double precision NOT NULL,
+	"spinz" integer NOT NULL,
+	"current_amount" double precision DEFAULT 0 NOT NULL,
+	"current_spin" integer DEFAULT 0 NOT NULL,
+	"profile_id" uuid NOT NULL,
+	"current_emojis_new" text DEFAULT '["🤑", "🤑", "🤑", "🤑", "🤑"]' NOT NULL,
+	"pay_per_spin" double precision NOT NULL,
+	"entry_amount" double precision NOT NULL,
+	"pnl" double precision DEFAULT 0 NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "emoji_slot" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"created_at" timestamp with time zone,
-	"amount" integer NOT NULL,
+	"amount" double precision NOT NULL,
 	"spinz" integer NOT NULL,
-	"profile_id" uuid NOT NULL
+	"current_amount" double precision DEFAULT 0 NOT NULL,
+	"current_spin" integer DEFAULT 0 NOT NULL,
+	"profile_id" uuid NOT NULL,
+	"current_emojis" text DEFAULT '["🤑", "🤑", "🤑", "🤑", "🤑"]' NOT NULL,
+	"pay_per_spin" double precision NOT NULL,
+	"entry_amount" double precision NOT NULL,
+	"pnl" double precision DEFAULT 0 NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "fee_received_transaction" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"created_at" timestamp with time zone,
+	"amount" double precision NOT NULL,
+	"profile_id" uuid NOT NULL,
+	"fee" double precision NOT NULL,
+	"transaction_id" uuid NOT NULL,
+	"signature" text NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "gamble" (
@@ -88,7 +118,8 @@ CREATE TABLE IF NOT EXISTS "gamble" (
 	"amount" text NOT NULL,
 	"choice" text NOT NULL,
 	"winner" text NOT NULL,
-	"status" boolean NOT NULL
+	"status" boolean NOT NULL,
+	"local_balance" double precision NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "hook_transactions" (
@@ -176,7 +207,8 @@ CREATE TABLE IF NOT EXISTS "transactions" (
 	"to" text NOT NULL,
 	"coin" text NOT NULL,
 	"amount" text NOT NULL,
-	"signature" text
+	"signature" text,
+	"status" text NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (
@@ -200,7 +232,25 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "double_emoji_slots" ADD CONSTRAINT "double_emoji_slots_profile_id_profiles_id_fk" FOREIGN KEY ("profile_id") REFERENCES "profiles"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  ALTER TABLE "emoji_slot" ADD CONSTRAINT "emoji_slot_profile_id_profiles_id_fk" FOREIGN KEY ("profile_id") REFERENCES "profiles"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "fee_received_transaction" ADD CONSTRAINT "fee_received_transaction_profile_id_profiles_id_fk" FOREIGN KEY ("profile_id") REFERENCES "profiles"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "fee_received_transaction" ADD CONSTRAINT "fee_received_transaction_transaction_id_transactions_id_fk" FOREIGN KEY ("transaction_id") REFERENCES "transactions"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

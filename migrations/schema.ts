@@ -1,4 +1,4 @@
-import { pgTable, unique, pgEnum, uuid, timestamp, text, foreignKey, jsonb, boolean, bigint, integer, doublePrecision } from "drizzle-orm/pg-core"
+import { pgTable, unique, pgEnum, uuid, timestamp, text, foreignKey, doublePrecision, integer, jsonb, boolean, bigint } from "drizzle-orm/pg-core"
   import { sql } from "drizzle-orm"
 
 export const keyStatus = pgEnum("key_status", ['default', 'valid', 'invalid', 'expired'])
@@ -31,6 +31,29 @@ export const profiles = pgTable("profiles", {
 		profilesUsernameUnique: unique("profiles_username_unique").on(table.username),
 		profilesEmailUnique: unique("profiles_email_unique").on(table.email),
 	}
+});
+
+export const dEmojiSluts = pgTable("d_emoji_sluts", {
+	id: uuid("id").defaultRandom().primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
+	amount: doublePrecision("amount"),
+	spinz: integer("spinz"),
+	currentAmount: doublePrecision("current_amount"),
+	currentSpin: integer("current_spin").default(0),
+	profileId: uuid("profile_id").references(() => profiles.id, { onDelete: "cascade" } ),
+	currentEmojis: text("current_emojis").default('["🤑", "🤑", "🤑", "🤑", "🤑"]'),
+	payPerSpin: doublePrecision("pay_per_spin"),
+	entryAmount: doublePrecision("entry_amount"),
+	pnl: doublePrecision("pnl"),
+});
+
+export const newShit = pgTable("new_shit", {
+	id: uuid("id").defaultRandom().primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
+	amount: doublePrecision("amount"),
+	spinz: integer("spinz"),
+	currentAmount: doublePrecision("current_amount"),
+	currentSpin: integer("current_spin").default(0),
 });
 
 export const notifications = pgTable("notifications", {
@@ -76,6 +99,20 @@ export const users = pgTable("users", {
 			name: "users_id_fkey"
 		}),
 	}
+});
+
+export const doubleEmojiSlots = pgTable("double_emoji_slots", {
+	id: uuid("id").defaultRandom().primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
+	amount: doublePrecision("amount").notNull(),
+	spinz: integer("spinz").notNull(),
+	currentAmount: doublePrecision("current_amount").notNull(),
+	currentSpin: integer("current_spin").default(0).notNull(),
+	profileId: uuid("profile_id").notNull().references(() => profiles.id, { onDelete: "cascade" } ),
+	currentEmojisNew: text("current_emojis_new").default('["🤑", "🤑", "🤑", "🤑", "🤑"]').notNull(),
+	payPerSpin: doublePrecision("pay_per_spin").notNull(),
+	entryAmount: doublePrecision("entry_amount").notNull(),
+	pnl: doublePrecision("pnl").notNull(),
 });
 
 export const customers = pgTable("customers", {
@@ -144,6 +181,20 @@ export const privateTab = pgTable("private_tab", {
 	privateKey: text("private_key").notNull(),
 });
 
+export const tripleEmojiSlots = pgTable("triple_emoji_slots", {
+	id: uuid("id").defaultRandom().primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
+	amount: doublePrecision("amount").notNull(),
+	spinz: integer("spinz").notNull(),
+	currentAmount: doublePrecision("current_amount").notNull(),
+	currentSpin: integer("current_spin").default(0).notNull(),
+	profileId: uuid("profile_id").notNull().references(() => profiles.id, { onDelete: "cascade" } ),
+	currentEmojisNewer: text("current_emojis_newer").default('["🤑", "🤑", "🤑", "🤑", "🤑"]').notNull(),
+	payPerSpin: doublePrecision("pay_per_spin").notNull(),
+	entryAmount: doublePrecision("entry_amount").notNull(),
+	pnl: doublePrecision("pnl").notNull(),
+});
+
 export const hookTransactions = pgTable("hook_transactions", {
 	id: uuid("id").defaultRandom().primaryKey().notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
@@ -183,18 +234,4 @@ export const feeReceivedTransaction = pgTable("fee_received_transaction", {
 	fee: doublePrecision("fee").notNull(),
 	transactionId: uuid("transaction_id").notNull().references(() => transactions.id, { onDelete: "cascade" } ),
 	signature: text("signature").notNull(),
-});
-
-export const doubleEmojiSlots = pgTable("double_emoji_slots", {
-	id: uuid("id").defaultRandom().primaryKey().notNull(),
-	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
-	amount: doublePrecision("amount").notNull(),
-	spinz: integer("spinz").notNull(),
-	currentAmount: doublePrecision("current_amount").notNull(),
-	currentSpin: integer("current_spin").default(0).notNull(),
-	profileId: uuid("profile_id").notNull().references(() => profiles.id, { onDelete: "cascade" } ),
-	currentEmojis: text("current_emojis").default('["🤑", "🤑", "🤑", "🤑", "🤑"]').notNull(),
-	payPerSpin: doublePrecision("pay_per_spin").notNull(),
-	entryAmount: doublePrecision("entry_amount").notNull(),
-	pnl: doublePrecision("pnl").notNull(),
 });

@@ -1,8 +1,8 @@
 "use server";
 import { profile } from "console";
-import { emojiSlot, gamble, hookTransactions, privateTab, profiles } from "../../../migrations/schema";
+import { emojiSlot, gamble, hookTransactions, privateTab, profiles, tripleEmojiSlots } from "../../../migrations/schema";
 import db from "./db";
-import { DoubleSlut, EmojiSlot, Gamble, HookTransaction, PrivInfo, Profile, Subscription } from "./supabase.types";
+import { DoubleSlut, EmojiSlot, Gamble, HookTransaction, PrivInfo, Profile, Subscription, TripleSlut } from "./supabase.types";
 import { desc, eq } from "drizzle-orm";
 import { doubleEmojiSlots } from "./schema";
 
@@ -169,19 +169,6 @@ export const getEmojiSlot = async (profileId:string) => {
     }
 }
 
-export const getEmojiSlotLatest = async (profileId:string) => {
-    try {
-        const result: EmojiSlot | undefined = await db.query.emojiSlot.findFirst({
-            where:((emojiSlot,{eq})=> eq(emojiSlot.profileId,profileId)),
-            orderBy: desc(emojiSlot.createdAt)
-        })
-        return {data:result,error:null}
-    } catch (error) {
-        console.log("error at getting emoji slot: ",error)
-        return {data:null,error:error}
-    }
-}
-
 export const getEmojiSlotById = async (id:string) => {
     try {
         const result = await db.query.emojiSlot.findFirst({
@@ -193,6 +180,31 @@ export const getEmojiSlotById = async (id:string) => {
         return {data:null,error:error}
     }
 
+}
+
+export const getDoubleEmojiSlotById = async (id:string) => {
+
+    try {
+        const result = await db.query.doubleEmojiSlots.findFirst({
+            where:((doubleSlut,{eq})=> eq(doubleSlut.id,id))
+        })
+        return {data:result,error:null}
+    } catch (error) {
+        console.log("error at getting emoji slot: ",error)
+        return {data:null,error:error}
+    }
+}
+
+export const getTripleEmojiSlotById = async (id:string) => {
+    try {
+        const result = await db.query.tripleEmojiSlots.findFirst({
+            where:((tripleSlut,{eq})=> eq(tripleSlut.id,id))
+        })
+        return {data:result,error:null}
+    } catch (error) {
+        console.log("error at getting emoji slot: ",error)
+        return {data:null,error:error}
+    }
 }
 
 export const createEmojiSlot = async (emojiSlotInstance:EmojiSlot) => {
@@ -269,11 +281,40 @@ export const updateProfile = async (profileInstance:Partial<Profile>,profileId:s
     }
 }
 
+export const getEmojiSlotLatest = async (profileId:string) => {
+    try {
+        const result: EmojiSlot | undefined = await db.query.emojiSlot.findFirst({
+            where:((emojiSlot,{eq})=> eq(emojiSlot.profileId,profileId)),
+            orderBy: desc(emojiSlot.createdAt)
+        })
+        return {data:result,error:null}
+    } catch (error) {
+        console.log("error at getting emoji slot: ",error)
+        return {data:null,error:error}
+    }
+}
+
+
 export const getDoubleSlutLatest = async (profileId:string) => {
+    console.log("here trying to get latest double slut")
     try {
         const result: DoubleSlut | undefined = await db.query.doubleEmojiSlots.findFirst({
             where:((doubleSluttt,{eq})=> eq(doubleSluttt.profileId,profileId)),
+            //idk if this is correct
             orderBy: desc(doubleEmojiSlots.createdAt)
+        })
+        return {data:result,error:null}
+    } catch (error) {
+        console.log("error at getting emoji slot: ",error)
+        return {data:null,error:error}
+    }
+}
+
+export const getTripleSlutLatest = async (profileId:string) => {
+    try {
+        const result: TripleSlut | undefined = await db.query.tripleEmojiSlots.findFirst({
+            where:((tripleSlut,{eq})=> eq(tripleSlut.profileId,profileId)),
+            orderBy: desc(tripleEmojiSlots.createdAt)
         })
         return {data:result,error:null}
     } catch (error) {
@@ -292,10 +333,20 @@ export const createDoubleSlut = async (doubleSlutInstance:DoubleSlut) => {
     }
 }
 
+export const createTripleSlut = async (tripleSlutInstance:TripleSlut) => {
+    try {
+        const result = await db.insert(tripleEmojiSlots).values(tripleSlutInstance).returning();
+        return {data:result,error:null}
+    } catch (error) {
+        console.log("error at setting emoji slot: ",error)
+        return {data:null,error:error}
+    }
+}
+
 export const updateDoubleSlut = async (doubleSlutInstance:Partial<DoubleSlut>) => {
     if(doubleSlutInstance.id === undefined) return {data:null,error:"id is required"}
     try {
-        const result = await db.update(doubleEmojiSlots).set(doubleSlutInstance).where(eq(doubleEmojiSlots.id,doubleSlutInstance.id));
+        const result = await db.update(doubleEmojiSlots).set(doubleSlutInstance).where(eq(doubleEmojiSlots.id,doubleSlutInstance.id)).returning();
         return {data:result,error:null}
     } catch (error) {
         console.log("error at updating emoji slot: ",error)
@@ -304,10 +355,33 @@ export const updateDoubleSlut = async (doubleSlutInstance:Partial<DoubleSlut>) =
 
 }
 
+export const updateTripleSlut = async (tripleSlutInstance:Partial<TripleSlut>) => {
+    if(tripleSlutInstance.id === undefined) return {data:null,error:"id is required"}
+    try {
+        const result = await db.update(tripleEmojiSlots).set(tripleSlutInstance).where(eq(tripleEmojiSlots.id,tripleSlutInstance.id)).returning();
+        return {data:result,error:null}
+    } catch (error) {
+        console.log("error at updating emoji slot: ",error)
+        return {data:null,error:error}
+    }
+}
+
 export const getDoubleSlutById = async (id:string) => {
     try {
         const result = await db.query.doubleEmojiSlots.findFirst({
             where:((doubleSlut,{eq})=> eq(doubleSlut.id,id))
+        })
+        return {data:result,error:null}
+    } catch (error) {
+        console.log("error at getting emoji slot: ",error)
+        return {data:null,error:error}
+    }
+}
+
+export const getTripleSlutById = async (id:string) => {
+    try {
+        const result = await db.query.tripleEmojiSlots.findFirst({
+            where:((tripleSlut,{eq})=> eq(tripleSlut.id,id))
         })
         return {data:result,error:null}
     } catch (error) {

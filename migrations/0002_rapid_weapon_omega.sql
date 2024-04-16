@@ -1,1 +1,0 @@
-ALTER TABLE "emoji_slot" ADD COLUMN "pay_per_spin" integer NOT NULL;
