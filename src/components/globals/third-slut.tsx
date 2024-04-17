@@ -54,7 +54,7 @@ const ThirdSlut = () => {
     //initialize game
     const initializeGameNew:SubmitHandler<z.infer<typeof EmojiSlotSchema>> = async (data) => {
         console.log("data: ",data)
-        if(!profile || !data.amount || !data.spinz){
+        if(!profile || !data.amount || !data.spinz || data.amount==="0" || data.spinz==="0"){
             console.log("no profile or data amount or data spinz");
             toast({title:"Error",description:"Please fill all fields",variant:"destructive"})
             return;
@@ -165,7 +165,13 @@ const ThirdSlut = () => {
             console.log("currentSpinCountNewer: ",currentSpinCountNewer)
             console.log("totalSpinCountNewer: ",totalSpinCountNewer)
             console.log("tripleSlut: ",tripleSlut)
+            toast({
+                title:"something is missing",
+                description:"we will see",
+                variant:"destructive"
+            })
             return;
+        
         };
         setLocalBalanceNewer((parseFloat(localBalanceNewer)-amountPerSpinNewer).toString())
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -407,7 +413,7 @@ const ThirdSlut = () => {
     //handleHalf balance
     const handleHalfBalance = async () => {
 
-        if(!profile || !profile?.balance){
+        if(!profile || !profile?.balance || profile.balance==="0"){
             console.log("no profile");
             toast({title:"Error",description:"Please fill all fields",variant:"destructive"})
             return;

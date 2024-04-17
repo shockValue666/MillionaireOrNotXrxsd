@@ -54,7 +54,7 @@ const EmojiSlots = () => {
     //initialize game
     const initializeGame:SubmitHandler<z.infer<typeof EmojiSlotSchema>> = async (data) => {
         console.log("data: ",data)
-        if(!profile || !data.amount || !data.spinz){
+        if(!profile || !data.amount || !data.spinz || data.amount==="0" || data.spinz==="0"){
             console.log("no profile or data amount or data spinz");
             toast({title:"Error",description:"Please fill all fields",variant:"destructive"})
             return;
@@ -165,6 +165,15 @@ const EmojiSlots = () => {
             console.log("currentSpinCount: ",currentSpinCount)
             console.log("totalSpinCount: ",totalSpinCount)
             console.log("emojiSlotFromAppState: ",emojiSlotFromAppState)
+            console.log("amountPerSpin: ",amountPerSpin)
+            console.log("localbalance: ",localBalance)
+            toast({
+                title:"something is missing",
+                description:"we will see",
+                variant:"destructive"
+            })
+            // setSetButtonVisibility(true)
+
             return;
         };
         setLocalBalance((parseFloat(localBalance)-amountPerSpin).toString())
@@ -408,7 +417,7 @@ const EmojiSlots = () => {
         //handleHalf balance
     const handleHalfBalance = async () => {
 
-        if(!profile || !profile?.balance){
+        if(!profile || !profile?.balance || profile.balance==="0"){
             console.log("no profile");
             toast({title:"Error",description:"Please fill all fields",variant:"destructive"})
             return;

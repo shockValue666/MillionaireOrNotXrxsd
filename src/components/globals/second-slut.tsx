@@ -54,7 +54,7 @@ const SecondSlut = () => {
     //initialize game
     const initializeGameNew:SubmitHandler<z.infer<typeof EmojiSlotSchema>> = async (data) => {
         console.log("data: ",data)
-        if(!profile || !data.amount || !data.spinz){
+        if(!profile || !data.amount || !data.spinz || data.amount==="0" || data.spinz==="9"){
             console.log("no profile or data amount or data spinz");
             toast({title:"Error",description:"Please fill all fields",variant:"destructive"})
             return;
@@ -165,6 +165,11 @@ const SecondSlut = () => {
             console.log("currentSpinCountNew: ",currentSpinCountNew)
             console.log("totalSpinCountNew: ",totalSpinCountNew)
             console.log("doubleSlut: ",doubleSlut)
+            toast({
+                title:"something is missing",
+                description:"we will see",
+                variant:"destructive"
+            })
             return;
         };
         setLocalBalanceNew((parseFloat(localBalanceNew)-amountPerSpinNew).toString())
@@ -406,9 +411,9 @@ const SecondSlut = () => {
     //handle half balance
     const handleHalfBalance = async () => {
 
-        if(!profile || !profile?.balance){
+        if(!profile || !profile?.balance || profile.balance==="0"){
             console.log("no profile");
-            toast({title:"Error",description:"Please fill all fields",variant:"destructive"})
+            toast({title:"Error",description:"your balance is 0",variant:"destructive"})
             return;
         }
         setTotalBetAmountNew(parseFloat(profile?.balance)/2);
