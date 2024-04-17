@@ -13,6 +13,7 @@ import { useToast } from '../ui/use-toast';
 import { createEmojiSlot, getAndSetBalance, getEmojiSlotById, getProfile, updateEmojiSlot } from '@/lib/supabase/queries';
 import { v4 } from 'uuid';
 import AmountNotification from './amount-notification';
+import { Progress } from '../ui/progress';
 
 
 const emojis = ["😈", "💀", "💩", "💰","🤑"];
@@ -403,6 +404,59 @@ const EmojiSlots = () => {
         })
     }
 
+    //handle half balance
+        //handleHalf balance
+    const handleHalfBalance = async () => {
+
+        if(!profile || !profile?.balance){
+            console.log("no profile");
+            toast({title:"Error",description:"Please fill all fields",variant:"destructive"})
+            return;
+        }
+        setTotalBetAmount(parseFloat(profile?.balance)/2);
+        setTotalSpinCount(10);
+        setAmountPerSpin(parseFloat(profile?.balance)/(2*10));
+
+        const res = await createEmojiSlot({
+            id:v4(),
+            amount:parseFloat(profile?.balance)/2,
+            spinz:10,
+            createdAt:new Date().toISOString(),
+            profileId:profile?.id,
+            currentAmount:parseFloat(profile?.balance)/2,
+            currentSpin:0,
+            currentEmojis:['💰','💰','💰','💰','💰'].toString(),
+            payPerSpin:parseFloat(profile?.balance)/(2*10),
+            entryAmount:parseFloat(profile?.balance)/2,
+            pnl:0
+            })
+        if(res.data){
+            // setSavedEmojiSlot(true);
+            // toast({title:"Success",description:"Slot created successfully"})
+            console.log("created emoji slot: ",res.data[0])
+            console.log("red.data[0]: ",res.data[0])
+            dispatch({type:"SET_EMOJI_SLOT",payload:res.data[0]})
+            if(profile?.balance){
+                const {data:profileData,error} = await getAndSetBalance({balance:(parseFloat(profile.balance)-(parseFloat(profile?.balance)/2)).toString()},profile.id);
+                if(error){
+                    toast({title:"Error",description:"Failed to update balance",variant:"destructive"})
+                    console.log("error updating balance: ",error)
+                }
+                if(profileData){
+                    console.log("successfully updated the balance: ",profileData)
+                    dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(profile.balance)-(parseFloat(profile?.balance)/2)).toString()}})
+                }
+            }
+            setLocalBalance(res.data[0].entryAmount.toString()) //here
+            // setRollButtonVisibility(true)
+            setCreateNewGame(false);
+        }else{
+            toast({title:"Error",description:"Slot creation failed",variant:"destructive"})
+        }
+
+    }
+
+
     //renew the balance
     const reNewTheBalance = async () => {
         setResetRewardsButtonVisibility(false)
@@ -454,20 +508,23 @@ const EmojiSlots = () => {
 
         }
         else if (emojiSlotFromAppState && 
-                emojiSlotFromAppState.spinz === emojiSlotFromAppState.currentSpin) {
-            console.log("game finished")
+                emojiSlotFromAppState.spinz === emojiSlotFromAppState.currentSpin && emojiSlotFromAppState.currentAmount!==0) {
+            console.log("game finished and the current amount is differnt than 0")
             // setResetButtonVisibility(true)
             setRollButtonVisibility(false)
             setSetButtonVisibility(true)
             setDisableInputs(false)
             //make the currentAmount 0
             const updateBalanceFromInsideUseEffect = async () => {
+                console.log("1 slut profile?.balance || 0", profile?.balance, "doubleSlut.currentAmount: ",emojiSlotFromAppState.currentAmount, " sum: ",(parseFloat(profile?.balance || "0")+emojiSlotFromAppState.currentAmount).toString())
                 const {data:updateBalanceData, error:updateBalanceError} = await getAndSetBalance({balance:(parseFloat(profile?.balance || "0")+emojiSlotFromAppState.currentAmount).toString()},profile?.id || "")
-                if(!updateBalanceData || updateBalanceError || !profile?.balance){
+                if(!updateBalanceData || updateBalanceError || !profile?.balance || !updateBalanceData[0].balance){
                     console.log("error updating balance: ",updateBalanceError)
                     return;
                 }
-                dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(profile.balance)+emojiSlotFromAppState.currentAmount).toString()}})
+                
+                console.log("updateBalanceData[0].balance", updateBalanceData[0].balance, "emojiSlutFromAppState.currentAmount: ",emojiSlotFromAppState.currentAmount, " sum: ",(parseFloat(updateBalanceData[0].balance)+emojiSlotFromAppState.currentAmount).toString())
+                dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(updateBalanceData[0].balance)).toString()}})
 
                 const {data:updateEmojiSlotData,error:updateEmojiSlotError} = await updateEmojiSlot({id:emojiSlotFromAppState.id,currentAmount:0})
                 if(updateEmojiSlotError || !updateEmojiSlotData){
@@ -521,6 +578,9 @@ const EmojiSlots = () => {
         {amountWonOrLostState===0 && amountNotification && <AmountNotification visible={amountNotification} message={amountWonOrLostState.toString()}/>}
         {/* {amountNotification && <p className='font-lg border border-yellow-500'>here it is: {amountNotification} {amountWonOrLostState}</p>} */}
         {amountNotification &&  <div>cocksycker</div>}
+        {currentSpinCount && totalSpinCount && (<div className='py-4 '>
+            <Progress value={(currentSpinCount/totalSpinCount)*100} className='bg-[#3d4552]'/>
+        </div>)}
             {/* {
                 !user &&
                 <div className='tracking-tight text-center text-hotPink bg-black hover:bg-accent hover:text-accent-foreground rounded-xl' onClick={()=>{console.log("kenta")}}>
@@ -607,6 +667,12 @@ const EmojiSlots = () => {
                     onClick={() => {handleSpin();}}>
                         SPIN
                     </Button>} */}
+                    <Button 
+                    disabled={!setButtonVisibility} 
+                    className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
+                    onClick={() => {handleHalfBalance();}}>
+                        $1/2*BLNC  10SPINZ
+                    </Button>
                     
                     <Button 
                     // disabled={!amount || !spinz || !savedEmojiSlot || spinButtonCooldown} 

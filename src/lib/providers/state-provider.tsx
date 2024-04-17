@@ -169,18 +169,29 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
         if(emojiSlotError){
           console.log(emojiSlotError)
         }
-        if(!emojiSlotData) {console.log("no data");return;};
-        console.log("emojislotdata from appstate: ",emojiSlotData)
-        dispatch({
-          type:"SET_EMOJI_SLOT",
-          payload:{...emojiSlotData}
-        })
+        if(!emojiSlotData) {
+          console.log("no data");
+        };
+        if(emojiSlotData){
+          console.log("emojislotdata from appstate: ",emojiSlotData)
+          dispatch({
+            type:"SET_EMOJI_SLOT",
+            payload:{...emojiSlotData}
+          })
+        }
 
         const {data:latestGambleData, error:latestGambleError} = await getLatestGamble(profileId);
         if(latestGambleError || !latestGambleData){
-          console.log(latestGambleError)
-          return;
+          console.log('latestGambleData error or no data' ,latestGambleError)
+          // return;
+        } //here's the problem probably create an if statement for the case of latestGambleData instead of returning null form the error or the lack of data
+        if(latestGambleData){
+          dispatch({
+            type:"SET_GAMBLE",
+            payload:{...latestGambleData}
+          })
         }
+        console.log("reaches here")
         // console.log("latestData: ",latestGambleData, " the other shit: ",{
         //     id:'1',
         //     createdAt:'2021',
@@ -190,10 +201,6 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
         //     winner: "",
         //     status: true
         //   })
-        dispatch({
-          type:"SET_GAMBLE",
-          payload:{...latestGambleData}
-        })
         // dispatch({
         //   type:"SET_GAMBLE",
         //   payload:{}
@@ -202,25 +209,28 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
         const {data:doubleSlutData, error:doubleSlutError} = await getDoubleSlutLatest(profileId)
         if(doubleSlutError || !doubleSlutData){
           console.log("error at getting the latest double slut: ",doubleSlutError)
-          return;
+          // return;
         }
-        console.log("doubleSlut data: ",doubleSlutData)
-        dispatch({
-          type:"SET_DOUBLE_SLUT",
-          payload:{...doubleSlutData }
-        })
+        if(doubleSlutData){
+          console.log("doubleSlut data: ",doubleSlutData)
+          dispatch({
+            type:"SET_DOUBLE_SLUT",
+            payload:{...doubleSlutData }
+          })
+        }
 
          const {data:tripleSlutData, error:tripleSlutError} = await getTripleSlutLatest(profileId)
         if(tripleSlutError || !tripleSlutData){
           console.log("error at getting the latest triple slut: ",tripleSlutError)
-          return;
+          // return;
         }
-        console.log("tripleSlutData: ",tripleSlutData)
-        dispatch({
-          type:"SET_TRIPLE_SLUT",
-          payload:{...tripleSlutData }
-        })
-        
+        if(tripleSlutData){
+          console.log("tripleSlutData: ",tripleSlutData)
+          dispatch({
+            type:"SET_TRIPLE_SLUT",
+            payload:{...tripleSlutData }
+          })
+        }
       };
       fetchProfile();
     }, [profileId]);//fetch the files when the folderId or the workspaceId changes

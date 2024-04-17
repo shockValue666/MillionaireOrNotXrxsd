@@ -13,6 +13,7 @@ import { useToast } from '../ui/use-toast';
 import { createDoubleSlut, getAndSetBalance, getDoubleEmojiSlotById, getProfile,  updateDoubleSlut } from '@/lib/supabase/queries';
 import { v4 } from 'uuid';
 import AmountNotificationNew from './amount-notification';
+import { Progress } from '../ui/progress';
 
 
 const emojis = ["😈", "💀", "💩", "💰","🤑"];
@@ -402,6 +403,56 @@ const SecondSlut = () => {
             payload:null
         })
     }
+    //handle half balance
+    const handleHalfBalance = async () => {
+
+        if(!profile || !profile?.balance){
+            console.log("no profile");
+            toast({title:"Error",description:"Please fill all fields",variant:"destructive"})
+            return;
+        }
+        setTotalBetAmountNew(parseFloat(profile?.balance)/2);
+        setTotalSpinCountNew(10);
+        setAmountPerSpinNew(parseFloat(profile?.balance)/(2*10));
+
+        const res = await createDoubleSlut({
+            id:v4(),
+            amount:parseFloat(profile?.balance)/2,
+            spinz:10,
+            createdAt:new Date().toISOString(),
+            profileId:profile?.id,
+            currentAmount:parseFloat(profile?.balance)/2,
+            currentSpin:0,
+            currentEmojisNew:['💰','💰','💰','💰','💰'].toString(),
+            payPerSpin:parseFloat(profile?.balance)/(2*10),
+            entryAmount:parseFloat(profile?.balance)/2,
+            pnl:0
+            })
+        if(res.data){
+            // setSavedEmojiSlot(true);
+            // toast({title:"Success",description:"Slot created successfully"})
+            console.log("created emoji slot: ",res.data[0])
+            console.log("red.data[0]: ",res.data[0])
+            dispatch({type:"SET_DOUBLE_SLUT",payload:res.data[0]})
+            if(profile?.balance){
+                const {data:profileData,error} = await getAndSetBalance({balance:(parseFloat(profile.balance)-(parseFloat(profile?.balance)/2)).toString()},profile.id);
+                if(error){
+                    toast({title:"Error",description:"Failed to update balance",variant:"destructive"})
+                    console.log("error updating balance: ",error)
+                }
+                if(profileData){
+                    console.log("successfully updated the balance: ",profileData)
+                    dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(profile.balance)-(parseFloat(profile?.balance)/2)).toString()}})
+                }
+            }
+            setLocalBalanceNew(res.data[0].entryAmount.toString()) //here
+            // setRollButtonVisibilityNewer(true)
+            setCreateNewGameNew(false);
+        }else{
+            toast({title:"Error",description:"Slot creation failed",variant:"destructive"})
+        }
+
+    }
 
     //renew the balance
     const reNewTheBalanceNew = async () => {
@@ -462,12 +513,14 @@ const SecondSlut = () => {
             setDisableInputsNew(false)
             //make the currentAmount 0
             const updateBalanceFromInsideUseEffect = async () => {
+                console.log("2 sluts profile?.balance || 0", profile?.balance || "0", "doubleSlut.currentAmount: ",doubleSlut.currentAmount)
                 const {data:updateBalanceData, error:updateBalanceError} = await getAndSetBalance({balance:(parseFloat(profile?.balance || "0")+doubleSlut.currentAmount).toString()},profile?.id || "")
-                if(!updateBalanceData || updateBalanceError || !profile?.balance){
+                if(!updateBalanceData || updateBalanceError || !profile?.balance || !updateBalanceData[0].balance){
                     console.log("error updating balance: ",updateBalanceError)
                     return;
                 }
-                dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(profile.balance)+doubleSlut.currentAmount).toString()}})
+                console.log("update balance data from inside the second slut: ",updateBalanceData)
+                dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(updateBalanceData[0].balance)).toString()}})
 
                 const {data:updateDoubleSlutData,error:updateDoubleSlutError} = await updateDoubleSlut({id:doubleSlut.id,currentAmount:0})
                 if(updateDoubleSlutError || !updateDoubleSlutData){
@@ -521,6 +574,10 @@ const SecondSlut = () => {
         {amountWonOrLostStateNew===0 && amountNotificationNew && <AmountNotificationNew visible={amountNotificationNew} message={amountWonOrLostStateNew.toString()}/>}
         {/* {amountNotificationNew && <p className='font-lg border border-yellow-500'>here it is: {amountNotificationNew} {amountWonOrLostStateNew}</p>} */}
         {amountNotificationNew &&  <div>cocksycker</div>}
+
+        {currentSpinCountNew && totalSpinCountNew && (<div className='py-4 '>
+            <Progress value={(currentSpinCountNew/totalSpinCountNew)*100} className='bg-[#3d4552]'/>
+        </div>)}
             {/* {
                 !user &&
                 <div className='tracking-tight text-center text-hotPink bg-black hover:bg-accent hover:text-accent-foreground rounded-xl' onClick={()=>{console.log("kenta")}}>
@@ -607,6 +664,13 @@ const SecondSlut = () => {
                     onClick={() => {handleSpinNew();}}>
                         SPIN
                     </Button>} */}
+                    <Button 
+                    disabled={!setButtonVisibilityNew} 
+                    //disabled={!rollButtonVisibilityNewer || disabledRollButtonNewer}
+                    className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
+                    onClick={() => {handleHalfBalance();}}>
+                        $1/2*BLNC  10SPINZ
+                    </Button>
                     
                     <Button 
                     // disabled={!amount || !spinz || !savedEmojiSlot || spinButtonCooldown} 

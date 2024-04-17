@@ -282,6 +282,7 @@ export const updateProfile = async (profileInstance:Partial<Profile>,profileId:s
 }
 
 export const getEmojiSlotLatest = async (profileId:string) => {
+    console.log("here trying to get latest emoji slot")
     try {
         const result: EmojiSlot | undefined = await db.query.emojiSlot.findFirst({
             where:((emojiSlot,{eq})=> eq(emojiSlot.profileId,profileId)),
@@ -311,6 +312,7 @@ export const getDoubleSlutLatest = async (profileId:string) => {
 }
 
 export const getTripleSlutLatest = async (profileId:string) => {
+    console.log("here trying to get trirple slut")
     try {
         const result: TripleSlut | undefined = await db.query.tripleEmojiSlots.findFirst({
             where:((tripleSlut,{eq})=> eq(tripleSlut.profileId,profileId)),

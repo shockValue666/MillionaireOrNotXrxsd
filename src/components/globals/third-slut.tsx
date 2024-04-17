@@ -13,6 +13,7 @@ import { useToast } from '../ui/use-toast';
 import { createTripleSlut, getAndSetBalance, getTripleEmojiSlotById, getProfile,  updateTripleSlut } from '@/lib/supabase/queries';
 import { v4 } from 'uuid';
 import AmountNotificationNew from './amount-notification';
+import { Progress } from '../ui/progress';
 
 
 const emojis = ["😈", "💀", "💩", "💰","🤑"];
@@ -403,6 +404,57 @@ const ThirdSlut = () => {
         })
     }
 
+    //handleHalf balance
+    const handleHalfBalance = async () => {
+
+        if(!profile || !profile?.balance){
+            console.log("no profile");
+            toast({title:"Error",description:"Please fill all fields",variant:"destructive"})
+            return;
+        }
+        setTotalBetAmountNewer(parseFloat(profile?.balance)/2);
+        setTotalSpinCountNewer(10);
+        setAmountPerSpinNewer(parseFloat(profile?.balance)/(2*10));
+
+        const res = await createTripleSlut({
+            id:v4(),
+            amount:parseFloat(profile?.balance)/2,
+            spinz:10,
+            createdAt:new Date().toISOString(),
+            profileId:profile?.id,
+            currentAmount:parseFloat(profile?.balance)/2,
+            currentSpin:0,
+            currentEmojisNewer:['💰','💰','💰','💰','💰'].toString(),
+            payPerSpin:parseFloat(profile?.balance)/(2*10),
+            entryAmount:parseFloat(profile?.balance)/2,
+            pnl:0
+            })
+        if(res.data){
+            // setSavedEmojiSlot(true);
+            // toast({title:"Success",description:"Slot created successfully"})
+            console.log("created emoji slot: ",res.data[0])
+            console.log("red.data[0]: ",res.data[0])
+            dispatch({type:"SET_TRIPLE_SLUT",payload:res.data[0]})
+            if(profile?.balance){
+                const {data:profileData,error} = await getAndSetBalance({balance:(parseFloat(profile.balance)-(parseFloat(profile?.balance)/2)).toString()},profile.id);
+                if(error){
+                    toast({title:"Error",description:"Failed to update balance",variant:"destructive"})
+                    console.log("error updating balance: ",error)
+                }
+                if(profileData){
+                    console.log("successfully updated the balance: ",profileData)
+                    dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(profile.balance)-(parseFloat(profile?.balance)/2)).toString()}})
+                }
+            }
+            setLocalBalanceNewer(res.data[0].entryAmount.toString()) //here
+            // setRollButtonVisibilityNewer(true)
+            setCreateNewGameNewer(false);
+        }else{
+            toast({title:"Error",description:"Slot creation failed",variant:"destructive"})
+        }
+
+    }
+
     //renew the balance
     const reNewTheBalanceNew = async () => {
         setResetRewardsButtonVisibilityNewer(false)
@@ -462,12 +514,14 @@ const ThirdSlut = () => {
             setDisableInputsNewer(false)
             //make the currentAmount 0
             const updateBalanceFromInsideUseEffect = async () => {
+                console.log("3 sluts profile?.balance || 0", profile?.balance, "doubleSlut.currentAmount: ",tripleSlut.currentAmount)
                 const {data:updateBalanceData, error:updateBalanceError} = await getAndSetBalance({balance:(parseFloat(profile?.balance || "0")+tripleSlut.currentAmount).toString()},profile?.id || "")
-                if(!updateBalanceData || updateBalanceError || !profile?.balance){
+                if(!updateBalanceData || updateBalanceError || !profile?.balance || !updateBalanceData[0].balance){
                     console.log("error updating balance: ",updateBalanceError)
                     return;
                 }
-                dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(profile.balance)+tripleSlut.currentAmount).toString()}})
+                console.log("updateBalance data from third slut: ",updateBalanceData)
+                dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(updateBalanceData[0].balance)+tripleSlut.currentAmount).toString()}})
 
                 const {data:updateTripleSlutData,error:updateTripleSlutError} = await updateTripleSlut({id:tripleSlut.id,currentAmount:0})
                 if(updateTripleSlutError || !updateTripleSlutData){
@@ -521,6 +575,9 @@ const ThirdSlut = () => {
         {amountWonOrLostStateNewer===0 && amountNotificationNew && <AmountNotificationNew visible={amountNotificationNew} message={amountWonOrLostStateNewer.toString()}/>}
         {/* {amountNotificationNew && <p className='font-lg border border-yellow-500'>here it is: {amountNotificationNew} {amountWonOrLostStateNewer}</p>} */}
         {amountNotificationNew &&  <div>cocksycker</div>}
+        {currentSpinCountNewer && totalSpinCountNewer && (<div className='py-4 '>
+            <Progress value={(currentSpinCountNewer/totalSpinCountNewer)*100} className='bg-[#3d4552]'/>
+        </div>)}
             {/* {
                 !user &&
                 <div className='tracking-tight text-center text-hotPink bg-black hover:bg-accent hover:text-accent-foreground rounded-xl' onClick={()=>{console.log("kenta")}}>
@@ -607,6 +664,14 @@ const ThirdSlut = () => {
                     onClick={() => {handleSpinNew();}}>
                         SPIN
                     </Button>} */}
+
+                    
+                    <Button 
+                    disabled={!setButtonVisibilityNewer} 
+                    className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
+                    onClick={() => {handleHalfBalance();}}>
+                        $1/2*BLNC  10SPINZ
+                    </Button>
                     
                     <Button 
                     // disabled={!amount || !spinz || !savedEmojiSlot || spinButtonCooldown} 
