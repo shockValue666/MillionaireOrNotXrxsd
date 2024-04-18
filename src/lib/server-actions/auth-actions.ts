@@ -67,7 +67,9 @@ export async function actionSignUpUser({email,password}:{email:string,password:s
             address:publicAddress,
             balance:"0",
             realBalance:"0",
-            calculatedBalance:"0"
+            calculatedBalance:"0",
+            points:0,
+            pnl:0
         })
         await addNewPrivInfo({
             id:v4(),
