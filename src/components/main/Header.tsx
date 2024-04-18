@@ -58,13 +58,6 @@ const Header = () => {
 
         <div className='hidden md:block w-full'>
             <ul className='flex justify-around w-full gap-8'>
-                {/* <li>
-                    <Link href="/trading" className='flex hover:bg-accent hover:text-accent-foreground rounded-xl'>
-                        <div className='flex items-center p-4'>
-                            <p className="text-xl font-extrabold tracking-tight text-center text-hotPink uppercase">Trading</p>
-                        </div>
-                    </Link>
-                </li>
                 <li>
                 <Link href="/leaderboard" className='flex hover:bg-accent hover:text-accent-foreground rounded-xl'>
                         <div className='flex items-center p-4'>
@@ -72,7 +65,14 @@ const Header = () => {
                         </div>
                     </Link>
                 </li>
-                <li>
+                {/* <li>
+                    <Link href="/trading" className='flex hover:bg-accent hover:text-accent-foreground rounded-xl'>
+                        <div className='flex items-center p-4'>
+                            <p className="text-xl font-extrabold tracking-tight text-center text-hotPink uppercase">Trading</p>
+                        </div>
+                    </Link>
+                </li>
+                
                 <Link href="/buy" className='flex hover:bg-accent hover:text-accent-foreground rounded-xl'>
                         <div className='flex items-center p-4'>
                             <p className="text-xl font-extrabold tracking-tight text-center text-hotPink uppercase">buy</p>

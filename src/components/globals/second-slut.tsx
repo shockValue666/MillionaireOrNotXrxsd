@@ -74,7 +74,8 @@ const SecondSlut = () => {
             currentEmojisNew:['💰','💰','💰','💰','💰'].toString(),
             payPerSpin:parseFloat(data.amount)/parseInt(data.spinz),
             entryAmount:parseFloat(data.amount),
-            pnl:0
+            pnl:0,
+            points:0
             })
         if(res.data){
             // setSavedEmojiSlot(true);
@@ -400,8 +401,8 @@ const SecondSlut = () => {
             console.log("error at updating the emoji slot at reseting, ",updateDoubleSlutError)
             return;
         }
-        setLocalBalanceNew("0")
-
+        setLocalBalanceNew("0");
+        setCurrentSpinCountNew(0);
         console.log("reset")
         dispatch({
             type:"DELETE_DOUBLE_SLUT",
@@ -431,7 +432,8 @@ const SecondSlut = () => {
             currentEmojisNew:['💰','💰','💰','💰','💰'].toString(),
             payPerSpin:parseFloat(profile?.balance)/(2*10),
             entryAmount:parseFloat(profile?.balance)/2,
-            pnl:0
+            pnl:0,
+            points:0
             })
         if(res.data){
             // setSavedEmojiSlot(true);

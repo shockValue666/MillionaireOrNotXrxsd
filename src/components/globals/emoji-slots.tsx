@@ -74,7 +74,8 @@ const EmojiSlots = () => {
             currentEmojis:['💰','💰','💰','💰','💰'].toString(),
             payPerSpin:parseFloat(data.amount)/parseInt(data.spinz),
             entryAmount:parseFloat(data.amount),
-            pnl:0
+            pnl:0,
+            points:0
             })
         if(res.data){
             // setSavedEmojiSlot(true);
@@ -202,6 +203,7 @@ const EmojiSlots = () => {
                 }
             })
             const {data,error} = await updateEmojiSlot({id:emojiSlotFromAppState.id,currentSpin:currentSpinCount+1,currentEmojis:winnerEmojis.toString(),currentAmount:(parseFloat(localBalance)-amountPerSpin+amountWonOrLost),pnl:totalBetAmount-newCurAmount});
+
             if(error){
                 toast({title:"Error",description:"Failed to update slot",variant:"destructive"})
                 console.log("error updating slot: ",error)
@@ -236,6 +238,27 @@ const EmojiSlots = () => {
                 // setAmountWonOrLostState(amountWonOrLost)
                 console.log("amount notification is supposed to be set")
             }
+            // if(currentSpinCount+1 === totalSpinCount){
+            //     console.log("game finished from inside handleSpin, localBalance: ",localBalance, " profile balance: ",profile?.balance)// herereturn
+            //     const {data:updateBalanceData, error:updateBalanceError} = await getAndSetBalance({balance:(parseFloat(profile?.balance || "0")+localBalance).toString()},profile?.id || "")
+            //     if(!updateBalanceData || updateBalanceError || !profile?.balance || !updateBalanceData[0].balance){
+            //         console.log("error updating balance: ",updateBalanceError)
+            //         return;
+            //     }
+                
+            //     // console.log("updateBalanceData[0].balance", updateBalanceData[0].balance, "emojiSlutFromAppState.currentAmount: ",emojiSlotFromAppState.currentAmount, " sum: ",(parseFloat(updateBalanceData[0].balance)+emojiSlotFromAppState.currentAmount).toString())
+            //     dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(updateBalanceData[0].balance)).toString()}})
+
+            //     const {data:updateEmojiSlotData,error:updateEmojiSlotError} = await updateEmojiSlot({id:emojiSlotFromAppState.id,currentAmount:0})
+            //     if(updateEmojiSlotError || !updateEmojiSlotData){
+            //         console.log("error updating the emoji slot: ",updateEmojiSlotError)
+            //         return;
+            //     }
+            //     dispatch({type:"UPDATE_EMOJI_SLOT",payload:{...emojiSlotFromAppState, currentAmount:0}})
+            //     setLocalBalance("0")
+            //     setCurrentSpinCount(0)
+
+            // }
 
             // if(!data || )
         }else{
@@ -405,6 +428,7 @@ const EmojiSlots = () => {
             return;
         }
         setLocalBalance("0")
+        setCurrentSpinCount(0)
 
         console.log("reset")
         dispatch({
@@ -437,7 +461,8 @@ const EmojiSlots = () => {
             currentEmojis:['💰','💰','💰','💰','💰'].toString(),
             payPerSpin:parseFloat(profile?.balance)/(2*10),
             entryAmount:parseFloat(profile?.balance)/2,
-            pnl:0
+            pnl:0,
+            points:0
             })
         if(res.data){
             // setSavedEmojiSlot(true);
@@ -672,37 +697,39 @@ const EmojiSlots = () => {
                         </form>
                     </Form>
                     {/*  */}
-                    {/* {!reset && <Button disabled={!amount || !spinz || !savedEmojiSlot || spinButtonCooldown} className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
+                    {/* {!reset && <Button disabled={!amount || !spinz || !savedEmojiSlot || spinButtonCooldown} className='rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl'
                     onClick={() => {handleSpin();}}>
                         SPIN
                     </Button>} */}
-                    <Button 
-                    disabled={!setButtonVisibility} 
-                    className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
-                    onClick={() => {handleHalfBalance();}}>
-                        $1/2*BLNC  10SPINZ
-                    </Button>
-                    
-                    <Button 
-                    // disabled={!amount || !spinz || !savedEmojiSlot || spinButtonCooldown} 
-                    disabled={!rollButtonVisibility || disabledRollButton}
-                    className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
-                    onClick={() => {handleSpin();}} onKeyDown={(e)=>{
-                        // if(e.key===" "){
-                        //     handleSpin();}
-                        // }
-                        console.log("key: ",e.key)
-                        }}>
-                        SPIN
-                    </Button>
-                    {/* {reset && <Button disabled={!amount} className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
-                    onClick={() => {resetTheGame();}}>
-                        RESET
-                    </Button>} */}
+                    <div className='grid grid-cols-2 lg:grid-cols-1 gap-4 items-center justify-items-center'>
+                        <Button 
+                        disabled={!setButtonVisibility} 
+                        className='rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl'
+                        onClick={() => {handleHalfBalance();}}>
+                            <p className='hidden lg:block'>$1/2*BLNC  10SPINZ</p>
+                            <p className='block lg:hidden' >1/2</p>
+                        </Button>
+                        
+                        <Button 
+                        // disabled={!amount || !spinz || !savedEmojiSlot || spinButtonCooldown} 
+                        disabled={!rollButtonVisibility || disabledRollButton}
+                        className='rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl'
+                        onClick={() => {handleSpin();}} onKeyDown={(e)=>{
+                            // if(e.key===" "){
+                            //     handleSpin();}
+                            // }
+                            console.log("key: ",e.key)
+                            }}>
+                            SPIN
+                        </Button>
+                        {/* {reset && <Button disabled={!amount} className='rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl'
+                        onClick={() => {resetTheGame();}}>
+                            RESET
+                        </Button>} */}
                         <Button 
                         // disabled={!amount} 
                         disabled={!resetButtonVisibility}
-                        className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
+                        className='rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl'
                         onClick={() => {resetTheGame();}}>
                             RESET
                         </Button>
@@ -710,25 +737,27 @@ const EmojiSlots = () => {
                         <Button 
                         // disabled={!amount} 
                         disabled={!resetRewardsButtonVisibility}
-                        className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
+                        className='rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl'
                         onClick={() => {reNewTheBalance();}}>
-                            RENEW BALANCE
+                            <p className='hidden lg:block'>RENEW BALANCE</p>
+                            <p className='block lg:hidden'>0</p>
                         </Button>
                         <Button 
                         // disabled={!amount} 
                         disabled={!airdropButtonVisibility}
-                        className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
+                        className='rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl'
                         onClick={() => {airdropAmount();}}>
-                            AIRDROP 1000
+                            <p className='hidden lg:block'>AIRDROP</p> 1000
                         </Button>
 
                         <Button 
                         // disabled={!amount} 
                         disabled={!autoSpinButtonVisibility}
-                        className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
+                        className='rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl'
                         onClick={() => {autoSpin();}}>
                             AUTOSPIN
                         </Button>
+                    </div>
                 </div>
             </div>
         </div>

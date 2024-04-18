@@ -1,4 +1,4 @@
-import { pgTable, unique, pgEnum, uuid, timestamp, text, foreignKey, doublePrecision, integer, jsonb, boolean, bigint } from "drizzle-orm/pg-core"
+import { pgTable, unique, pgEnum, uuid, timestamp, text, doublePrecision, integer, foreignKey, jsonb, boolean, bigint } from "drizzle-orm/pg-core"
   import { sql } from "drizzle-orm"
 
 export const keyStatus = pgEnum("key_status", ['default', 'valid', 'invalid', 'expired'])
@@ -25,26 +25,14 @@ export const profiles = pgTable("profiles", {
 	balance: text("balance"),
 	realBalance: text("real_balance"),
 	calculatedBalance: text("calculated_balance"),
+	points: doublePrecision("points").notNull(),
+	pnl: doublePrecision("pnl").notNull(),
 },
 (table) => {
 	return {
 		profilesUsernameUnique: unique("profiles_username_unique").on(table.username),
 		profilesEmailUnique: unique("profiles_email_unique").on(table.email),
 	}
-});
-
-export const dEmojiSluts = pgTable("d_emoji_sluts", {
-	id: uuid("id").defaultRandom().primaryKey().notNull(),
-	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
-	amount: doublePrecision("amount"),
-	spinz: integer("spinz"),
-	currentAmount: doublePrecision("current_amount"),
-	currentSpin: integer("current_spin").default(0),
-	profileId: uuid("profile_id").references(() => profiles.id, { onDelete: "cascade" } ),
-	currentEmojis: text("current_emojis").default('["🤑", "🤑", "🤑", "🤑", "🤑"]'),
-	payPerSpin: doublePrecision("pay_per_spin"),
-	entryAmount: doublePrecision("entry_amount"),
-	pnl: doublePrecision("pnl"),
 });
 
 export const newShit = pgTable("new_shit", {
@@ -113,6 +101,7 @@ export const doubleEmojiSlots = pgTable("double_emoji_slots", {
 	payPerSpin: doublePrecision("pay_per_spin").notNull(),
 	entryAmount: doublePrecision("entry_amount").notNull(),
 	pnl: doublePrecision("pnl").notNull(),
+	points: doublePrecision("points").notNull(),
 });
 
 export const customers = pgTable("customers", {
@@ -193,6 +182,7 @@ export const tripleEmojiSlots = pgTable("triple_emoji_slots", {
 	payPerSpin: doublePrecision("pay_per_spin").notNull(),
 	entryAmount: doublePrecision("entry_amount").notNull(),
 	pnl: doublePrecision("pnl").notNull(),
+	points: doublePrecision("points").notNull(),
 });
 
 export const hookTransactions = pgTable("hook_transactions", {
@@ -224,6 +214,7 @@ export const emojiSlot = pgTable("emoji_slot", {
 	payPerSpin: doublePrecision("pay_per_spin").notNull(),
 	entryAmount: doublePrecision("entry_amount").notNull(),
 	pnl: doublePrecision("pnl").notNull(),
+	points: doublePrecision("points").notNull(),
 });
 
 export const feeReceivedTransaction = pgTable("fee_received_transaction", {

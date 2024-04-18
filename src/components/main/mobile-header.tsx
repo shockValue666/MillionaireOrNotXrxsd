@@ -55,6 +55,13 @@ const MobileHeader = () => {
                 <SheetContent side={"bottom"}>
                     <div className='flex flex-col w-full items-center gap-y-8'>
                         <ul>
+                            <li>
+                            <Link href="/leaderboard" className='flex hover:bg-accent hover:text-accent-foreground rounded-xl'>
+                                    <div className='flex items-center p-4'>
+                                        <p className="text-xl font-extrabold tracking-tight text-center text-hotPink uppercase">leaderboard</p>
+                                    </div>
+                                </Link>
+                            </li>
                             {/* <li>
                                 <Link href="/trading" className='flex hover:bg-accent hover:text-accent-foreground rounded-xl'>
                                     <div className='flex items-center p-4'>

@@ -24,6 +24,8 @@ export const profiles = pgTable("profiles", {
 	balance: text("balance"),
 	realBalance: text("real_balance"),
 	calculatedBalance: text("calculated_balance"),
+	points: doublePrecision("points").default(0).notNull(),
+	pnl: doublePrecision("pnl").default(0).notNull(),
 },
 (table) => {
 	return {
@@ -177,6 +179,8 @@ export const emojiSlot = pgTable("emoji_slot", {
 	entryAmount: doublePrecision("entry_amount").notNull(),
 
 	pnl: doublePrecision("pnl").default(0).notNull(),
+
+	points:doublePrecision("points").default(0).notNull(),
 })
 
 
@@ -203,7 +207,9 @@ export const doubleEmojiSlots = pgTable("double_emoji_slots", {
 	payPerSpin: doublePrecision("pay_per_spin").notNull(),
 	entryAmount: doublePrecision("entry_amount").notNull(),
 
+
 	pnl: doublePrecision("pnl").default(0).notNull(),
+	points:doublePrecision("points").default(0).notNull()
 })
 
 
@@ -221,4 +227,6 @@ export const tripleEmojiSlots = pgTable("triple_emoji_slots", {
 	entryAmount: doublePrecision("entry_amount").notNull(),
 
 	pnl: doublePrecision("pnl").default(0).notNull(),
+
+	points:doublePrecision("points").default(0).notNull()
 })

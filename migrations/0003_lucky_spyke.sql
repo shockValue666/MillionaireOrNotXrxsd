@@ -1,0 +1,2 @@
+ALTER TABLE "double_emoji_slots" ADD COLUMN "points" double precision DEFAULT 0 NOT NULL;--> statement-breakpoint
+ALTER TABLE "triple_emoji_slots" ADD COLUMN "points" double precision DEFAULT 0 NOT NULL;

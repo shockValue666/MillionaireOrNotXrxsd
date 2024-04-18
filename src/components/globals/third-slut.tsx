@@ -74,7 +74,8 @@ const ThirdSlut = () => {
             currentEmojisNewer:['💰','💰','💰','💰','💰'].toString(),
             payPerSpin:parseFloat(data.amount)/parseInt(data.spinz),
             entryAmount:parseFloat(data.amount),
-            pnl:0
+            pnl:0,
+            points:0
             })
         if(res.data){
             // setSavedEmojiSlot(true);
@@ -402,6 +403,7 @@ const ThirdSlut = () => {
             return;
         }
         setLocalBalanceNewer("0")
+        setCurrentSpinCountNewer(0)
 
         console.log("reset")
         dispatch({
@@ -433,7 +435,8 @@ const ThirdSlut = () => {
             currentEmojisNewer:['💰','💰','💰','💰','💰'].toString(),
             payPerSpin:parseFloat(profile?.balance)/(2*10),
             entryAmount:parseFloat(profile?.balance)/2,
-            pnl:0
+            pnl:0,
+            points:0
             })
         if(res.data){
             // setSavedEmojiSlot(true);

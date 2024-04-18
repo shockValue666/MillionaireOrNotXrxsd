@@ -1,0 +1,1 @@
+ALTER TABLE "emoji_slot" ADD COLUMN "points" double precision DEFAULT 0 NOT NULL;

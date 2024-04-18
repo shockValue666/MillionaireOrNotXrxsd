@@ -391,3 +391,55 @@ export const getTripleSlutById = async (id:string) => {
         return {data:null,error:error}
     }
 }
+
+
+export const getTotalPnlAndPointsForUser = async (id:string) => {
+    const {data,error} = await getSlotsForUser(id);
+    if(error || !data){
+        console.log("error at getting slots for user: ",error)
+        return {data:null, error:error}
+    }
+    //get the sum of points and pnl from each slot and return it after iterating through the data array
+    let totalPnl = 0;
+    let totalPoints = 0;
+    data.forEach((slot)=>{
+        totalPnl += slot.pnl;
+        totalPoints += slot.points;
+    })
+    console.log("totalPoints: ",totalPoints, " totalPnl: ",totalPnl)
+    return {
+        data:{
+            totalPoints,
+            totalPnl
+        },
+        error:null
+    }
+}
+
+export const getTotalPnlAndPointsForAllUsers = async () => {
+    const usersTotal = await db.query.profiles.findMany();
+    if(usersTotal){
+        const totalPnlAndPoints = usersTotal.map(async (profile)=>{
+        const {data,error} = await getTotalPnlAndPointsForUser(profile.id);
+            if(error || !data){
+                console.log("error at getting total pnl and points for user: ",error)
+                return {data:null,error:error}
+            }
+            return {data};
+        })
+        return {data:totalPnlAndPoints, error:null};
+    }
+    return {data:null, error:"No data found"}
+}
+
+export const getUsersWithHighestPoints = async () => {
+    const usersTotal = await db.query.profiles.findMany({
+        orderBy:desc(profiles.points),
+        limit:200
+    });
+    if(usersTotal){
+        console.log("users total: ",usersTotal)
+        return {data:usersTotal, error:null};
+    }
+    return {data:null, error:"No data found"}
+}

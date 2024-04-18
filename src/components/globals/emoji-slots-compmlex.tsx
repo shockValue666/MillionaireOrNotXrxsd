@@ -83,7 +83,8 @@ const EmojiSlotsComplex = () => {
             currentEmojis: emojisArray.toString(),
             payPerSpin: parseFloat(data.amount)/parseInt(data.spinz),
             entryAmount: parseFloat(data.amount), // Add the missing entryAmount property
-            pnl:0
+            pnl:0,
+            points:0
         });
         if(res.data){
             setSavedEmojiSlot(true);
