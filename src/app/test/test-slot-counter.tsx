@@ -76,7 +76,7 @@ const TestSlotCounter = React.forwardRef<SlotCounterRef, Props>((props, ref) => 
                 // useMonospaceWidth={true}
                 debounceDelay={3}
                 // ref={slot1Ref} 
-                onAnimationEnd={()=>{}}
+                // onAnimationEnd={()=>{}}
         />
         </div>
     );
