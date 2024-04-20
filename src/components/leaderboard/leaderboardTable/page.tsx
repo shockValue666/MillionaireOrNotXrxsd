@@ -29,10 +29,10 @@ function LeaderBoardMatrix() {
   useEffect(() => {
     const fetchGames = async () => {
         // Fetch games from the server
-        if(!profile){
-            console.log("No profile found in the game table");
-            return;
-        }
+        // if(!profile){
+        //     console.log("No profile found in the game table");
+        //     return;
+        // }
         // const {data,error} = await getSlotsForUser(profile?.id); 
         // if(error || !data){
         //     console.log("Error at fetching games: ",error);
@@ -80,7 +80,7 @@ function LeaderBoardMatrix() {
 
     }
     fetchGames();
-  }, [profile]); // Empty dependency array means this runs once on mount
+  }, []); // Empty dependency array means this runs once on mount
 
 return (
     <div className="container mx-auto py-10">

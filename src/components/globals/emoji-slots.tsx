@@ -189,7 +189,15 @@ const EmojiSlots = () => {
             //alright i think the problem is with the amountWonOrLost when it's 0
             console.log("amountWonOrLost from hadnel spin in order to check if the notification works with 0: ",amountWonOrLost)
             setAmountWonOrLostState(amountWonOrLost)
-            setAmountNotification(true)
+            setTimeout(()=>{
+                setAmountNotification(true)
+                console.log("inside the first", " amountWonOrLostState: ",amountWonOrLostState)
+                    setTimeout(()=>{
+                        console.log("inside the second", " amountWonOrLostState: ",amountWonOrLostState)
+                        setAmountNotification(false)
+                        setAmountWonOrLostState(null) // here 4:20AM
+                    },1000)
+                },1000)
             const newCurAmount = parseFloat(localBalance)-amountPerSpin+amountWonOrLost;
             if(!totalBetAmount) return;
             dispatch({
@@ -233,7 +241,7 @@ const EmojiSlots = () => {
 
                 // await new Promise(resolve => setTimeout(resolve, 2500));
                 setAmountNotification(false)
-                setAmountWonOrLostState(null)
+                // setAmountWonOrLostState(null) // here 6:19PM
                 //?
                 // setAmountWonOrLostState(amountWonOrLost)
                 console.log("amount notification is supposed to be set")
@@ -315,7 +323,12 @@ const EmojiSlots = () => {
                 // console.log("amountWonOrLost: ",amountWonOrLost)
                 if(amountWonOrLost === undefined) {console.log("amountWinorLost undefined");return;};
                 setAmountWonOrLostState(amountWonOrLost)
-                setAmountNotification(true)
+                // setTimeout(()=>{
+                //     setAmountNotification(true)
+                //     setTimeout(()=>{
+                //         setAmountNotification(false)
+                //     },1000)
+                // },1000)
                 dispatch({
                     type:"UPDATE_EMOJI_SLOT",
                     payload:{
@@ -355,7 +368,7 @@ const EmojiSlots = () => {
                     }
                     setDisabledRollButton(false)
                     setAmountWonOrLostState(null)
-                    setAmountNotification(false)
+                    // setAmountNotification(false)
                     // setAmountNotification(true)
                     console.log("here 6 6 6 ")
                     console.log("localBalance: ",lcLocal, "amountWonOrLost: ",amountWonOrLost, "amountPerSpin: ",amountPerSpin, "parseFloat(lcLocal)+amountWonOrLost-amountPerSpin: ",(parseFloat(lcLocal)-amountPerSpin+amountWonOrLost), " ||||||    parseFloat(localBalance) + amountWonOrLost", parseFloat(lcLocal)+amountWonOrLost)
@@ -550,7 +563,16 @@ const EmojiSlots = () => {
             setDisableInputs(false)
             //make the currentAmount 0
             const updateBalanceFromInsideUseEffect = async () => {
-                console.log("1 slut profile?.balance || 0", profile?.balance, "doubleSlut.currentAmount: ",emojiSlotFromAppState.currentAmount, " sum: ",(parseFloat(profile?.balance || "0")+emojiSlotFromAppState.currentAmount).toString())
+                if(!profile?.id){
+                    console.log("no profile id")
+                    return;
+                }
+                const {data:profileDataFromProfile, error:profileErrorFromProfile} = await getProfile(profile?.id)
+                if(!profileDataFromProfile || profileErrorFromProfile || profileDataFromProfile.balance===null){
+                    console.log("error no user found or balance not found");
+                    return;
+                }
+                console.log("1 slut profile?.balance || 0", profileDataFromProfile.balance || "0", "emojiSlotFromAppState.currentAmount: ",emojiSlotFromAppState.currentAmount)
                 const {data:updateBalanceData, error:updateBalanceError} = await getAndSetBalance({balance:(parseFloat(profile?.balance || "0")+emojiSlotFromAppState.currentAmount).toString()},profile?.id || "")
                 if(!updateBalanceData || updateBalanceError || !profile?.balance || !updateBalanceData[0].balance){
                     console.log("error updating balance: ",updateBalanceError)

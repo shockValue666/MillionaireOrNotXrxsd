@@ -186,7 +186,16 @@ const ThirdSlut = () => {
             //alright i think the problem is with the amountWonOrLost when it's 0
             console.log("amountWonOrLost from hadnel spin in order to check if the notification works with 0: ",amountWonOrLost)
             setAmountWonOrLostStateNewer(amountWonOrLost)
-            setAmountNotificationNew(true)
+            setTimeout(()=>{
+                setAmountNotificationNew(true)
+                console.log("inside the first", " amountWonOrLostState: ",amountWonOrLostStateNewer)
+                    setTimeout(()=>{
+                        console.log("inside the second", " amountWonOrLostStateNew: ",amountWonOrLostStateNewer)
+                        setAmountNotificationNew(false)
+                        setAmountWonOrLostStateNewer(null) // here 4:20AM
+                    },1000)
+                },1000)
+            // setAmountNotificationNew(true)
             const newCurAmount = parseFloat(localBalanceNewer)-amountPerSpinNewer+amountWonOrLost;
             if(!totalBetAmountNewer) return;
             dispatch({
@@ -228,7 +237,7 @@ const ThirdSlut = () => {
                 setLocalBalanceNewer((parseFloat(localBalanceNewer)-amountPerSpinNewer+amountWonOrLost).toString())
 
                 // await new Promise(resolve => setTimeout(resolve, 2500));
-                setAmountNotificationNew(false)
+                // setAmountNotificationNew(false)
                 setAmountWonOrLostStateNewer(null)
                 //?
                 // setAmountWonOrLostStateNewer(amountWonOrLost)
@@ -523,8 +532,17 @@ const ThirdSlut = () => {
             setDisableInputsNewer(false)
             //make the currentAmount 0
             const updateBalanceFromInsideUseEffect = async () => {
-                console.log("3 sluts profile?.balance || 0", profile?.balance, "doubleSlut.currentAmount: ",tripleSlut.currentAmount)
-                const {data:updateBalanceData, error:updateBalanceError} = await getAndSetBalance({balance:(parseFloat(profile?.balance || "0")+tripleSlut.currentAmount).toString()},profile?.id || "")
+                if(!profile?.id){
+                    console.log("no profile id")
+                    return;
+                }
+                const {data:profileDataFromProfile, error:profileErrorFromProfile} = await getProfile(profile?.id)
+                if(!profileDataFromProfile || profileErrorFromProfile || profileDataFromProfile.balance===null){
+                    console.log("error no user found or balance not found");
+                    return;
+                }
+                console.log("3 sluts profile?.balance || 0", profileDataFromProfile.balance || "0", "triple.currentAmount: ",tripleSlut.currentAmount)
+                const {data:updateBalanceData, error:updateBalanceError} = await getAndSetBalance({balance:(parseFloat(profileDataFromProfile.balance)+tripleSlut.currentAmount).toString()},profile?.id || "")
                 if(!updateBalanceData || updateBalanceError || !profile?.balance || !updateBalanceData[0].balance){
                     console.log("error updating balance: ",updateBalanceError)
                     return;
@@ -668,40 +686,37 @@ const ThirdSlut = () => {
                             >set</Button>
                         </form>
                     </Form>
-                    {/*  */}
-                    {/* {!reset && <Button disabled={!amount || !spinz || !savedEmojiSlot || spinButtonCooldown} className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
-                    onClick={() => {handleSpinNew();}}>
-                        SPIN
-                    </Button>} */}
 
-                    
-                    <Button 
-                    disabled={!setButtonVisibilityNewer} 
-                    className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
-                    onClick={() => {handleHalfBalance();}}>
-                        $1/2*BLNC  10SPINZ
-                    </Button>
-                    
-                    <Button 
-                    // disabled={!amount || !spinz || !savedEmojiSlot || spinButtonCooldown} 
-                    disabled={!rollButtonVisibilityNewer || disabledRollButtonNewer}
-                    className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
-                    onClick={() => {handleSpinNew();}} onKeyDown={(e)=>{
-                        // if(e.key===" "){
-                        //     handleSpinNew();}
-                        // }
-                        console.log("key: ",e.key)
-                        }}>
-                        SPIN
-                    </Button>
-                    {/* {reset && <Button disabled={!amount} className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
-                    onClick={() => {resetTheGameNew();}}>
-                        RESET
-                    </Button>} */}
+
+                    <div className='grid grid-cols-2 lg:grid-cols-1 gap-4 items-center justify-items-center'>
+                        <Button 
+                        disabled={!setButtonVisibilityNewer} 
+                        className='rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl'
+                        onClick={() => {handleHalfBalance();}}>
+                            <p className='hidden lg:block'>$1/2*BLNC  10SPINZ</p>
+                            <p className='block lg:hidden' >1/2</p>
+                        </Button>
+                        
+                        <Button 
+                        // disabled={!amount || !spinz || !savedEmojiSlot || spinButtonCooldown} 
+                        disabled={!rollButtonVisibilityNewer || disabledRollButtonNewer}
+                        className='rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl'
+                        onClick={() => {handleSpinNew();}} onKeyDown={(e)=>{
+                            // if(e.key===" "){
+                            //     handleSpinNew();}
+                            // }
+                            console.log("key: ",e.key)
+                            }}>
+                            SPIN
+                        </Button>
+                        {/* {reset && <Button disabled={!amount} className='rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl'
+                        onClick={() => {resetTheGameNew();}}>
+                            RESET
+                        </Button>} */}
                         <Button 
                         // disabled={!amount} 
                         disabled={!resetButtonVisibilityNewer}
-                        className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
+                        className='rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl'
                         onClick={() => {resetTheGameNew();}}>
                             RESET
                         </Button>
@@ -709,25 +724,27 @@ const ThirdSlut = () => {
                         <Button 
                         // disabled={!amount} 
                         disabled={!resetRewardsButtonVisibilityNewer}
-                        className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
+                        className='rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl'
                         onClick={() => {reNewTheBalanceNew();}}>
-                            RENEW BALANCE
+                            <p className='hidden lg:block'>RENEW BALANCE</p>
+                            <p className='block lg:hidden'>0</p>
                         </Button>
                         <Button 
                         // disabled={!amount} 
                         disabled={!airdropButtonVisibilityNewer}
-                        className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
+                        className='rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl'
                         onClick={() => {airdropAmountNew();}}>
-                            AIRDROP 1000
+                            <p className='hidden lg:block'>AIRDROP</p> 1000
                         </Button>
 
                         <Button 
                         // disabled={!amount} 
                         disabled={!autoSpinButtonVisibilityNewer}
-                        className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
+                        className='rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl'
                         onClick={() => {autoSpinNew();}}>
                             AUTOSPIN
                         </Button>
+                    </div>
                 </div>
             </div>
         </div>
