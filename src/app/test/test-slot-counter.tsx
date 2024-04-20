@@ -82,4 +82,6 @@ const TestSlotCounter = React.forwardRef<SlotCounterRef, Props>((props, ref) => 
     );
 });
 
+TestSlotCounter.displayName = 'TestSlotCounter';
+
 export default React.memo(TestSlotCounter);
