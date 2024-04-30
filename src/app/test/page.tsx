@@ -36,6 +36,14 @@ const Page = () => {
         console.log("some other shit", winnerEmojis, " await getWinnerNew(): ",await getWinnerNew())
     }
 
+    const autospin = async () => {
+        for(let i = 0; i<=5; i++){
+            // console.log("something")
+            await handleSpinNew()
+            await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+    }
+
     
   return (
     <div className='flex w-full flex-col items-center mt-8'>
@@ -59,7 +67,7 @@ const Page = () => {
         <Button 
             // disabled={!amount || !spinz || !savedEmojiSlot || spinButtonCooldown} 
             // disabled={!rollButtonVisibilityNew || disabledRollButtonNew}
-            className='rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl'
+            className='w-[20%] rounded-full border border-hotPink bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl'
             onClick={() => {handleSpinNew();}} onKeyDown={(e)=>{
                 // if(e.key===" "){
                 //     handleSpinNew();}
@@ -67,6 +75,18 @@ const Page = () => {
                 console.log("key: ",e.key)
                 }}>
                 SPIN
+        </Button>
+        <Button 
+            // disabled={!amount || !spinz || !savedEmojiSlot || spinButtonCooldown} 
+            // disabled={!rollButtonVisibilityNew || disabledRollButtonNew}
+            className='w-[20%] rounded-full border border-hotPink bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl'
+            onClick={() => {autospin();}} onKeyDown={(e)=>{
+                // if(e.key===" "){
+                //     handleSpinNew();}
+                // }
+                console.log("key: ",e.key)
+                }}>
+                AUTOSPIN
         </Button>
     </div>
   )

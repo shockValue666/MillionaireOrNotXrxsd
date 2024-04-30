@@ -181,6 +181,7 @@ export const emojiSlot = pgTable("emoji_slot", {
 	pnl: doublePrecision("pnl").default(0).notNull(),
 
 	points:doublePrecision("points").default(0).notNull(),
+	//probably have to add the emoji total list adn the payeouts in order to make it more modular
 })
 
 

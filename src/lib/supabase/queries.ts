@@ -220,6 +220,7 @@ export const createEmojiSlot = async (emojiSlotInstance:EmojiSlot) => {
 
 export const updateEmojiSlot = async (emojiSlotInstance:Partial<EmojiSlot>) => {
     if(emojiSlotInstance.id === undefined) return {data:null,error:"id is required"}
+    console.log("emojiSlotInstance: ",emojiSlotInstance)
     try {
         const result = await db.update(emojiSlot).set(emojiSlotInstance).where(eq(emojiSlot.id,emojiSlotInstance.id));
         return {data:result,error:null}
@@ -442,4 +443,26 @@ export const getUsersWithHighestPoints = async () => {
         return {data:usersTotal, error:null};
     }
     return {data:null, error:"No data found"}
+}
+
+
+// export const getAndSetBalance = async (profile:Partial<Profile>,profileId:string) => {
+//     try {
+//         const result = await db.update(profiles).set(profile).where(eq(profiles.id,profileId)).returning();
+//         return {data:result,error:null}   
+//     } catch (error) {
+//         console.log("error at updating balance: ",error)
+//         return {data:null,error:error}
+//     }
+// }
+
+
+export const getAndSetPoints = async (profile:Partial<Profile>, profileId:string) => {
+    try {
+        const result = await db.update(profiles).set(profile).where(eq(profiles.id,profileId)).returning()
+        return {data:result, error:null}
+    }catch(err){
+        console.log("error at getting and setting points: ",err)
+        return {data:null, error:err}
+    }
 }

@@ -21,8 +21,33 @@ useEffect(() => {
     return () => clearTimeout(timer);
   }, [isVisible]);
 
+  const notificationStyle = {
+    left: '50%',
+    transform: 'translateX(-50%)',
+    width: 'fit-content',
+    padding: '1rem',
+    color: 'white',
+    backgroundColor: isVisible ? 'green' : 'transparent',
+    position: 'absolute',
+    animation: isVisible ? 'bounce 0.5s ease infinite' : 'none' // Apply bounce animation if visible
+  };
+
+
+
   return (
-    <div className={`fixed top-0 left-0 w-full p-4 text-white ${isVisible ? 'bg-green-500' : 'hidden'}`}>
+    // <div className={`fixed top-0 left-0 w-full p-4 text-white ${isVisible ? 'bg-green-500' : 'hidden'}`}>
+    //   <p>{message}</p>
+    // </div>
+    <div className={`p-4 text-white rounded-md ${isVisible ? 'bg-green-500' : 'hidden'}`} style={{ 
+      // left: '50%',
+      transform: 'translateX(-50%)',
+      width: 'fit-content',
+      padding: '1rem',
+      color: 'white',
+      backgroundColor: isVisible ? 'green' : 'transparent',
+      position: 'absolute',
+      animation: isVisible ? 'bounce 0.75s ease infinite' : 'none' // Apply bounce animation if visible}}>
+    }}>
       <p>{message}</p>
     </div>
   );

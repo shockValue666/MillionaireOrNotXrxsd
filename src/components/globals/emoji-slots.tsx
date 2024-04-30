@@ -4,13 +4,13 @@ import SlotCounter from 'react-slot-counter';
 import React, { useEffect, useState } from 'react'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { set, z } from 'zod';
+import { promise, set, z } from 'zod';
 import { EmojiSlotSchema } from '@/lib/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CustomInputForEmojiSlots } from '../ui/custom-input-for-emoji-slots';
 import { Button } from '../ui/button';
 import { useToast } from '../ui/use-toast';
-import { createEmojiSlot, getAndSetBalance, getEmojiSlotById, getProfile, updateEmojiSlot } from '@/lib/supabase/queries';
+import { createEmojiSlot, getAndSetBalance, getAndSetPoints, getEmojiSlotById, getProfile, updateEmojiSlot, updateProfile } from '@/lib/supabase/queries';
 import { v4 } from 'uuid';
 import AmountNotification from './amount-notification';
 import { Progress } from '../ui/progress';
@@ -30,6 +30,7 @@ const EmojiSlots = () => {
     const [currentEmojis, setCurrentEmojis] = useState<string[]>(['💰','💰','💰','💰','💰'])
     
     const [localBalance, setLocalBalance] = useState<string | null>("0")
+    const [localPoints, setLocalPoints] = useState<number | null>(0);
 
     const [rollButtonVisibility, setRollButtonVisibility] = useState(false)
     const [resetButtonVisibility, setResetButtonVisibility] = useState(false)
@@ -38,6 +39,7 @@ const EmojiSlots = () => {
     const [disabledRollButton,setDisabledRollButton] = useState(false)
     const [disableInputs, setDisableInputs] = useState(false)
     const [amountWonOrLostState, setAmountWonOrLostState] = useState<number | null>(null)
+    const [pointsWonOrLostState, setPointsWonOrLostState] = useState<number | null>(null)
     const [resetRewardsButtonVisibility, setResetRewardsButtonVisibility] = useState(true)
     const [airdropButtonVisibility, setAirdropButtonVisibility] = useState(true)
     const [autoSpinButtonVisibility, setAutoSpinButtonVisibility] = useState(true)
@@ -65,17 +67,17 @@ const EmojiSlots = () => {
 
         const res = await createEmojiSlot({
             id:v4(),
-            amount:parseFloat(data.amount),
-            spinz:parseInt(data.spinz),
+            amount:parseFloat(data.amount), //total amount of current emoji slot bet
+            spinz:parseInt(data.spinz),//total spins for the current emoji slot
             createdAt:new Date().toISOString(),
             profileId:profile?.id,
-            currentAmount:parseFloat(data.amount),
-            currentSpin:0,
+            currentAmount:parseFloat(data.amount), //amount of local balance at the current emoji slot game
+            currentSpin:0, //current spin index
             currentEmojis:['💰','💰','💰','💰','💰'].toString(),
-            payPerSpin:parseFloat(data.amount)/parseInt(data.spinz),
-            entryAmount:parseFloat(data.amount),
+            payPerSpin:parseFloat(data.amount)/parseInt(data.spinz), // = (amount/spins)
+            entryAmount:parseFloat(data.amount), //same as amount i think
             pnl:0,
-            points:0
+            points:parseFloat(data.amount)/10 //local points of emoji slot
             })
         if(res.data){
             // setSavedEmojiSlot(true);
@@ -85,16 +87,19 @@ const EmojiSlots = () => {
             dispatch({type:"SET_EMOJI_SLOT",payload:res.data[0]})
             if(profile?.balance){
                 const {data:profileData,error} = await getAndSetBalance({balance:(parseFloat(profile.balance)-parseFloat(data.amount)).toString()},profile.id);
-                if(error){
-                    toast({title:"Error",description:"Failed to update balance",variant:"destructive"})
-                    console.log("error updating balance: ",error)
+                const {data:getAndSetPointsDataGlobal, error: getAndSetPointsErrorErrorGlobal} = await getAndSetPoints({points:parseFloat(data.amount)/10},profile.id)
+                if(error || getAndSetPointsErrorErrorGlobal){
+                    toast({title:"Error",description:"Failed to update balance or points",variant:"destructive"})
+                    console.log("error updating  or points: ",error && getAndSetPointsErrorErrorGlobal)
                 }
-                if(profileData){
-                    console.log("successfully updated the balance: ",data)
-                    dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(profile.balance)-parseFloat(data.amount)).toString()}})
+                if(profileData && getAndSetPointsDataGlobal){
+                    console.log("successfully updated the balance and the points: ",data)
+                    dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(profile.balance)-parseFloat(data.amount)).toString(),points:profile.points + parseFloat(data.amount)/10}})
                 }
             }
             setLocalBalance(res.data[0].entryAmount.toString()) //here
+            console.log("line 101 res.data[0].points: ",res.data[0].points)
+            setLocalPoints(res.data[0].points)
             // setRollButtonVisibility(true)
             setCreateNewGame(false);
         }else{
@@ -147,6 +152,51 @@ const EmojiSlots = () => {
                 // return amountPerSpin*0.5;
             }
         }else if (uniqueEmojis === 4) {
+            return amountPerSpin*0.5;
+            // return amountPerSpin*0.5;
+        }else if (uniqueEmojis === 5) {
+            return 0;
+            // return amountPerSpin*0.5;
+        }
+        console.log("emoji count: ",emojiCount)
+        return 1;
+    }
+
+    const getPointstWonOrLost = async (winnerEmojis:string[]) => {
+        if(!amountPerSpin) return;
+        const emojiCount:any = {}
+        winnerEmojis.forEach(emoji=>{
+            if(emojiCount[emoji]){
+                emojiCount[emoji]++
+            }else{
+                emojiCount[emoji] = 1
+            }
+        })
+
+        const uniqueEmojis = Object.keys(emojiCount).length;
+        console.log("emoji count: ",emojiCount)
+        if(uniqueEmojis === 1){
+            return amountPerSpin*1;
+            // return amountPerSpin*0.5;
+        }else if (uniqueEmojis === 2) {
+            if(Object.values(emojiCount).includes(3) && Object.values(emojiCount).includes(2)){
+                return amountPerSpin*0.5;
+                // return amountPerSpin*0.5;
+            }
+            if(Object.values(emojiCount).includes(4)){
+                return amountPerSpin*0.22
+                // return amountPerSpin*0.5;
+            }
+        }else if (uniqueEmojis === 3) {
+            if(Object.values(emojiCount).includes(3)){
+                return amountPerSpin*0.1;
+                // return amountPerSpin*0.5;
+            }
+            if(Object.values(emojiCount).includes(2)){
+                return amountPerSpin*0.1;
+                // return amountPerSpin*0.5;
+            }
+        }else if (uniqueEmojis === 4) {
             return amountPerSpin*0;
             // return amountPerSpin*0.5;
         }else if (uniqueEmojis === 5) {
@@ -161,13 +211,14 @@ const EmojiSlots = () => {
     const handleSpin = async () => {
         console.log("spin")
         setDisabledRollButton(true)
-        if(currentSpinCount===null || totalSpinCount===null || !emojiSlotFromAppState || !amountPerSpin || !localBalance) {
+        if(currentSpinCount===null || totalSpinCount===null || !emojiSlotFromAppState || !amountPerSpin || !localBalance || localPoints===null) {
             console.log("currentSpincount or totalspincount or emojistateformappstate doesn't exist");
             console.log("currentSpinCount: ",currentSpinCount)
             console.log("totalSpinCount: ",totalSpinCount)
             console.log("emojiSlotFromAppState: ",emojiSlotFromAppState)
             console.log("amountPerSpin: ",amountPerSpin)
             console.log("localbalance: ",localBalance)
+            console.log("localPoints: ",localPoints)
             toast({
                 title:"something is missing",
                 description:"we will see",
@@ -178,17 +229,19 @@ const EmojiSlots = () => {
             return;
         };
         setLocalBalance((parseFloat(localBalance)-amountPerSpin).toString())
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise(resolve => setTimeout(resolve, 1000));
         console.log("localBalance: ",localBalance, " amountPerSpin: ",amountPerSpin, "parceFloat(localBalance)-amountPerSpin: ",(parseFloat(localBalance)-amountPerSpin))
         setCurrentSpinCount(currentSpinCount+1)
         if(currentSpinCount < totalSpinCount){
             setNewGameInTheSameSession(true)
             const winnerEmojis = await getWinner()
             const amountWonOrLost = await getAmountWonOrLost(winnerEmojis)
-            if(amountWonOrLost === undefined) return;
+            const pointsWonOrLost = await getPointstWonOrLost(winnerEmojis)
+            if(amountWonOrLost === undefined || pointsWonOrLost === undefined) return;
             //alright i think the problem is with the amountWonOrLost when it's 0
             console.log("amountWonOrLost from hadnel spin in order to check if the notification works with 0: ",amountWonOrLost)
             setAmountWonOrLostState(amountWonOrLost)
+            setPointsWonOrLostState(pointsWonOrLost)
             setTimeout(()=>{
                 setAmountNotification(true)
                 console.log("inside the first", " amountWonOrLostState: ",amountWonOrLostState)
@@ -196,21 +249,25 @@ const EmojiSlots = () => {
                         console.log("inside the second", " amountWonOrLostState: ",amountWonOrLostState)
                         setAmountNotification(false)
                         setAmountWonOrLostState(null) // here 4:20AM
+                        setPointsWonOrLostState(null)
                     },1000)
                 },1000)
-            const newCurAmount = parseFloat(localBalance)-amountPerSpin+amountWonOrLost;
+            const newCurAmount = parseFloat(localBalance)-amountPerSpin+amountWonOrLost; //still local balance
+            const newCurPoints = localPoints + pointsWonOrLost; //still localpoints (by local i mean emojislot's points not user's)
             if(!totalBetAmount) return;
+            console.log("here prepei na katalavw pws douleve ito emojislot")
             dispatch({
                 type:"UPDATE_EMOJI_SLOT",
                 payload:{
                     ...emojiSlotFromAppState, 
                     currentSpin:currentSpinCount+1,
                     currentEmojis:winnerEmojis.toString(),
-                    currentAmount:parseFloat(localBalance)-amountPerSpin+amountWonOrLost,
-                    pnl:totalBetAmount-newCurAmount
+                    currentAmount:newCurAmount,
+                    pnl:emojiSlotFromAppState.pnl + parseFloat(localBalance)-newCurAmount, //i will change totalBetAmount to parseFloat(localBalance)
+                    points:newCurPoints
                 }
             })
-            const {data,error} = await updateEmojiSlot({id:emojiSlotFromAppState.id,currentSpin:currentSpinCount+1,currentEmojis:winnerEmojis.toString(),currentAmount:(parseFloat(localBalance)-amountPerSpin+amountWonOrLost),pnl:totalBetAmount-newCurAmount});
+            const {data,error} = await updateEmojiSlot({id:emojiSlotFromAppState.id,currentSpin:currentSpinCount+1,currentEmojis:winnerEmojis.toString(),currentAmount:newCurAmount,pnl:emojiSlotFromAppState?.pnl + parseFloat(localBalance)-newCurAmount, points:newCurPoints});//i will change totalBetAmount to parseFloat(localBalance)
 
             if(error){
                 toast({title:"Error",description:"Failed to update slot",variant:"destructive"})
@@ -218,26 +275,14 @@ const EmojiSlots = () => {
             }
             if(data){
                 console.log("successfully updated the database: ",data)
-                // let userBalance = profile?.balance;
-                // if(userBalance && amountPerSpin && profile?.id){
-                //     const {data:profileData,error:profileError} = await getAndSetBalance({balance:(parseFloat(userBalance)+amountWonOrLost).toString()},profile?.id);
-                //     if(profileError){
-                //         toast({title:"Error",description:"Failed to update balance",variant:"destructive"})
-                //         console.log("error updating balance: ",profileError)
-                //     }
-                //     if([profileData]){
-                //         // console.log("successfully updated the balance: ",profileData)
-                //         console.log("amount won or lost plus the balance: ",(parseFloat(userBalance)+(amountPerSpin+amountWonOrLost)), " amountWonOrLost: ",amountWonOrLost)
-                //         dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(userBalance)+amountWonOrLost).toString()}})    
-                //     }
-                // }
                 setDisabledRollButton(false)
-                // setAmountWonOrLostState(null)
-                // setAmountNotification(false)
 
-                console.log("localBalance: ",localBalance, "amountWonOrLost: ",amountWonOrLost, "amountPerSpin: ",amountPerSpin, "parseFloat(localBalance)+amountWonOrLost-amountPerSpin: ",(parseFloat(localBalance)-amountPerSpin+amountWonOrLost))
+                console.log("localBalance: ",localBalance, "amountWonOrLost: ",amountWonOrLost, "amountPerSpin: ",amountPerSpin, "parseFloat(localBalance)+amountWonOrLost-amountPerSpin: ",(parseFloat(localBalance)-amountPerSpin+amountWonOrLost), "localPoints: ",localPoints)
 
-                setLocalBalance((parseFloat(localBalance)-amountPerSpin+amountWonOrLost).toString())
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                setLocalBalance((newCurAmount).toString())
+                //todo: make it more secure by error checking for the lasck of localpoints
+                setLocalPoints(newCurPoints)
 
                 // await new Promise(resolve => setTimeout(resolve, 2500));
                 setAmountNotification(false)
@@ -246,34 +291,11 @@ const EmojiSlots = () => {
                 // setAmountWonOrLostState(amountWonOrLost)
                 console.log("amount notification is supposed to be set")
             }
-            // if(currentSpinCount+1 === totalSpinCount){
-            //     console.log("game finished from inside handleSpin, localBalance: ",localBalance, " profile balance: ",profile?.balance)// herereturn
-            //     const {data:updateBalanceData, error:updateBalanceError} = await getAndSetBalance({balance:(parseFloat(profile?.balance || "0")+localBalance).toString()},profile?.id || "")
-            //     if(!updateBalanceData || updateBalanceError || !profile?.balance || !updateBalanceData[0].balance){
-            //         console.log("error updating balance: ",updateBalanceError)
-            //         return;
-            //     }
-                
-            //     // console.log("updateBalanceData[0].balance", updateBalanceData[0].balance, "emojiSlutFromAppState.currentAmount: ",emojiSlotFromAppState.currentAmount, " sum: ",(parseFloat(updateBalanceData[0].balance)+emojiSlotFromAppState.currentAmount).toString())
-            //     dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(updateBalanceData[0].balance)).toString()}})
 
-            //     const {data:updateEmojiSlotData,error:updateEmojiSlotError} = await updateEmojiSlot({id:emojiSlotFromAppState.id,currentAmount:0})
-            //     if(updateEmojiSlotError || !updateEmojiSlotData){
-            //         console.log("error updating the emoji slot: ",updateEmojiSlotError)
-            //         return;
-            //     }
-            //     dispatch({type:"UPDATE_EMOJI_SLOT",payload:{...emojiSlotFromAppState, currentAmount:0}})
-            //     setLocalBalance("0")
-            //     setCurrentSpinCount(0)
-
-            // }
-
-            // if(!data || )
         }else{
             console.log("game finished")
             setResetButtonVisibility(true)
             setRollButtonVisibility(false)
-            // setReset(true)
         }
     }
     //handle autospin
@@ -307,7 +329,7 @@ const EmojiSlots = () => {
             //     return (parseFloat(lc)-amountPerSpin).toString()
             // })
             setLocalBalance(lc=>(parseFloat(lcLocal)-amountPerSpin).toString())
-            console.log("new localbalance: ",localBalance)
+            console.log(" localbalance: ",localBalance)
             await new Promise(resolve => setTimeout(resolve, 500));
 
             setCurrentSpinCount(currentSpinCount=>{
@@ -318,17 +340,26 @@ const EmojiSlots = () => {
             if(currentSpinCount < totalSpinCount){
                 setNewGameInTheSameSession(true)
                 const winnerEmojis = await getWinner()
+                await new Promise(resolve => setTimeout(resolve, 1500));
                 // console.log("winnerEmojis: ",winnerEmojis)
                 const amountWonOrLost = await getAmountWonOrLost(winnerEmojis)
                 // console.log("amountWonOrLost: ",amountWonOrLost)
                 if(amountWonOrLost === undefined) {console.log("amountWinorLost undefined");return;};
                 setAmountWonOrLostState(amountWonOrLost)
+                setAmountNotification(true)
+                //here it's now 29 april
+
                 // setTimeout(()=>{
-                //     setAmountNotification(true)
+                // // setAmountNotification(true)
+                // console.log("inside the first", " amountWonOrLostState: ",amountWonOrLostState)
                 //     setTimeout(()=>{
+                //         console.log("inside the second", " amountWonOrLostState: ",amountWonOrLostState)
                 //         setAmountNotification(false)
+                //         setAmountWonOrLostState(null) // here 4:20AM
+                //         setPointsWonOrLostState(null)
                 //     },1000)
                 // },1000)
+
                 dispatch({
                     type:"UPDATE_EMOJI_SLOT",
                     payload:{
@@ -367,8 +398,9 @@ const EmojiSlots = () => {
                         // }
                     }
                     setDisabledRollButton(false)
+                    // await new Promise(resolve => setTimeout(resolve, 1500));                    
                     setAmountWonOrLostState(null)
-                    // setAmountNotification(false)
+                    setAmountNotification(false)
                     // setAmountNotification(true)
                     console.log("here 6 6 6 ")
                     console.log("localBalance: ",lcLocal, "amountWonOrLost: ",amountWonOrLost, "amountPerSpin: ",amountPerSpin, "parseFloat(lcLocal)+amountWonOrLost-amountPerSpin: ",(parseFloat(lcLocal)-amountPerSpin+amountWonOrLost), " ||||||    parseFloat(localBalance) + amountWonOrLost", parseFloat(lcLocal)+amountWonOrLost)
@@ -378,7 +410,7 @@ const EmojiSlots = () => {
     
                 // if(!data || )
             }else{
-                console.log("game finished")
+                console.log("game finished double slut")
                 setResetButtonVisibility(true)
                 setRollButtonVisibility(false)
                 // setReset(true)
@@ -394,13 +426,13 @@ const EmojiSlots = () => {
             if(curProf.data){
                 await asyncProcess(remainingSpins-i, curProf.data.balance || "", curEmojiSlot.data?.currentAmount.toString() || "0");
             }
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            await new Promise(resolve => setTimeout(resolve, 1000));
         }
         //alternative approach
         // const executeSequentially = async (n:number) => {
         // if (n <= 0) {
         //         // Base case: all iterations completed
-        //         setAutoSpinButtonVisibility(true);
+        //         setAutoSpinButtonVisibilityNew(true);
         //         return;
         //     }
 
@@ -428,13 +460,16 @@ const EmojiSlots = () => {
             return;
         }
         console.log("emojiSlotFromAppState?.currentAmount: ",finishedGame?.currentAmount, "parseFloat(profile?.balance): ",parseFloat(profile?.balance), "(emojiSlotFromAppState?.currentAmount+parseFloat(profile?.balance)).toString(): ",(emojiSlotFromAppState?.currentAmount+parseFloat(profile?.balance)).toString())
+        //set points and current amount to users
         const {data,error} = await getAndSetBalance({balance:(finishedGame?.currentAmount+parseFloat(profile?.balance)).toString()},profile?.id || "")
-        if(error || !data || !data[0] || !data[0].balance){
+        const {data:getAndSetPointsDataGlobal, error:getAndSetPointsErrorErrorGlobal} = await getAndSetPoints({points:finishedGame?.points+profile?.points},profile?.id || "")
+        const {data:updateProfilePnlData, error:updateProfilePnlError} = await updateProfile({pnl:profile.pnl-finishedGame.pnl},profile.id)
+        if(error || !data || !data[0] || !data[0].balance || !getAndSetPointsDataGlobal || getAndSetPointsErrorErrorGlobal || !updateProfilePnlData || updateProfilePnlError){
             console.log("error at updating the balance at reseting, ",error)
             return;
         }
-        dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(profile?.balance)+finishedGame?.currentAmount).toString()}})
-        dispatch({type:"UPDATE_EMOJI_SLOT",payload:{...finishedGame, currentAmount:0}})
+        dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(profile?.balance)+finishedGame?.currentAmount).toString(),points:finishedGame.points+profile?.points}})
+        dispatch({type:"UPDATE_EMOJI_SLOT",payload:{...finishedGame, currentAmount:0,}})
         const {data:updateEmojiSlotData,error:updateEmojiSlotError} = await updateEmojiSlot({id:finishedGame.id,currentAmount:0})
         if(updateEmojiSlotError || !updateEmojiSlotData){
             console.log("error at updating the emoji slot at reseting, ",updateEmojiSlotError)
@@ -442,6 +477,7 @@ const EmojiSlots = () => {
         }
         setLocalBalance("0")
         setCurrentSpinCount(0)
+        setLocalPoints(0)
 
         console.log("reset")
         dispatch({
@@ -485,13 +521,15 @@ const EmojiSlots = () => {
             dispatch({type:"SET_EMOJI_SLOT",payload:res.data[0]})
             if(profile?.balance){
                 const {data:profileData,error} = await getAndSetBalance({balance:(parseFloat(profile.balance)-(parseFloat(profile?.balance)/2)).toString()},profile.id);
-                if(error){
+                const {data:getAndSetPointsDataGlobal, error:getAndSetPointsErrorErrorGlobal} = await getAndSetPoints({points:parseFloat(profile.balance)/2},profile.id)
+                if(error || getAndSetPointsErrorErrorGlobal){
                     toast({title:"Error",description:"Failed to update balance",variant:"destructive"})
-                    console.log("error updating balance: ",error)
+                    console.log("error updating balance: ",error && getAndSetPointsErrorErrorGlobal)
                 }
-                if(profileData){
+                if(profileData && getAndSetPointsDataGlobal){
                     console.log("successfully updated the balance: ",profileData)
                     dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(profile.balance)-(parseFloat(profile?.balance)/2)).toString()}})
+                    dispatch({type: "UPDATE_USER",payload:{...profile, points:parseFloat(profile.balance)/2}})
                 }
             }
             setLocalBalance(res.data[0].entryAmount.toString()) //here
@@ -630,13 +668,12 @@ const EmojiSlots = () => {
     
   return (
     <div className='w-[90%] md:w-[50%] text-center'>
-        {amountNotification  && amountWonOrLostState && <AmountNotification visible={amountNotification} message={amountWonOrLostState.toString()}/>}
-        {amountWonOrLostState===0 && amountNotification && <AmountNotification visible={amountNotification} message={amountWonOrLostState.toString()}/>}
         {/* {amountNotification && <p className='font-lg border border-yellow-500'>here it is: {amountNotification} {amountWonOrLostState}</p>} */}
-        {amountNotification &&  <div>cocksycker</div>}
+        {/* {amountNotification &&  <div>cocksycker {emojiSlotFromAppState?.pnl} amountWonrOrLost: {amountWonOrLostState}</div>} */}
         {currentSpinCount && totalSpinCount && (<div className='py-4 '>
             <Progress value={(currentSpinCount/totalSpinCount)*100} className='bg-[#3d4552]'/>
         </div>)}
+        {/* {amountWonOrLostState && (<div> HERE'S THE COCK {amountWonOrLostState}</div>)} */}
             {/* {
                 !user &&
                 <div className='tracking-tight text-center text-hotPink bg-black hover:bg-accent hover:text-accent-foreground rounded-xl' onClick={()=>{console.log("kenta")}}>
@@ -646,7 +683,14 @@ const EmojiSlots = () => {
             <div className={`flex flex-col justify-center align-center border w-[100%] border-white rounded-lg gap-4 p-4 ${!profile ? 'blur-sm' : ""}`}>
                 <div className='flex justify-center items-center'>
                     <p className='w-full text-center'>SLEM</p>
-                    <div>{localBalance && <p>{localBalance}</p>}</div>
+                    <div>
+                        <div>
+                            {amountNotification  && amountWonOrLostState && <AmountNotification visible={amountNotification} message={amountWonOrLostState.toFixed(2).toString()}/>}
+                            {amountWonOrLostState===0 && amountNotification && <AmountNotification visible={amountNotification} message={amountWonOrLostState.toFixed(2).toString()}/>}
+                        </div>
+                        <div> Balance: {localBalance && <p>{parseFloat(localBalance).toFixed(2)}</p>}</div>
+                        <div> Points: {localPoints && <p>{localPoints.toFixed(2)}</p>}</div>
+                    </div>
                 </div>
                 <div className='w-full flex flex-col items-center gap-y-6'> 
                     <div className='flex items-center gap-x-4 border border-white'>

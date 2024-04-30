@@ -1,5 +1,6 @@
 "use client";
 import Balance from '@/components/globals/Balance';
+import Points from '@/components/globals/Points';
 import Header from '@/components/main/Header';
 import MobileHeader from '@/components/main/mobile-header';
 import React from 'react'
@@ -17,6 +18,7 @@ const layout:React.FC<LayoutProps> = ({
         {/* <Header/>
         <MobileHeader/> */}
         <Balance/>
+        <Points/>
             {children}
             <style jsx>{`
                 input, textarea {

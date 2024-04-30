@@ -9,6 +9,7 @@ import { EmojiSlot } from "@/lib/supabase/supabase.types"
 export type Payment = {
   id: string
   amount: number
+  payout: number
   status: "pending" | "processing" | "success" | "failed"
   pnl: number,
   createdAt:string
@@ -61,4 +62,17 @@ export const columns: ColumnDef<EmojiSlot>[] = [
     },
 
   },
+  {
+    accessorKey: "payout",
+    header: () => <div className="text-right">Payout</div>,
+    cell: ({ row }) => {
+      const payout = parseFloat(row.getValue("payout"))
+      const formatted = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+      }).format(payout)
+ 
+      return <div className="text-right font-medium">{formatted}</div>
+    },
+  }
 ]
