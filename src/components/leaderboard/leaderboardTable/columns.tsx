@@ -3,10 +3,13 @@ import { Button } from "@/components/ui/button"
 import { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 import { EmojiSlot } from "@/lib/supabase/supabase.types"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { AvatarImage } from "@radix-ui/react-avatar"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Payment = {
+  avatar:string
   username: string
   points: number
 //   status: "pending" | "processing" | "success" | "failed"
@@ -15,6 +18,22 @@ export type Payment = {
 }
 
 export const columns: ColumnDef<EmojiSlot>[] = [
+  {
+    accessorKey:"avatar",
+    header: "avatar",
+    cell: ({ row }) => {
+      const avatar = row.getValue("avatar")
+ 
+      return (
+      <div className="">
+        <Avatar className="">
+          <AvatarImage src={`https://ytrtdcbrzjpyjpjqmhub.supabase.co/storage/v1/object/public/prof_pics/${avatar}`} alt="Avatar" />
+          <AvatarFallback>OM</AvatarFallback>
+        </Avatar>
+      </div>
+      )
+    },
+  },
   {
     accessorKey: "username",
     header: "username",

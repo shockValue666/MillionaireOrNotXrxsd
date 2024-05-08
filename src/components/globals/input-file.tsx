@@ -32,9 +32,9 @@ const InputFile = () => {
       setFile(selectedFile);
       const {data,error} = await supabase.storage.from('prof_pics').upload(`${profile?.id}.png`,selectedFile as File,{upsert:true});
     //   const {} = await updateProfile({avatar:})
-      if(data){
-        console.log("successfully uploaded the file: ",data.path)
-      }
+    if(data){
+      console.log("successfully uploaded the file: ",data.path)
+    }
     if(error){
         console.log("error at uploading the file: ",error)
     }

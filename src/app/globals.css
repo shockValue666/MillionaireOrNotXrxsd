@@ -87,3 +87,49 @@ body{
     transform: translateY(-5px);
   }
 }
+
+.gradient-border {
+  display: inline-block;
+  /* Or 'block' depending on your layout */
+  background: linear-gradient(to right, red, yellow, green);
+  /* Gradient colors */
+  padding: 2px;
+  /* This is the thickness of your 'border' */
+  border-radius: 5px;
+  /* Optional: if you want rounded corners */
+}
+
+.gradient-border-content {
+  background: white;
+  /* Color of the inner content area */
+  display: block;
+  /* Or 'inline-block', 'flex' etc. */
+  padding: 10px;
+  /* Spacing around the content */
+  border-radius: 3px;
+  /* Slightly smaller radius than the container for rounded corners */
+}
+
+.module-border-wrap {
+  max-width: 250px;
+  padding: 1rem;
+  position: relative;
+  background: linear-gradient(to right, red, purple);
+  padding: 3px;
+}
+
+.module {
+  background: black;
+  color: white;
+  padding: 2rem;
+}
+
+.emojiSeparator{
+  padding: 0 2px;
+  border: 1px solid white;
+}
+
+.char {
+  padding: 0 10px;
+  /* background: #eee; */
+}

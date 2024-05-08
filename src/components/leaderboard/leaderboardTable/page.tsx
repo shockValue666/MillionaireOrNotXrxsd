@@ -72,9 +72,11 @@ function LeaderBoardMatrix() {
         const manipulatedDataNewer = totalPnlAndPointsForAllUsersData.map((user) => ({
             points:user.points,
             pnl:user.pnl*-1,
-            username:user.username
+            username:user.username,
+            avatar:user.avatar
         })) 
         setData(manipulatedDataNewer)
+        console.log("manipulatedDataNewer: ",manipulatedDataNewer, "profile: ",profile)
         setLoading(false)
         // console.log("totalPnlAndPointsForAllUsersData: ",totalPnlAndPointsForAllUsersData)
 

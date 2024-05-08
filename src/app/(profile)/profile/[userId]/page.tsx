@@ -14,6 +14,8 @@ import {GamesPlayed} from '@/components/profile/GamesPlayed';
 import DemoPage from '@/components/profile/gametable/page';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import InputFile from '@/components/globals/input-file';
+import EditProfileDialog from '@/components/profile/edit-profile-dialog';
+import { Button } from '@/components/ui/button';
 
 
 
@@ -68,11 +70,13 @@ const Page = () => {
       const getAvatar = async () => {
         if(profile && profile?.avatar){
           setNewProfilePicture(profile.avatar)
+          console.log("profile.avatar: ",profile.avatar)
           // const {data,error} = await supabase.storage.from('avatars').upload(`${user?.id}.png`,event.target.files?.[0] as File,{upsert:true});
           // const getIt = supabase.storage.from('avatars').getPublicUrl(response.avatarUrl).data.publicUrl : ""
           // const getIt = supabase.storage.from('avatars').getPublicUrl()
         }
       } 
+      getAvatar();
     },[profile])
   return (
     <div className='flex justify-center items-center flex-col gap-y-16'>
@@ -80,7 +84,7 @@ const Page = () => {
       <div>
         <div className="flex items-center gap-x-4">
           <Avatar className="h-9 w-9">
-            <AvatarImage src={`${userFromUsersTable?.avatarUrl}`} alt="Avatar" />
+            <AvatarImage src={`https://ytrtdcbrzjpyjpjqmhub.supabase.co/storage/v1/object/public/prof_pics/${profile?.avatar}`} alt="Avatar" />
             <AvatarFallback>OM</AvatarFallback>
           </Avatar>
           <div className="ml-4 space-y-1">
@@ -89,11 +93,18 @@ const Page = () => {
               {user?.email}
             </p>
           </div>
-          <div className="ml-auto font-medium">+${amountInDollars}</div>
+          {/* <div className="ml-auto font-medium">+${amountInDollars}</div> */}
         </div>
-        <InputFile/>
+        {/* <InputFile/> */}
+        <div className='m-4 flex items-center justify-center'>
+            <EditProfileDialog>
+              <div className="text-hotPink bg-black text-md hover:bg-accent p-4 rounded-lg">
+                  EDIT PROFILE
+              </div>
+            </EditProfileDialog>
+        </div>
       </div>
-      <div className='flex gap-x-8 w-[50%] items-center'>
+      <div className='flex gap-x-8 w-[100%] justify-center items-center'>
 
         address:{!address && <Loader/>} {address && <WalletAddress address={address}/>}
       </div>

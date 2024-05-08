@@ -31,6 +31,7 @@ const EmojiSlots = () => {
     
     const [localBalance, setLocalBalance] = useState<string | null>("0")
     const [localPoints, setLocalPoints] = useState<number | null>(0);
+    const [autoRoll,setAutoRoll] = useState(false)
 
     const [rollButtonVisibility, setRollButtonVisibility] = useState(false)
     const [resetButtonVisibility, setResetButtonVisibility] = useState(false)
@@ -252,6 +253,7 @@ const EmojiSlots = () => {
                         setPointsWonOrLostState(null)
                     },1000)
                 },1000)
+            await new Promise(resolve => setTimeout(resolve, 1000));
             const newCurAmount = parseFloat(localBalance)-amountPerSpin+amountWonOrLost; //still local balance
             const newCurPoints = localPoints + pointsWonOrLost; //still localpoints (by local i mean emojislot's points not user's)
             if(!totalBetAmount) return;
@@ -300,10 +302,17 @@ const EmojiSlots = () => {
     }
     //handle autospin
     const autoSpin = async () => {
-        if(!totalSpinCount || !currentSpinCount || !emojiSlotFromAppState) return;
+        if(!totalSpinCount || currentSpinCount===null || !emojiSlotFromAppState) {
+            console.log("currentSpincount or totalspincount or emojistateformappstate doesn't exist");
+            console.log("currentSpinCount: ",currentSpinCount)
+            console.log("totalSpinCount: ",totalSpinCount)
+            console.log("emojiSlotFromAppState: ",emojiSlotFromAppState)
+            return;
+        };
         const remainingSpins = totalSpinCount-currentSpinCount;
         console.log("autospin remaining lol", remainingSpins)
-        setDisabledRollButton(true)
+        // setDisabledRollButton(true)
+        setRollButtonVisibility(false)
         setAutoSpinButtonVisibility(false)
 
         const asyncProcess = async (i:number,curBal:string,lcLocal:string) => {
@@ -338,6 +347,7 @@ const EmojiSlots = () => {
             // console.log("here 3, currentSpin: ",curSpi, " totalSpin: ",totalSpinCount, "updatedCount: ")
 
             if(currentSpinCount < totalSpinCount){
+                setAutoRoll(true)
                 setNewGameInTheSameSession(true)
                 const winnerEmojis = await getWinner()
                 await new Promise(resolve => setTimeout(resolve, 1500));
@@ -397,8 +407,6 @@ const EmojiSlots = () => {
                         //     dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(currentBalance)+amountWonOrLost).toString()}})    
                         // }
                     }
-                    setDisabledRollButton(false)
-                    // await new Promise(resolve => setTimeout(resolve, 1500));                    
                     setAmountWonOrLostState(null)
                     setAmountNotification(false)
                     // setAmountNotification(true)
@@ -413,6 +421,7 @@ const EmojiSlots = () => {
                 console.log("game finished double slut")
                 setResetButtonVisibility(true)
                 setRollButtonVisibility(false)
+                setAutoRoll(false)
                 // setReset(true)
                 return;
             }
@@ -420,11 +429,16 @@ const EmojiSlots = () => {
         //spin twice 
         for (let i = 0; i < remainingSpins; i++) {
             // console.log("here: lol lol oll")
-            if(!profile || !profile.balance || !emojiSlotFromAppState) return;
+            if(!profile || !profile.balance || !emojiSlotFromAppState) {
+                console.log("no profile: ",profile, " or profile.balance: ",profile?.balance, " or emojiSlotFromAppState: ",emojiSlotFromAppState)
+                return;
+            };
             const curProf = await getProfile(profile.id);
             const curEmojiSlot = await getEmojiSlotById(emojiSlotFromAppState.id);
             if(curProf.data){
                 await asyncProcess(remainingSpins-i, curProf.data.balance || "", curEmojiSlot.data?.currentAmount.toString() || "0");
+            }else{
+                console.log("no curProf.data: ")
             }
             await new Promise(resolve => setTimeout(resolve, 1000));
         }
@@ -448,6 +462,7 @@ const EmojiSlots = () => {
         // await executeSequentially(3);
         setAutoSpinButtonVisibility(true)
         setRollButtonVisibility(true)
+        setAutoRoll(false)
     }
     
     //reset 
@@ -488,6 +503,58 @@ const EmojiSlots = () => {
 
     //handle half balance
         //handleHalf balance
+    // const handleHalfBalance = async () => {
+
+    //     if(!profile || !profile?.balance || profile.balance==="0"){
+    //         console.log("no profile");
+    //         toast({title:"Error",description:"Please fill all fields",variant:"destructive"})
+    //         return;
+    //     }
+    //     setTotalBetAmount(parseFloat(profile?.balance)/2);
+    //     setTotalSpinCount(10);
+    //     setAmountPerSpin(parseFloat(profile?.balance)/(2*10));
+
+    //     const res = await createEmojiSlot({
+    //         id:v4(),
+    //         amount:parseFloat(profile?.balance)/2,
+    //         spinz:10,
+    //         createdAt:new Date().toISOString(),
+    //         profileId:profile?.id,
+    //         currentAmount:parseFloat(profile?.balance)/2,
+    //         currentSpin:0,
+    //         currentEmojis:['💰','💰','💰','💰','💰'].toString(),
+    //         payPerSpin:parseFloat(profile?.balance)/(2*10),
+    //         entryAmount:parseFloat(profile?.balance)/2,
+    //         pnl:0,
+    //         points:0
+    //         })
+    //     if(res.data){
+    //         // setSavedEmojiSlot(true);
+    //         // toast({title:"Success",description:"Slot created successfully"})
+    //         console.log("created emoji slot: ",res.data[0])
+    //         console.log("red.data[0]: ",res.data[0])
+    //         dispatch({type:"SET_EMOJI_SLOT",payload:res.data[0]})
+    //         if(profile?.balance){
+    //             const {data:profileData,error} = await getAndSetBalance({balance:(parseFloat(profile.balance)-(parseFloat(profile?.balance)/2)).toString()},profile.id);
+    //             const {data:getAndSetPointsDataGlobal, error:getAndSetPointsErrorErrorGlobal} = await getAndSetPoints({points:parseFloat(profile.balance)/2},profile.id)
+    //             if(error || getAndSetPointsErrorErrorGlobal){
+    //                 toast({title:"Error",description:"Failed to update balance",variant:"destructive"})
+    //                 console.log("error updating balance: ",error && getAndSetPointsErrorErrorGlobal)
+    //             }
+    //             if(profileData && getAndSetPointsDataGlobal){
+    //                 console.log("successfully updated the balance: ",profileData)
+    //                 dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(profile.balance)-(parseFloat(profile?.balance)/2)).toString()}})
+    //                 // dispatch({type: "UPDATE_USER",payload:{...profile, points:parseFloat(profile.balance)/2}})
+    //             }
+    //         }
+    //         setLocalBalance(res.data[0].entryAmount.toString()) //here
+    //         // setRollButtonVisibility(true)
+    //         setCreateNewGame(false);
+    //     }else{
+    //         toast({title:"Error",description:"Slot creation failed",variant:"destructive"})
+    //     }
+
+    // }
     const handleHalfBalance = async () => {
 
         if(!profile || !profile?.balance || profile.balance==="0"){
@@ -528,6 +595,7 @@ const EmojiSlots = () => {
                 }
                 if(profileData && getAndSetPointsDataGlobal){
                     console.log("successfully updated the balance: ",profileData)
+                    console.log("(parseFloat(profile.balance)-(parseFloat(profile?.balance)/2)).toString(): ",(parseFloat(profile.balance)-(parseFloat(profile?.balance)/2)).toString())
                     dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(profile.balance)-(parseFloat(profile?.balance)/2)).toString()}})
                     dispatch({type: "UPDATE_USER",payload:{...profile, points:parseFloat(profile.balance)/2}})
                 }
@@ -561,7 +629,11 @@ const EmojiSlots = () => {
     //check if there is a saved Emoji slot game and either set it to the saved game or a new game
     useEffect(()=>{
         // console.log("emojiSlotFromAppState: ",emojiSlotFromAppState)
-        if(emojiSlotFromAppState &&  emojiSlotFromAppState.spinz > emojiSlotFromAppState.currentSpin){
+
+        if(emojiSlotFromAppState && autoRoll && emojiSlotFromAppState.spinz>emojiSlotFromAppState?.currentSpin) {
+            setRollButtonVisibility(false)
+        }
+        else if(emojiSlotFromAppState &&  emojiSlotFromAppState.spinz > emojiSlotFromAppState.currentSpin){
             console.log("emoji slot exists and the game hasn't been finished: ", emojiSlotFromAppState)
             setSetButtonVisibility(false)
             setResetButtonVisibility(false)
@@ -693,25 +765,32 @@ const EmojiSlots = () => {
                     </div>
                 </div>
                 <div className='w-full flex flex-col items-center gap-y-6'> 
-                    <div className='flex items-center gap-x-4 border border-white'>
-                        <div className=''>
-                            {amountPerSpin && <div className="text-left">APS: {amountPerSpin?.toFixed(3)}</div>}
+                {/* <div className='module-border-wrap'> */}
+                    {/* <div className='module'> */}
+                        <div className='flex items-center gap-x-4'>
+                            <div className=''>
+                                {amountPerSpin && <div className="text-left">APS: {amountPerSpin?.toFixed(3)}</div>}
+                            </div>
+                            <SlotCounter
+                                startValue={currentEmojis}
+                                startValueOnce={true}
+                                value={currentEmojis}
+                                charClassName='text-4xl'
+                                animateUnchanged
+                                autoAnimationStart={false}
+                                dummyCharacters={emojis}
+                                duration={0.5}
+                                separatorClassName='emojiSeparator'
+                                valueClassName='char'
+                                
+                            />
+                            {currentSpinCount && totalSpinCount && (
+                                <div className="text-right">spinz: {currentSpinCount}/{totalSpinCount}</div>
+                            )}
                         </div>
-                        <SlotCounter
-                            startValue={currentEmojis}
-                            startValueOnce={true}
-                            value={currentEmojis}
-                            charClassName='text-4xl'
-                            animateUnchanged
-                            autoAnimationStart={false}
-                            dummyCharacters={emojis}
-                            duration={0.5}
-                            
-                        />
-                         {currentSpinCount && totalSpinCount && (
-                            <div className="text-right">spinz: {currentSpinCount}/{totalSpinCount}</div>
-                        )}
-                    </div>
+
+                    {/* </div> */}
+                {/* </div> */}
                     {/*  */}
                     <Form {...form}>
                         <form onSubmit={
