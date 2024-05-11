@@ -43,6 +43,20 @@
       "when": 1713406109368,
       "tag": "0005_freezing_falcon",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1715384494974,
+      "tag": "0006_tricky_russian",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1715385066515,
+      "tag": "0007_tranquil_nehzno",
+      "breakpoints": true
     }
   ]
 }

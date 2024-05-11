@@ -1,4 +1,5 @@
 "use client";
+import AdBanner from '@/components/globals/ad-banner';
 import Header from '@/components/main/Header';
 import MobileHeader from '@/components/main/mobile-header';
 import React from 'react'
@@ -15,6 +16,7 @@ const layout:React.FC<LayoutProps> = ({
       <main>
         <Header/>
         <MobileHeader/>
+    <AdBanner/>
             {children}
       </main>
   )

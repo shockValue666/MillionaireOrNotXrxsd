@@ -1,8 +1,8 @@
 "use server";
 import { profile } from "console";
-import { emojiSlot, gamble, hookTransactions, privateTab, profiles, tripleEmojiSlots } from "../../../migrations/schema";
+import { ads, emojiSlot, gamble, hookTransactions, privateTab, profiles, tripleEmojiSlots } from "../../../migrations/schema";
 import db from "./db";
-import { DoubleSlut, EmojiSlot, Gamble, HookTransaction, PrivInfo, Profile, Subscription, TripleSlut } from "./supabase.types";
+import { Ad, DoubleSlut, EmojiSlot, Gamble, HookTransaction, PrivInfo, Profile, Subscription, TripleSlut } from "./supabase.types";
 import { desc, eq } from "drizzle-orm";
 import { doubleEmojiSlots } from "./schema";
 
@@ -464,5 +464,51 @@ export const getAndSetPoints = async (profile:Partial<Profile>, profileId:string
     }catch(err){
         console.log("error at getting and setting points: ",err)
         return {data:null, error:err}
+    }
+}
+
+export const getLatestSlots = async () => {
+    try {
+        const result = await db.query.emojiSlot.findMany({
+            orderBy:desc(emojiSlot.createdAt),
+            limit:10
+        })
+        return {data:result,error:null}
+    } catch (error) {
+        console.log("error at getting latest slots: ",error)
+        return {data:null,error:error}
+    }
+}
+
+export const createAd = async (ad:Ad) => {
+    try {
+        const result = await db.insert(ads).values(ad).returning();
+        return {data:result,error:null}
+    } catch (error) {
+        console.log("error at creating ad: ",error)
+        return {data:null,error:error}
+    }
+}
+
+export const get5LatestAds = async () => {
+    try {
+        const result = await db.query.ads.findMany({
+            orderBy:desc(ads.createdAt),
+            limit:5
+        })
+        return {data:result,error:null}
+    } catch (error) {
+        console.log("error at getting latest ads: ",error)
+        return {data:null,error:error}
+    }
+}
+
+export const updateAd = async (adInstance:Partial<Ad>, adId:string) => {
+    try {
+        const result = await db.update(ads).set(adInstance).where(eq(ads.id,adId)).returning();
+        return {data:result,error:null}
+    } catch (error) {
+        console.log("error at updating ad: ",error)
+        return {data:null,error:error}
     }
 }

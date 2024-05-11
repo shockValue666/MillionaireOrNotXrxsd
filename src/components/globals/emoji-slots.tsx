@@ -10,7 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { CustomInputForEmojiSlots } from '../ui/custom-input-for-emoji-slots';
 import { Button } from '../ui/button';
 import { useToast } from '../ui/use-toast';
-import { createEmojiSlot, getAndSetBalance, getAndSetPoints, getEmojiSlotById, getProfile, updateEmojiSlot, updateProfile } from '@/lib/supabase/queries';
+import { createEmojiSlot, getAndSetBalance, getAndSetPoints, getEmojiSlotById, getLatestSlots, getProfile, updateEmojiSlot, updateProfile } from '@/lib/supabase/queries';
 import { v4 } from 'uuid';
 import AmountNotification from './amount-notification';
 import { Progress } from '../ui/progress';
@@ -300,6 +300,13 @@ const EmojiSlots = () => {
             setRollButtonVisibility(false)
         }
     }
+    useEffect(()=>{
+        const fetchSlots = async () => {
+            const latestEmojiSlots = await getLatestSlots()
+            console.log("latestEmojiSlots: ",latestEmojiSlots)
+        }
+        fetchSlots()
+    })
     //handle autospin
     const autoSpin = async () => {
         if(!totalSpinCount || currentSpinCount===null || !emojiSlotFromAppState) {
@@ -779,7 +786,7 @@ const EmojiSlots = () => {
                                 animateUnchanged
                                 autoAnimationStart={false}
                                 dummyCharacters={emojis}
-                                duration={0.5}
+                                duration={0.35}
                                 separatorClassName='emojiSeparator'
                                 valueClassName='char'
                                 

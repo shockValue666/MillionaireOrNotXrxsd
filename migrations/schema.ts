@@ -191,6 +191,16 @@ export const hookTransactions = pgTable("hook_transactions", {
 	content: text("content").notNull(),
 });
 
+export const copyTradingTransactions = pgTable("copyTradingTransactions", {
+	// You can use { mode: "bigint" } if numbers are exceeding js number limitations
+	id: bigint("id", { mode: "number" }).primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	fromToken: text("from_token"),
+	toToken: text("to_token"),
+	toAmount: doublePrecision("to_amount"),
+	fromAmount: doublePrecision("from_amount"),
+});
+
 export const transactions = pgTable("transactions", {
 	id: uuid("id").defaultRandom().primaryKey().notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
@@ -215,6 +225,21 @@ export const emojiSlot = pgTable("emoji_slot", {
 	entryAmount: doublePrecision("entry_amount").notNull(),
 	pnl: doublePrecision("pnl").notNull(),
 	points: doublePrecision("points").notNull(),
+});
+
+export const ads = pgTable("ads", {
+	id: uuid("id").defaultRandom().primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
+	profileId: uuid("profile_id").notNull().references(() => profiles.id, { onDelete: "cascade" } ),
+	amount: doublePrecision("amount").notNull(),
+	views: integer("views").notNull(),
+	clicks: integer("clicks").notNull(),
+	website: text("website").notNull(),
+	image: text("image").notNull(),
+	description: text("description").notNull(),
+	payPerView: doublePrecision("pay_per_view").notNull(),
+	payPerClick: doublePrecision("pay_per_click").notNull(),
+	title: text("title").notNull(),
 });
 
 export const feeReceivedTransaction = pgTable("fee_received_transaction", {

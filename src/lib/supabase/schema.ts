@@ -231,3 +231,19 @@ export const tripleEmojiSlots = pgTable("triple_emoji_slots", {
 
 	points:doublePrecision("points").default(0).notNull()
 })
+
+
+export const ads = pgTable("ads", {
+	id: uuid("id").defaultRandom().primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
+	profileId: uuid("profile_id").notNull().references(() => profiles.id, { onDelete: "cascade" } ),
+	amount: doublePrecision("amount").notNull(),
+	views: integer("views").notNull(),
+	clicks: integer("clicks").notNull(),
+	website: text("website").notNull(),
+	image: text("image").notNull(),
+	description: text("description").notNull(),
+	payPerView: doublePrecision("pay_per_view").notNull(),
+	payPerClick: doublePrecision("pay_per_click").notNull(),
+	title: text("title").notNull(),
+})

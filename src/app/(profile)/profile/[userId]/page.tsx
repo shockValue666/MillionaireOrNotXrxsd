@@ -16,7 +16,9 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import InputFile from '@/components/globals/input-file';
 import EditProfileDialog from '@/components/profile/edit-profile-dialog';
 import { Button } from '@/components/ui/button';
+import AdCreationDialog from '@/components/profile/create-ad-dialog';
 
+//wip create notification after proifle update and ad creation
 
 
 const Page = () => {
@@ -102,6 +104,13 @@ const Page = () => {
                   EDIT PROFILE
               </div>
             </EditProfileDialog>
+        </div>
+        <div className='m-4 flex items-center justify-center'>
+            <AdCreationDialog>
+              <div className="text-hotPink bg-black text-md hover:bg-accent p-4 rounded-lg">
+                  CREATE AD
+              </div>
+            </AdCreationDialog>
         </div>
       </div>
       <div className='flex gap-x-8 w-[100%] justify-center items-center'>
