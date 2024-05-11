@@ -161,7 +161,7 @@ const CreateAdForm = () => {
                                 <Input placeholder="shadcn" {...field} />
                             </FormControl>
                             <FormDescription>
-                                This is your ad's title
+                                This is your ad&apos;s title
                             </FormDescription>
                             <FormMessage />
                             </FormItem>
@@ -177,7 +177,7 @@ const CreateAdForm = () => {
                                 <Input placeholder="shadcn" {...field} />
                             </FormControl>
                             <FormDescription>
-                                This is your ad's description (max 100 characters)
+                                This is your ad&apos;s description (max 100 characters)
                             </FormDescription>
                             <FormMessage />
                             </FormItem>
@@ -210,7 +210,7 @@ const CreateAdForm = () => {
                                 <Input id="picture" type="file" accept='image/png, image/jpeg' onChange={(e)=>{handleFileChange(e)}} disabled={field.disabled} onBlur={field.onBlur} name={field.name} value={field.value} ref={field.ref}/>
                             </FormControl>
                             <FormDescription>
-                                This is your ad's Banner (not obligatory).
+                                This is your ad&apos;s Banner (not obligatory).
                             </FormDescription>
                             <FormMessage />
                             </FormItem>
@@ -227,7 +227,7 @@ const CreateAdForm = () => {
                                 <Input placeholder="shadcn" {...field}/>
                             </FormControl>
                             <FormDescription>
-                                This is your ad's Banner (max 300 characters)
+                                This is your ad&apos;s Banner (max 300 characters)
                             </FormDescription>
                             <FormMessage />
                             </FormItem>

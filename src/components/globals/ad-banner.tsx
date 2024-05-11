@@ -49,8 +49,8 @@ const AdBanner = () => {
                   <CarouselItem key={index}>
                     <div className='p-1'>
                       <Alert>
-                        {/* <h1 className='relative r-0'>{index}/5</h1> */}
                         <RocketIcon className="h-4 w-4" />
+                        
                         <AlertTitle>{ad.title}</AlertTitle>
                         <AlertDescription>
                             {ad.description}
