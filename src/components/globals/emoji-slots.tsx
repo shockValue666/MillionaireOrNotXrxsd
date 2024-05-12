@@ -14,6 +14,7 @@ import { createEmojiSlot, getAndSetBalance, getAndSetPoints, getEmojiSlotById, g
 import { v4 } from 'uuid';
 import AmountNotification from './amount-notification';
 import { Progress } from '../ui/progress';
+import LocalStats from './local-stats';
 
 
 const emojis = ["😈", "💀", "💩", "💰","🤑"];
@@ -243,6 +244,11 @@ const EmojiSlots = () => {
             console.log("amountWonOrLost from hadnel spin in order to check if the notification works with 0: ",amountWonOrLost)
             setAmountWonOrLostState(amountWonOrLost)
             setPointsWonOrLostState(pointsWonOrLost)
+            // setTimeout(()=>{
+            //     console.log("something here?")
+            // },1000)
+            //time difference between emoji result and balance update
+            await new Promise(resolve => setTimeout(resolve, 1000));
             setTimeout(()=>{
                 setAmountNotification(true)
                 console.log("inside the first", " amountWonOrLostState: ",amountWonOrLostState)
@@ -253,7 +259,7 @@ const EmojiSlots = () => {
                         setPointsWonOrLostState(null)
                     },1000)
                 },1000)
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, 1500));
             const newCurAmount = parseFloat(localBalance)-amountPerSpin+amountWonOrLost; //still local balance
             const newCurPoints = localPoints + pointsWonOrLost; //still localpoints (by local i mean emojislot's points not user's)
             if(!totalBetAmount) return;
@@ -281,7 +287,7 @@ const EmojiSlots = () => {
 
                 console.log("localBalance: ",localBalance, "amountWonOrLost: ",amountWonOrLost, "amountPerSpin: ",amountPerSpin, "parseFloat(localBalance)+amountWonOrLost-amountPerSpin: ",(parseFloat(localBalance)-amountPerSpin+amountWonOrLost), "localPoints: ",localPoints)
 
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                // await new Promise(resolve => setTimeout(resolve, 1000));
                 setLocalBalance((newCurAmount).toString())
                 //todo: make it more secure by error checking for the lasck of localpoints
                 setLocalPoints(newCurPoints)
@@ -770,6 +776,10 @@ const EmojiSlots = () => {
                         <div> Balance: {localBalance && <p>{parseFloat(localBalance).toFixed(2)}</p>}</div>
                         <div> Points: {localPoints && <p>{localPoints.toFixed(2)}</p>}</div>
                     </div>
+                    <div>
+                        new kid on the block
+                        {/* <LocalStats/> */}
+                    </div>
                 </div>
                 <div className='w-full flex flex-col items-center gap-y-6'> 
                 {/* <div className='module-border-wrap'> */}
@@ -786,7 +796,7 @@ const EmojiSlots = () => {
                                 animateUnchanged
                                 autoAnimationStart={false}
                                 dummyCharacters={emojis}
-                                duration={0.35}
+                                duration={0.4}
                                 separatorClassName='emojiSeparator'
                                 valueClassName='char'
                                 
