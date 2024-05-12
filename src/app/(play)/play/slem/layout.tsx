@@ -1,6 +1,7 @@
 "use client";
 import Balance from '@/components/globals/Balance';
 import Points from '@/components/globals/Points';
+import BalanceAndPoints from '@/components/globals/balance-and-points';
 import Header from '@/components/main/Header';
 import MobileHeader from '@/components/main/mobile-header';
 import React from 'react'
@@ -14,11 +15,12 @@ const layout:React.FC<LayoutProps> = ({
 }) => {
   return (
 
-      <main className='border border-yellow-500 us'>
+      <main className=''>
         {/* <Header/>
         <MobileHeader/> */}
-        <Balance/>
-        <Points/>
+        {/* <div className="flex justify-start items-center">
+                <BalanceAndPoints/>
+        </div> */}
             {children}
             <style jsx>{`
                 input, textarea {

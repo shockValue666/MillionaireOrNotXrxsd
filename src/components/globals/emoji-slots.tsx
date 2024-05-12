@@ -15,6 +15,8 @@ import { v4 } from 'uuid';
 import AmountNotification from './amount-notification';
 import { Progress } from '../ui/progress';
 import LocalStats from './local-stats';
+import LocalBalanceAndPoints from './local-balance-and-points';
+import ApsCurrentSpin from './aps-current-spin';
 
 
 const emojis = ["😈", "💀", "💩", "💰","🤑"];
@@ -767,27 +769,27 @@ const EmojiSlots = () => {
             } */}
             <div className={`flex flex-col justify-center align-center border w-[100%] border-white rounded-lg gap-4 p-4 ${!profile ? 'blur-sm' : ""}`}>
                 <div className='flex justify-center items-center'>
+                    <ApsCurrentSpin currentSpin={currentSpinCount || 0} totalSpins={totalSpinCount || 0} aps={parseFloat(amountPerSpin?.toFixed(3) || "0") || 0}/>
                     <p className='w-full text-center'>SLEM</p>
                     <div>
                         <div>
                             {amountNotification  && amountWonOrLostState && <AmountNotification visible={amountNotification} message={amountWonOrLostState.toFixed(2).toString()}/>}
                             {amountWonOrLostState===0 && amountNotification && <AmountNotification visible={amountNotification} message={amountWonOrLostState.toFixed(2).toString()}/>}
                         </div>
-                        <div> Balance: {localBalance && <p>{parseFloat(localBalance).toFixed(2)}</p>}</div>
-                        <div> Points: {localPoints && <p>{localPoints.toFixed(2)}</p>}</div>
-                    </div>
-                    <div>
-                        new kid on the block
-                        {/* <LocalStats/> */}
+                        {/* <div className=''> Balance: {localBalance && <p>{parseFloat(localBalance).toFixed(2)}</p>}</div>
+                        <div className=''> Points: {localPoints && <p>{localPoints.toFixed(2)}</p>}</div> */}
+
+                        <LocalBalanceAndPoints localBalance={localBalance ? parseFloat(localBalance) : 0} localPoints={localPoints ? localPoints : 0}/>
+
                     </div>
                 </div>
                 <div className='w-full flex flex-col items-center gap-y-6'> 
                 {/* <div className='module-border-wrap'> */}
                     {/* <div className='module'> */}
                         <div className='flex items-center gap-x-4'>
-                            <div className=''>
+                            {/* <div className=''>
                                 {amountPerSpin && <div className="text-left">APS: {amountPerSpin?.toFixed(3)}</div>}
-                            </div>
+                            </div> */}
                             <SlotCounter
                                 startValue={currentEmojis}
                                 startValueOnce={true}
@@ -801,9 +803,9 @@ const EmojiSlots = () => {
                                 valueClassName='char'
                                 
                             />
-                            {currentSpinCount && totalSpinCount && (
+                            {/* {currentSpinCount && totalSpinCount && (
                                 <div className="text-right">spinz: {currentSpinCount}/{totalSpinCount}</div>
-                            )}
+                            )} */}
                         </div>
 
                     {/* </div> */}

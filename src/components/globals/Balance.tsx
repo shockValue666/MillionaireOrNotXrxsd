@@ -31,7 +31,7 @@ const Balance: React.FC = () => {
     return (
     <>
         {visible && <div className='relative'>
-            <div className="absolute md:top-20 left-4 top-0 md:left-10 bg-indigo-600 text-white py-2 px-4 rounded-lg shadow-xl flex items-center text-sm md:text-base">
+            <div className="md:top-20 left-4 top-0 md:left-10 bg-black text-hotPink py-2 px-4 rounded-lg shadow-xl flex items-center text-sm md:text-base">
                 <span className="font-bold">Balance: </span>
                 <span className="ml-2 font-semibold">{balance} $USDC</span>
             </div>

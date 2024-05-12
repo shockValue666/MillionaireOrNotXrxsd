@@ -16,7 +16,6 @@ const layout:React.FC<LayoutProps> = ({
       <main className='us'>
         <Header/>
         <MobileHeader/>
-        <Balance/>
             {children}
             <style jsx>{`
                 input, textarea {

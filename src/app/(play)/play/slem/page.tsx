@@ -7,6 +7,7 @@ import React from 'react'
 import ConcurrentGamesNav from '@/components/globals/concurrent-games-nav'
 import SecondSlut from '@/components/globals/second-slut';
 import ThirdSlut from '@/components/globals/third-slut';
+import BalanceAndPoints from '@/components/globals/balance-and-points';
 // import DoubleSluts from '@/components/globals/double-sluts';
 
 const Page = () => {
@@ -16,6 +17,9 @@ const Page = () => {
       <p>{numberOfGames}</p>
       {/* <BiggerOrSmaller checkBalance={false}/>
       <EmojiSlotsComplex/> */}
+      <div className="md:absolute md:left-2 flex justify-start items-center">
+                <BalanceAndPoints/>
+      </div>
       <ConcurrentGamesNav setNumberOfGames={setNumberOfGames}/>
       {numberOfGames===1 && (<EmojiSlots/>) }
       {numberOfGames === 2 && (<div className='flex flex-col lg:flex-row items-center gap-x-4 gap-y-4 w-full lg:w-[50%]'>
