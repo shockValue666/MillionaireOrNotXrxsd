@@ -27,11 +27,11 @@ const LocalBalanceAndPoints:React.FC<LocalBalanceAndPointsProps> = ({localBalanc
 //     },[emojiSlot])
   return (
     <Card className="bg-gradient-to-br from-[#1E1E1E] to-[#2C2C2C] text-white p-3 rounded-lg shadow-lg">
-      <div className="flex gap-x-4 md:gap-x-9 flex-col items-stretch md:items-center">
-        <div className="text-2xl font-bold mb-4">${localBalance}</div>
+      <div className="flex gap-x-4 md:gap-x-9 flex-col items-start justify-center md:items-center">
+        <div className="text-2xl font-bold mb-4">${localBalance?.toFixed(2)}</div>
         <div className="text-lg font-medium">
           <StarIcon className="w-5 h-5 inline-block mr-1 text-yellow-500" />
-          {localPoints} Points
+          {localPoints?.toFixed(2)} Points
         </div>
       </div>
     </Card>

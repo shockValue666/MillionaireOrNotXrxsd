@@ -17,6 +17,7 @@ import { Progress } from '../ui/progress';
 import LocalStats from './local-stats';
 import LocalBalanceAndPoints from './local-balance-and-points';
 import ApsCurrentSpin from './aps-current-spin';
+import JackPot from './jackpot';
 
 
 const emojis = ["😈", "💀", "💩", "💰","🤑"];
@@ -760,6 +761,11 @@ const EmojiSlots = () => {
         {currentSpinCount && totalSpinCount && (<div className='py-4 '>
             <Progress value={(currentSpinCount/totalSpinCount)*100} className='bg-[#3d4552]'/>
         </div>)}
+        
+            <div className='flex justify-center items-center gap-x-6 w-full'>
+                {/* jackpot: <Progress value={30/100} className='bg-[#3d4552]'/> */}
+                {/* i am creating a casino slots app on solana. currently i only need the component which will showcase the jackpot as it's increased in real time. i want it to be fancy inspired by 2017 fortnite and 2017 lil pump blowup */}
+            </div>
         {/* {amountWonOrLostState && (<div> HERE'S THE COCK {amountWonOrLostState}</div>)} */}
             {/* {
                 !user &&

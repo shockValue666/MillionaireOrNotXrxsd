@@ -27,9 +27,9 @@ const BalanceAndPoints = () => {
     },[profile])
   return (
     <Card className="bg-gradient-to-br from-[#1E1E1E] to-[#2C2C2C] text-white p-3 rounded-lg shadow-lg">
-      <div className="flex gap-x-4 md:gap-x-9 md:flex-col items-stretch md:items-center">
-        <div className="text-xl font-bold mb-2">{username}</div>
-        <div className="text-2xl font-bold mb-4">${balance}</div>
+      <div className="flex gap-x-4 md:gap-x-9 md:flex-col items-center md:items-center py-2">
+        <div className="text-xl font-bold ">{username}</div>
+        <div className="text-2xl font-bold ">${balance}</div>
         <div className="text-lg font-medium">
           <StarIcon className="w-5 h-5 inline-block mr-1 text-yellow-500" />
           {points} Points

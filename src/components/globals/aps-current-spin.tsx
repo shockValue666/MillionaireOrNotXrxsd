@@ -12,7 +12,7 @@ const ApsCurrentSpin:React.FC<ApsCurrentSpinProps> = ({aps,currentSpin,totalSpin
   return (
     <Card className="bg-gradient-to-br from-[#1E1E1E] to-[#2C2C2C] text-white p-3 rounded-lg shadow-lg">
       <div className="flex gap-x-4 md:gap-x-9 flex-col items-stretch md:items-center">
-        <div className="text-xl md:text-2xl font-bold mb-4">APS: {aps}</div>
+        <div className="text-xl md:text-2xl font-bold mb-4">APS: {aps.toFixed(2)}</div>
         <div className="text-md md:text-lg font-medium">
           {currentSpin}/{totalSpins} 
         </div>
