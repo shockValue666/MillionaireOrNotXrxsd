@@ -133,3 +133,25 @@ body{
   padding: 0 10px;
   /* background: #eee; */
 }
+
+/* styles.css or within your Tailwind CSS file */
+.video-container {
+  position: relative;
+  /* Relative positioning to contain the absolute video */
+  z-index: -1;
+  /* Keep the video behind other content */
+  height: 100vh;
+  /* Full viewport height */
+  overflow: hidden;
+  /* Prevents overflow */
+}
+
+.background-video {
+  width: 100%;
+  /* Full width */
+  height: 100%;
+  /* Full height */
+  object-fit: cover;
+  /* Cover the whole area without losing aspect ratio */
+}
+

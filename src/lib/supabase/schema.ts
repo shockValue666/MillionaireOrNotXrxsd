@@ -1,6 +1,6 @@
 //NOTE: idk i just copied the web/migrations/schema.ts file it may work better with type safety
 import { pgTable, unique, pgEnum, uuid, timestamp, text, foreignKey, jsonb, boolean, bigint, integer, doublePrecision } from "drizzle-orm/pg-core"
-  import { sql } from "drizzle-orm"
+  import { desc, sql } from "drizzle-orm"
 
 export const keyStatus = pgEnum("key_status", ['expired', 'invalid', 'valid', 'default'])
 export const keyType = pgEnum("key_type", ['stream_xchacha20', 'secretstream', 'secretbox', 'kdf', 'generichash', 'shorthash', 'auth', 'hmacsha256', 'hmacsha512', 'aead-det', 'aead-ietf'])
@@ -246,4 +246,20 @@ export const ads = pgTable("ads", {
 	payPerView: doublePrecision("pay_per_view").notNull(),
 	payPerClick: doublePrecision("pay_per_click").notNull(),
 	title: text("title").notNull(),
+})
+
+
+
+
+export const bets = pgTable("bets", {
+	id: uuid("id").defaultRandom().primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
+	profileId: uuid("profile_id").notNull().references(() => profiles.id, { onDelete: "cascade" } ),
+	betAmount: doublePrecision("bet_amount").notNull(),
+	targetValue: doublePrecision("target_value").notNull(),
+	achievedValue: doublePrecision("achieved_value").notNull(),
+	// outcomeId: uuid("outcome_id").notNull().references(() => outcomes.id, { onDelete: "cascade" } ),
+	status: text("status").notNull().default("pending"),
+	description: text("description").notNull(),
+
 })

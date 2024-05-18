@@ -73,7 +73,7 @@ const Page = () => {
         if(profile && profile?.avatar){
           setNewProfilePicture(profile.avatar)
           console.log("profile.avatar: ",profile.avatar)
-          // const {data,error} = await supabase.storage.from('avatars').upload(`${user?.id}.png`,event.target.files?.[0] as File,{upsert:true});
+          // const {data,error} = await supabase.storage.from('avatars').upload(`${user?.id}.png`,eve/nt.target.files?.[0] as File,{upsert:true});
           // const getIt = supabase.storage.from('avatars').getPublicUrl(response.avatarUrl).data.publicUrl : ""
           // const getIt = supabase.storage.from('avatars').getPublicUrl()
         }
