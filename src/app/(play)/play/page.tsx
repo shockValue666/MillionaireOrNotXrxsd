@@ -40,7 +40,7 @@ const games = [
     //i represent the cocks with progress bars from shadcn ui 
     title: 'bigger c*ck wins',
     description: 'Description of Game 3...',
-    url: '/play/experimental',
+    url: '/play/bigger',
     image:CockFirst
     // Add more details as needed
   },

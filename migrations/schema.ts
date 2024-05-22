@@ -12,6 +12,7 @@ export const pricingPlanInterval = pgEnum("pricing_plan_interval", ['day', 'week
 export const subscriptionStatus = pgEnum("subscription_status", ['trialing', 'active', 'canceled', 'incomplete', 'incomplete_expired', 'past_due', 'unpaid'])
 export const equalityOp = pgEnum("equality_op", ['eq', 'neq', 'lt', 'lte', 'gt', 'gte', 'in'])
 export const action = pgEnum("action", ['INSERT', 'UPDATE', 'DELETE', 'TRUNCATE', 'ERROR'])
+export const oneTimeTokenType = pgEnum("one_time_token_type", ['confirmation_token', 'reauthentication_token', 'recovery_token', 'email_change_token_new', 'email_change_token_current', 'phone_change_token'])
 
 
 export const profiles = pgTable("profiles", {
@@ -240,6 +241,17 @@ export const ads = pgTable("ads", {
 	payPerView: doublePrecision("pay_per_view").notNull(),
 	payPerClick: doublePrecision("pay_per_click").notNull(),
 	title: text("title").notNull(),
+});
+
+export const bets = pgTable("bets", {
+	id: uuid("id").defaultRandom().primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
+	profileId: uuid("profile_id").notNull().references(() => profiles.id, { onDelete: "cascade" } ),
+	betAmount: doublePrecision("bet_amount").notNull(),
+	targetValue: doublePrecision("target_value").notNull(),
+	achievedValue: doublePrecision("achieved_value").notNull(),
+	status: text("status").default('pending').notNull(),
+	description: text("description").notNull(),
 });
 
 export const feeReceivedTransaction = pgTable("fee_received_transaction", {
