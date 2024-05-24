@@ -1,8 +1,8 @@
 "use server";
 import { profile } from "console";
-import { ads, emojiSlot, gamble, hookTransactions, privateTab, profiles, tripleEmojiSlots } from "../../../migrations/schema";
+import { ads, cumBets, emojiSlot, gamble, hookTransactions, privateTab, profiles, tripleEmojiSlots } from "../../../migrations/schema";
 import db from "./db";
-import { Ad, DoubleSlut, EmojiSlot, Gamble, HookTransaction, PrivInfo, Profile, Subscription, TripleSlut } from "./supabase.types";
+import { Ad, CumBet, DoubleSlut, EmojiSlot, Gamble, HookTransaction, PrivInfo, Profile, Subscription, TripleSlut } from "./supabase.types";
 import { desc, eq } from "drizzle-orm";
 import { doubleEmojiSlots } from "./schema";
 
@@ -509,6 +509,50 @@ export const updateAd = async (adInstance:Partial<Ad>, adId:string) => {
         return {data:result,error:null}
     } catch (error) {
         console.log("error at updating ad: ",error)
+        return {data:null,error:error}
+    }
+}
+
+export const createCumBet = async (cumBet:CumBet) => {
+    try {
+        const result = await db.insert(cumBets).values(cumBet).returning();
+        return {data:result,error:null}
+    } catch (error) {
+        console.log("error at creating cum bet: ",error)
+        return {data:null,error:error}
+    }
+}
+
+export const updateCumBet = async (cumBetInstance:Partial<CumBet>, cumBetId:string) => {
+    try {
+        const result = await db.update(cumBets).set(cumBetInstance).where(eq(cumBets.id,cumBetId)).returning();
+        return {data:result,error:null}
+    } catch (error) {
+        console.log("error at updating cum bet: ",error)
+        return {data:null,error:error}
+    }
+}
+
+export const getCumBetById = async (id:string) => {
+    try {
+        const result = await db.query.cumBets.findFirst({
+            where:((cumBet,{eq})=> eq(cumBet.id,id))
+        })
+        return {data:result,error:null}
+    } catch (error) {
+        console.log("error at getting cum bet: ",error)
+        return {data:null,error:error}
+    }
+}
+
+export const getCumBetsForUser = async (profileId:string) => {
+    try {
+        const result = await db.query.cumBets.findMany({
+            where:((cumBet,{eq})=> eq(cumBet.profileId,profileId))
+        })
+        return {data:result,error:null}
+    } catch (error) {
+        console.log("error at getting cum bets for user: ",error)
         return {data:null,error:error}
     }
 }

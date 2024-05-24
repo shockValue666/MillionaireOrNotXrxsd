@@ -155,3 +155,23 @@ body{
   /* Cover the whole area without losing aspect ratio */
 }
 
+/* Picker.css */
+.picker-container {
+  font-size: 16px;
+  /* Prevent zoom on mobile */
+}
+
+.picker-item {
+  height: 40px;
+  /* Height of each picker item */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ensure that the container does not trigger automatic page zoom on focus in iOS */
+input,
+select,
+textarea {
+  font-size: 16px;
+}

@@ -202,6 +202,17 @@ export const copyTradingTransactions = pgTable("copyTradingTransactions", {
 	fromAmount: doublePrecision("from_amount"),
 });
 
+export const cumBets = pgTable("cum_bets", {
+	id: uuid("id").defaultRandom().primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
+	profileId: uuid("profile_id").notNull().references(() => profiles.id, { onDelete: "cascade" } ),
+	betAmount: doublePrecision("bet_amount").notNull(),
+	targetValue: doublePrecision("target_value").notNull(),
+	achievedValue: doublePrecision("achieved_value").notNull(),
+	status: text("status").default('pending').notNull(),
+	description: text("description").notNull(),
+});
+
 export const transactions = pgTable("transactions", {
 	id: uuid("id").defaultRandom().primaryKey().notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),

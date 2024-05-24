@@ -263,3 +263,15 @@ export const bets = pgTable("bets", {
 	description: text("description").notNull(),
 
 })
+
+export const cumBets = pgTable("cum_bets", {
+	id: uuid("id").defaultRandom().primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
+	profileId: uuid("profile_id").notNull().references(() => profiles.id, { onDelete: "cascade" } ),
+	betAmount: doublePrecision("bet_amount").notNull(),
+	targetValue: doublePrecision("target_value").notNull(),
+	achievedValue: doublePrecision("achieved_value").notNull(),
+	// outcomeId: uuid("outcome_id").notNull().references(() => outcomes.id, { onDelete: "cascade" } ),
+	status: text("status").notNull().default("pending"),
+	description: text("description").notNull(),
+})

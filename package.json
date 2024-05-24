@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "uploadtomux" : "npx next-video sync"
+    "uploadtomux": "npx next-video sync"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
@@ -26,6 +26,7 @@
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-toast": "^1.1.5",
+    "@scena/react-ruler": "^0.19.0",
     "@solana/spl-token": "^0.2.0",
     "@solana/wallet-adapter-base": "^0.9.7",
     "@solana/wallet-adapter-react": "^0.15.6",

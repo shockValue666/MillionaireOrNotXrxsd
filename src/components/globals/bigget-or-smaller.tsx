@@ -191,11 +191,11 @@ const BiggerOrSmaller:React.FC<BiggerOrSmallerProps> = ({
                         </form>
                     </Form>
                     {/*  */}
-                    {!reset && <Button disabled={!amount || disableRollButton} className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
+                    {!reset && <Button disabled={!amount || disableRollButton} className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent  hover:text-hotPink text-hotPink text-2xl' 
                     onClick={() => {getRandomWinner(); console.log("pressed winner: ", winner);}}>
                         ROLL
                     </Button>}
-                    {reset && <Button disabled={!amount} className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent hover:text-accent-foreground hover:text-hotPink text-hotPink text-2xl' 
+                    {reset && <Button disabled={!amount} className='rounded-full border border-hotPink w-[50%] bg-black hover:bg-accent  hover:text-hotPink text-hotPink text-2xl' 
                     onClick={() => {resetTheGame();}}>
                         RESET
                     </Button>}
