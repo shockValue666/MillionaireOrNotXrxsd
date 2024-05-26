@@ -32,6 +32,7 @@ const EmojiSlots = () => {
     const [currentSpinCount, setCurrentSpinCount] = useState<number | null>(null)
     const [amountPerSpin, setAmountPerSpin] = useState<number | null>(null)
     const [currentEmojis, setCurrentEmojis] = useState<string[]>(['💰','💰','💰','💰','💰'])
+    const [emojiCountLocal, setEmojiCountLocal] = useState<number>(0);
     
     const [localBalance, setLocalBalance] = useState<string | null>("0")
     const [localPoints, setLocalPoints] = useState<number | null>(0);
@@ -135,6 +136,7 @@ const EmojiSlots = () => {
 
         const uniqueEmojis = Object.keys(emojiCount).length;
         console.log("emoji count: ",emojiCount)
+        // setEmojiCountLocal(emojiCount)
         if(uniqueEmojis === 1){
             return amountPerSpin*10;
             // return amountPerSpin*0.5;
@@ -644,9 +646,10 @@ const EmojiSlots = () => {
     }
     //check if there is a saved Emoji slot game and either set it to the saved game or a new game
     useEffect(()=>{
-        // console.log("emojiSlotFromAppState: ",emojiSlotFromAppState)
+        // console.log("emojiSlotFromAppState inside the fucking shit: ",emojiSlotFromAppState)
 
         if(emojiSlotFromAppState && autoRoll && emojiSlotFromAppState.spinz>emojiSlotFromAppState?.currentSpin) {
+            console.log("emojislot exists and autorll too and the game hasn't been finished: ", emojiSlotFromAppState)
             setRollButtonVisibility(false)
         }
         else if(emojiSlotFromAppState &&  emojiSlotFromAppState.spinz > emojiSlotFromAppState.currentSpin){
@@ -730,6 +733,13 @@ const EmojiSlots = () => {
             setDisableInputs(false)
             // setDisabled(false)
             // setReset(true)
+        }else if (emojiSlotFromAppState && emojiSlotFromAppState.spinz === emojiSlotFromAppState.currentSpin && emojiSlotFromAppState.currentAmount===0) {
+            
+            console.log("game finished and the payouts have been settled and we have to create a new game")
+            setSetButtonVisibility(true)
+            setRollButtonVisibility(false)
+            setDisableInputs(false)
+
         }
     },[emojiSlotFromAppState])
 
@@ -773,6 +783,12 @@ const EmojiSlots = () => {
                     <Auth>LOG IN TO PLAY</Auth>
                 </div>
             } */}
+            <div>
+                here
+                {emojiCountLocal!==0 && (<div>
+                    some shit {emojiCountLocal}
+                </div>)}
+            </div>
             <div className={`flex flex-col justify-center align-center border w-[100%] border-white rounded-lg gap-4 p-4 ${!profile ? 'blur-sm' : ""}`}>
                 <div className='flex justify-center items-center'>
                     <ApsCurrentSpin currentSpin={currentSpinCount || 0} totalSpins={totalSpinCount || 0} aps={parseFloat(amountPerSpin?.toFixed(3) || "0") || 0}/>

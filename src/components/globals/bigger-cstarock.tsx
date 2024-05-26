@@ -10,7 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '../ui/button';
 import SlotCounter from 'react-slot-counter';
 import LocalBalanceAndPoints from './local-balance-and-points';
-import { createCumBet } from '@/lib/supabase/queries';
+import { createCumBet, updateCumBet, updateProfile } from '@/lib/supabase/queries';
 import { v4 } from 'uuid';
 import { useAppState } from '@/lib/providers/state-provider';
 import { EmojiSelect } from './emoji-select';
@@ -32,8 +32,10 @@ const BiggerCo = () => {
   const [localBalance, setLocalBalance] = useState<string | null>("0")
   const [localPoints, setLocalPoints] = useState<number | null>(0);
   const [autoRoll,setAutoRoll] = useState(false)
+  const [disableSetButton,setDisableSetButton] = useState(false)
+  const [disableCumButton,setDisableCumButton] = useState(true)
   
-  const {profile} = useAppState();
+  const {profile,cumBet,dispatch} = useAppState();
 
 
   const form = useForm<z.infer<typeof BiggerCoSchema>>({
@@ -43,7 +45,7 @@ const BiggerCo = () => {
   })
   const isLoading = form.formState.isSubmitting;
   const onSubmit:SubmitHandler<z.infer<typeof BiggerCoSchema>> = async (data) => {
-    if(!profile){
+    if(!profile || !profile?.balance || parseFloat(profile?.balance) < parseFloat(data.amount)){
       console.log("no profile in bigger cock")
       return;
     }
@@ -58,13 +60,31 @@ const BiggerCo = () => {
       targetValue:6,
       achievedValue:0,
       description:"",
-      status:"pending"
+      status:"pending",
+      cumBetBalance:parseFloat(data.amount)
     })
     if(createCumBetError || !createCumBetData){
       console.log("error at creating cumbet");
       return;
     }
+    
+    dispatch({
+      type:"SET_CUM_BET",
+      payload:createCumBetData[0]
+    })
+    setDisableSetButton(true)
     //update balance or some shit
+    const {data:updateProfileData,error:updateProfileError} = await updateProfile({balance:(parseFloat(profile?.balance)-parseFloat(data.amount)).toString()},profile.id)
+    if(updateProfileError || !updateProfileData){
+      console.log("couldn't update user after creating cumbet");
+      return;
+    }
+    dispatch({
+      type:"UPDATE_USER",
+      payload:{...profile,balance:(parseFloat(profile?.balance)-parseFloat(data.amount)).toString()}
+    })
+
+
   }
   const cum = async () => {
     console.log("cum")
@@ -78,6 +98,49 @@ const BiggerCo = () => {
     setInchesValue(assignedValue)
 
     ///WIP UPDATE cumBet
+    if(!profile || !cumBet){
+      console.log("profile or cumbet don't exist inside cum");
+      return;
+    }
+    if(result>cumBet.targetValue){
+      console.log("won")
+      const {data:updateCumBetData,error:updateCumBetError} = await updateCumBet({status:"won",cumBetBalance:0},cumBet.id)
+      if(updateCumBetError || !updateCumBetData){
+        console.log("error at updating cumbet");
+        return;
+      }
+      dispatch({
+        type:"UPDATE_CUM_BET",
+        payload:updateCumBetData[0]
+      })
+
+      //update profile BALANCE
+      const {data:updateProfileData,error:updateProfileError} = await updateProfile({balance:(parseFloat(profile?.balance || "0")+cumBet.betAmount).toString()},profile.id)
+      if(updateProfileError || !updateProfileData){
+        console.log("error at updating profile balance");
+        return;
+      }
+      dispatch({
+        type:"UPDATE_USER",
+        payload:{...profile,balance:(parseFloat(profile?.balance || "0")+cumBet.betAmount).toString()}
+      })
+    }else if(result<cumBet.targetValue){
+      console.log("lost")
+      const {data:updateCumBetData,error:updateCumBetError} = await updateCumBet({status:"lost",cumBetBalance:cumBet.betAmount},cumBet.id)
+      if(updateCumBetError || !updateCumBetData){
+        console.log("error at updating cumbet");
+        return;
+      }
+      dispatch({
+        type:"UPDATE_CUM_BET",
+        payload:updateCumBetData[0]
+      })
+      //update profile BALANCE
+      // const {data:updateProfileData,error:updateProfileError} = await updateProfile({balance:(parseFloat(profile?.balance || "0")).toString()},profile.id)
+      //actually there is not need to update the balance if the user lost
+    }else{
+      console.log("house won")
+    }
   }
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -88,7 +151,10 @@ const BiggerCo = () => {
 
   useEffect(()=>{
     console.log("amount changed: ",amount)
-  },[amount])
+    if(cumBet){
+      console.log("cumBet :",cumBet)
+    }
+  },[amount,cumBet])
   return (
     <div className='border flex-col gap-4 border-white flex justify-center items-center p-4'>
         <h1>dickcel or BBCchad</h1>
@@ -139,7 +205,7 @@ const BiggerCo = () => {
               )}
               />
               <Button 
-              // disabled={!choice || disabled} 
+              disabled={disableSetButton} 
               type="submit">set</Button>
           </form>
       </Form>

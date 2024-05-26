@@ -211,6 +211,7 @@ export const cumBets = pgTable("cum_bets", {
 	achievedValue: doublePrecision("achieved_value").notNull(),
 	status: text("status").default('pending').notNull(),
 	description: text("description").notNull(),
+	cumBetBalance: doublePrecision("cum_bet_balance"),
 });
 
 export const transactions = pgTable("transactions", {

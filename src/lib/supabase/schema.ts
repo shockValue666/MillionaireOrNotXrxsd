@@ -274,4 +274,5 @@ export const cumBets = pgTable("cum_bets", {
 	// outcomeId: uuid("outcome_id").notNull().references(() => outcomes.id, { onDelete: "cascade" } ),
 	status: text("status").notNull().default("pending"),
 	description: text("description").notNull(),
+	cumBetBalance: doublePrecision("cum_bet_balance").default(0),
 })

@@ -556,3 +556,16 @@ export const getCumBetsForUser = async (profileId:string) => {
         return {data:null,error:error}
     }
 }
+
+export const getCumBetLatest = async (profileId:string) => {
+    try {
+        const result = await db.query.cumBets.findFirst({
+            where:((cumBet,{eq})=> eq(cumBet.profileId,profileId)),
+            orderBy:desc(cumBets.createdAt)
+        })
+        return {data:result,error:null}
+    } catch (error) {
+        console.log("error at getting cum bet: ",error)
+        return {data:null,error:error}
+    }
+}

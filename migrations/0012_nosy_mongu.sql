@@ -1,0 +1,1 @@
+ALTER TABLE "cum_bets" ALTER COLUMN "cum_bet_balance" SET DEFAULT 0;

@@ -71,6 +71,27 @@
       "when": 1716507345839,
       "tag": "0009_damp_inhumans",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1716602929393,
+      "tag": "0010_blue_shotgun",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1716602959209,
+      "tag": "0011_fine_charles_xavier",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "5",
+      "when": 1716603005606,
+      "tag": "0012_nosy_mongu",
+      "breakpoints": true
     }
   ]
 }

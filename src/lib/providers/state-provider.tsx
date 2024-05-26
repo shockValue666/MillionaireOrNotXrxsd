@@ -11,9 +11,9 @@ import React, {
   useReducer,
 } from 'react';
 // import { Users } from '../supabase/supabase.types';
-import {DoubleSlut, EmojiSlot, Gamble, Profile, TripleSlut} from '../supabase/supabase.types'
+import {CumBet, DoubleSlut, EmojiSlot, Gamble, Profile, TripleSlut} from '../supabase/supabase.types'
 import { usePathname } from 'next/navigation';
-import { getDoubleSlutLatest, getEmojiSlotLatest, getLatestGamble, getProfile, getTripleSlutLatest } from '../supabase/queries';
+import { getCumBetLatest, getDoubleSlutLatest, getEmojiSlotLatest, getLatestGamble, getProfile, getTripleSlutLatest } from '../supabase/queries';
 import { useSupabaseUser } from './supabase-user-provider';
 import { gamble } from '../../../migrations/schema';
 
@@ -23,6 +23,7 @@ interface AppState {
     doubleSlutLocal:DoubleSlut | null;
     tripleSlutLocal:TripleSlut | null;
     gambleLocal:Gamble | null;
+    cumBet:CumBet | null;
 }
 
 type Action = 
@@ -41,8 +42,11 @@ type Action =
     | {type:"SET_TRIPLE_SLUT",payload:TripleSlut}
     | {type:"UPDATE_TRIPLE_SLUT",payload:TripleSlut}
     | {type:"DELETE_TRIPLE_SLUT",payload:TripleSlut | null}
+    | {type:"SET_CUM_BET",payload:CumBet}
+    | {type:"UPDATE_CUM_BET",payload:CumBet}
+    | {type:"DELETE_CUM_BET",payload:CumBet | null}
 
-const initialState: AppState = { userLocal: null, emojiSlotLocal:null,gambleLocal:null,doubleSlutLocal:null,tripleSlutLocal:null};
+const initialState: AppState = { userLocal: null, emojiSlotLocal:null,gambleLocal:null,doubleSlutLocal:null,tripleSlutLocal:null,cumBet:null};
 
 const appReducer = (
     state: AppState = initialState,
@@ -74,12 +78,18 @@ const appReducer = (
             return { ...state, doubleSlutLocal: action.payload };
         case "DELETE_DOUBLE_SLUT":
             return { ...state, doubleSlutLocal: null };
-          case "SET_TRIPLE_SLUT":
+        case "SET_TRIPLE_SLUT":
             return { ...state, tripleSlutLocal: action.payload };
         case "UPDATE_TRIPLE_SLUT":
             return { ...state, tripleSlutLocal: action.payload };
         case "DELETE_TRIPLE_SLUT":
             return { ...state, tripleSlutLocal: null };
+        case "SET_CUM_BET":
+            return { ...state, cumBet: action.payload };
+        case "UPDATE_CUM_BET":
+            return { ...state, cumBet: action.payload };
+        case "DELETE_CUM_BET":
+            return { ...state, cumBet: null };
         default:
             return state;
     }
@@ -95,6 +105,7 @@ const AppStateContext = createContext<
       gamble:Gamble | null;
       doubleSlut:DoubleSlut | null;
       tripleSlut:TripleSlut | null;
+      cumBet:CumBet | null;
     }
   | undefined
 >(undefined);
@@ -148,6 +159,9 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
     },[state])
     const usTripleSlut = useMemo(()=>{
       return state.tripleSlutLocal
+    },[state])
+    const usCumBet = useMemo(()=>{
+      return state.cumBet
     },[state])
 
   
@@ -231,6 +245,19 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
             payload:{...tripleSlutData }
           })
         }
+
+        const {data:cumBetData, error:cumBetError} = await getCumBetLatest(profileId)
+        if(cumBetError || !cumBetData){
+          console.log("error at getting the cumbet at state-provider: ",cumBetError)
+          return;
+        }
+        if(cumBetData){
+          console.log("cumBetData: ",cumBetData);
+          dispatch({
+            type:"SET_CUM_BET",
+            payload:{...cumBetData}
+          })
+        }
       };
       fetchProfile();
     }, [profileId]);//fetch the files when the folderId or the workspaceId changes
@@ -242,7 +269,7 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
   
     return (
       <AppStateContext.Provider
-        value={{ state, dispatch, userId: profileId, profile:usProf, emojiSlot:usEmojiSlot, gamble:usGamble, doubleSlut:usDoubleSlut, tripleSlut:usTripleSlut}}
+        value={{ state, dispatch, userId: profileId, profile:usProf, emojiSlot:usEmojiSlot, gamble:usGamble, doubleSlut:usDoubleSlut, tripleSlut:usTripleSlut,cumBet:usCumBet}}
       >
         {children}
       </AppStateContext.Provider>
