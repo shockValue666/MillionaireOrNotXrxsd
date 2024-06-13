@@ -1,1 +1,0 @@
-ALTER TABLE "cum_bets" ALTER COLUMN "cum_bet_balance" DROP NOT NULL;

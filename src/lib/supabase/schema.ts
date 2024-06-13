@@ -276,3 +276,51 @@ export const cumBets = pgTable("cum_bets", {
 	description: text("description").notNull(),
 	cumBetBalance: doublePrecision("cum_bet_balance").default(0),
 })
+
+export const newCopyTradingTransaction = pgTable("new_copy_trading_transaction", {
+	id: uuid("id").defaultRandom().primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
+	swapperAddress: text("swapper_address").notNull(),
+	tokenInSymbol: text("token_in_symbol").notNull(),
+	tokenInAmount: text("token_in_amount").notNull(),
+	tokenInMint: text("token_in_mint").notNull(),
+	tokenOutSymbol: text("token_out_symbol").notNull(),
+	tokenOutAmount: text("token_out_amount").notNull(),
+	tokenOutMint: text("token_out_mint").notNull(),
+	pricePerToken: doublePrecision("price_per_token").notNull(),
+	swapDescription: text("swap_description").notNull(),
+	txId: text("tx_id"),
+	type: text("type").default("none"),
+	swapperAddressId: uuid("swapper_address_id").references(() => newCopyTradingAddresses.id, { onDelete: "cascade" } ),
+	currentSolPrice: doublePrecision("current_sol_price"),
+	tokenId: uuid("token_id").references(() => newCopyTradingCoinsOfOwners.id, { onDelete: "cascade" } ),
+	typeOfSwap: text("type_of_swap").default("none"),
+	amountBoughtInSol: doublePrecision("amount_bought_in_sol"),
+	amountSoldInSol: doublePrecision("amount_sold_in_sol"),
+	amountBoughtInUsdc: doublePrecision("amount_bought_in_usdc"),
+	amountSoldInUsdc: doublePrecision("amount_sold_in_usdc"),
+})
+
+export const newCopyTradingAddresses = pgTable("new_copy_trading_addresses", {
+	id: uuid("id").defaultRandom().primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
+	address: text("swapper_address").notNull(),
+	// wip: add the profile id here, and the followers
+	description: text("description").notNull(),
+})
+	
+export const newCopyTradingCoinsOfOwners = pgTable("new_copy_trading_coins_of_owners", {
+	id: uuid("id").defaultRandom().primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
+	tokenSymbol: text("token_symbol").notNull(),
+	tokenAmount: doublePrecision("token_amount").notNull(),
+	tokenMint: text("token_mint").notNull(),
+	owner: uuid("owner").notNull().references(() => newCopyTradingAddresses.id, { onDelete: "cascade" } ),
+	// priceBought: doublePrecision("price_bought").notNull(),
+	// priceSold: doublePrecision("price_sold").notNull(),
+	// currentPriceOfPosition: doublePrecision("current_price_of_position").notNull(),
+	totalAmountBoughtInSol: doublePrecision("total_amount_bought_in_sol").notNull(),
+	totalAmountSoldInSol: doublePrecision("total_amount_sold_in_sol").notNull(),
+	totalAmountBoughtInUsdc: doublePrecision("total_amount_bought_in_usdc").notNull(),
+	totalAmountSoldInUsdc: doublePrecision("total_amount_sold_in_usdc").notNull(),
+})

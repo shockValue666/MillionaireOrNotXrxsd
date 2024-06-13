@@ -1,6 +1,6 @@
 {
-  "id": "b504ae87-7582-4b17-8f1e-ea825dd1cb4c",
-  "prevId": "9e9e621a-11f2-4cf7-abb2-8c40f38eb45a",
+  "id": "2de5862b-2498-4f2b-abd8-44c3589f0e6e",
+  "prevId": "6d701db9-7c83-4d59-917f-8a6a8d031ea0",
   "version": "5",
   "dialect": "pg",
   "tables": {
@@ -42,6 +42,177 @@
           "tableTo": "users",
           "columnsFrom": [
             "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "ads": {
+      "name": "ads",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "profile_id": {
+          "name": "profile_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amount": {
+          "name": "amount",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "views": {
+          "name": "views",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "clicks": {
+          "name": "clicks",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "website": {
+          "name": "website",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "image": {
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pay_per_view": {
+          "name": "pay_per_view",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pay_per_click": {
+          "name": "pay_per_click",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "ads_profile_id_profiles_id_fk": {
+          "name": "ads_profile_id_profiles_id_fk",
+          "tableFrom": "ads",
+          "tableTo": "profiles",
+          "columnsFrom": [
+            "profile_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "bets": {
+      "name": "bets",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "profile_id": {
+          "name": "profile_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bet_amount": {
+          "name": "bet_amount",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "target_value": {
+          "name": "target_value",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "achieved_value": {
+          "name": "achieved_value",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'pending'"
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "bets_profile_id_profiles_id_fk": {
+          "name": "bets_profile_id_profiles_id_fk",
+          "tableFrom": "bets",
+          "tableTo": "profiles",
+          "columnsFrom": [
+            "profile_id"
           ],
           "columnsTo": [
             "id"
@@ -101,6 +272,87 @@
           ]
         }
       }
+    },
+    "cum_bets": {
+      "name": "cum_bets",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "profile_id": {
+          "name": "profile_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bet_amount": {
+          "name": "bet_amount",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "target_value": {
+          "name": "target_value",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "achieved_value": {
+          "name": "achieved_value",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'pending'"
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cum_bet_balance": {
+          "name": "cum_bet_balance",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "cum_bets_profile_id_profiles_id_fk": {
+          "name": "cum_bets_profile_id_profiles_id_fk",
+          "tableFrom": "cum_bets",
+          "tableTo": "profiles",
+          "columnsFrom": [
+            "profile_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
     },
     "customers": {
       "name": "customers",
@@ -524,6 +776,292 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "new_copy_trading_addresses": {
+      "name": "new_copy_trading_addresses",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "swapper_address": {
+          "name": "swapper_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "new_copy_trading_coins_of_owners": {
+      "name": "new_copy_trading_coins_of_owners",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "token_symbol": {
+          "name": "token_symbol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_amount": {
+          "name": "token_amount",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_mint": {
+          "name": "token_mint",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "owner": {
+          "name": "owner",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total_amount_bought_in_sol": {
+          "name": "total_amount_bought_in_sol",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total_amount_sold_in_sol": {
+          "name": "total_amount_sold_in_sol",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total_amount_bought_in_usdc": {
+          "name": "total_amount_bought_in_usdc",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total_amount_sold_in_usdc": {
+          "name": "total_amount_sold_in_usdc",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "new_copy_trading_coins_of_owners_owner_new_copy_trading_addresses_id_fk": {
+          "name": "new_copy_trading_coins_of_owners_owner_new_copy_trading_addresses_id_fk",
+          "tableFrom": "new_copy_trading_coins_of_owners",
+          "tableTo": "new_copy_trading_addresses",
+          "columnsFrom": [
+            "owner"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "new_copy_trading_transaction": {
+      "name": "new_copy_trading_transaction",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "swapper_address": {
+          "name": "swapper_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_in_symbol": {
+          "name": "token_in_symbol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_in_amount": {
+          "name": "token_in_amount",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_in_mint": {
+          "name": "token_in_mint",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_out_symbol": {
+          "name": "token_out_symbol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_out_amount": {
+          "name": "token_out_amount",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_out_mint": {
+          "name": "token_out_mint",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price_per_token": {
+          "name": "price_per_token",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "swap_description": {
+          "name": "swap_description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tx_id": {
+          "name": "tx_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'none'"
+        },
+        "swapper_address_id": {
+          "name": "swapper_address_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "current_sol_price": {
+          "name": "current_sol_price",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "token_id": {
+          "name": "token_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type_of_swap": {
+          "name": "type_of_swap",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'none'"
+        },
+        "amount_bought_in_sol": {
+          "name": "amount_bought_in_sol",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "amount_sold_in_sol": {
+          "name": "amount_sold_in_sol",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "amount_bought_in_usdc": {
+          "name": "amount_bought_in_usdc",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "amount_sold_in_usdc": {
+          "name": "amount_sold_in_usdc",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "new_copy_trading_transaction_swapper_address_id_new_copy_trading_addresses_id_fk": {
+          "name": "new_copy_trading_transaction_swapper_address_id_new_copy_trading_addresses_id_fk",
+          "tableFrom": "new_copy_trading_transaction",
+          "tableTo": "new_copy_trading_addresses",
+          "columnsFrom": [
+            "swapper_address_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "new_copy_trading_transaction_token_id_new_copy_trading_coins_of_owners_id_fk": {
+          "name": "new_copy_trading_transaction_token_id_new_copy_trading_coins_of_owners_id_fk",
+          "tableFrom": "new_copy_trading_transaction",
+          "tableTo": "new_copy_trading_coins_of_owners",
+          "columnsFrom": [
+            "token_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "notifications": {
       "name": "notifications",
       "schema": "",
@@ -835,6 +1373,20 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "points": {
+          "name": "points",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "pnl": {
+          "name": "pnl",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
         }
       },
       "indexes": {},

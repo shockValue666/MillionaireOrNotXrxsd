@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Progress } from "@/components/ui/progress"
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
@@ -16,8 +16,21 @@ import { useAppState } from '@/lib/providers/state-provider';
 import { EmojiSelect } from './emoji-select';
 import { CustomInputForAmount } from '../ui/custom-input-for-amount';
 import Picker from './picker';
+import CumfettiButton from './cumfetti-button';
+import Cumfetti from './cumfetti';
 
 
+
+export const delay = (ms:number) => new Promise(resolve => setTimeout(resolve, ms));
+
+// utils/scaleParticleCount.js
+export const scaleParticleCount = (inchesValue:number) => {
+  const minParticles = 10; // Minimum particles for inchesValue 1
+  const maxParticles = 300; // Maximum particles for inchesValue 12
+  const scale = 2; // Adjust this value to control the steepness of the curve
+
+  return Math.round(minParticles + (maxParticles - minParticles) * Math.pow((inchesValue - 1) / 11, scale));
+};
 
 
 export const BiggerCoSchema = z.object(
@@ -34,6 +47,8 @@ const BiggerCo = () => {
   const [autoRoll,setAutoRoll] = useState(false)
   const [disableSetButton,setDisableSetButton] = useState(false)
   const [disableCumButton,setDisableCumButton] = useState(true)
+
+  const confettiRef = useRef<{ fire: (x: number, y: number) => void }>(null);
   
   const {profile,cumBet,dispatch} = useAppState();
 
@@ -143,6 +158,17 @@ const BiggerCo = () => {
     }
   }
 
+  const trigger = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    console.log('Trigger function called');
+    console.log('Event currentTarget:', e.currentTarget);
+    if(!e.currentTarget.parentElement) return;
+    const rect = e.currentTarget.parentElement.getBoundingClientRect();
+    const x = rect.right / window.innerWidth;
+    const y = (rect.top + rect.bottom) / 2 / window.innerHeight;
+
+    confettiRef.current?.fire(x, y);
+  }
+
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const newAmount = event.target.value;
     console.log("New amount:", newAmount); // Verify the value in console
@@ -222,10 +248,20 @@ const BiggerCo = () => {
         
     />
       <Button className='rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl'
-      onClick={cum}
+      onClick={async (e)=>{
+        cum();
+        // await new Promise(resolve => setTimeout(resolve, 1000));
+        // await delay(1000);
+        await trigger(e);
+      }}
       >
         cum
+        <Cumfetti ref={confettiRef} particleCount={
+          // (parseFloat(inchesValue)/12)*300
+          scaleParticleCount(parseFloat(inchesValue))
+        }/>
       </Button>
+      {/* <CumfettiButton/> */}
       <EmojiSelect/>
     </div>
 

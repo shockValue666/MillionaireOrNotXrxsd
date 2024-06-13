@@ -1,1 +1,0 @@
-ALTER TABLE "profiles" ADD COLUMN "pnl" double precision DEFAULT 0 NOT NULL;

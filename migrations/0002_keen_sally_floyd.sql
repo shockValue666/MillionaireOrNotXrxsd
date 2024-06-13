@@ -1,0 +1,1 @@
+ALTER TABLE "new_copy_trading_coins_of_owners" ADD COLUMN "token_amount" double precision NOT NULL;

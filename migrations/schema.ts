@@ -225,6 +225,22 @@ export const transactions = pgTable("transactions", {
 	status: text("status").notNull(),
 });
 
+export const newCopyTradingTransaction = pgTable("new_copy_trading_transaction", {
+	id: uuid("id").defaultRandom().primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
+	swapperAddress: text("swapper_address").notNull(),
+	tokenInSymbol: text("token_in_symbol").notNull(),
+	tokenInAmount: text("token_in_amount").notNull(),
+	tokenInMint: text("token_in_mint").notNull(),
+	tokenOutSymbol: text("token_out_symbol").notNull(),
+	tokenOutAmount: text("token_out_amount").notNull(),
+	tokenOutMint: text("token_out_mint").notNull(),
+	pricePerToken: doublePrecision("price_per_token").notNull(),
+	swapDescription: text("swap_description").notNull(),
+	txId: text("tx_id"),
+	type: text("type").default('none'),
+});
+
 export const emojiSlot = pgTable("emoji_slot", {
 	id: uuid("id").defaultRandom().primaryKey().notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }),
