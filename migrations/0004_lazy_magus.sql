@@ -1,0 +1,1 @@
+ALTER TABLE "new_copy_trading_addresses" ADD COLUMN "pnl" double precision DEFAULT 0;

@@ -3,7 +3,7 @@ import {createRouteHandlerClient} from '@supabase/auth-helpers-nextjs'
 import { cookies } from "next/headers";
 import {v4} from 'uuid'
 import { addNewPrivInfo, addProfile } from '../supabase/queries';
-import {Keypair} from '@solana/web3.js'
+import {Connection, Keypair, PublicKey} from '@solana/web3.js'
 
 export async function actionLogCock(){
     console.log("cockies: ",cookies().getAll())
@@ -82,4 +82,18 @@ export async function actionSignUpUser({email,password}:{email:string,password:s
     return response;
 }
 
+const connection = new Connection("https://mainnet.helius-rpc.com/?api-key=d1fc2eeb-2efa-417f-954d-750ab9f03157")
 
+export async function fetchAndRefreshBalance({userId,address}:{userId:string,address:string}){
+    const currentBalance = await connection.getBalance(new PublicKey(address));
+    console.log("currentBalance: ",currentBalance)
+    return currentBalance;
+    // const supabase = createRouteHandlerClient({cookies})
+    // const {data,error} = await supabase.from("profiles").select("balance").eq("id",userId);
+    // if(error){
+    //     return {
+    //         error
+    //     }
+    // }
+    // return data;
+}

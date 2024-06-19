@@ -17,6 +17,7 @@ import InputFile from '@/components/globals/input-file';
 import EditProfileDialog from '@/components/profile/edit-profile-dialog';
 import { Button } from '@/components/ui/button';
 import AdCreationDialog from '@/components/profile/create-ad-dialog';
+import { fetchAndRefreshBalance } from '@/lib/server-actions/auth-actions';
 
 //wip create notification after proifle update and ad creation
 
@@ -29,6 +30,10 @@ const Page = () => {
     const {userId,profile:appStateProfile} = useAppState();
     const [amountInDollars,setAmountInDollars] = useState<string>("0");
     const supabase = createClientComponentClient();
+
+    const [isCooldown, setIsCooldown] = useState(false);
+
+
 
     // Function to handle profile picture upload
     const handleProfilePictureUpload = async () => {
@@ -80,6 +85,21 @@ const Page = () => {
       } 
       getAvatar();
     },[profile])
+
+
+    const handleRefresh = async () => {
+      setIsCooldown(true);
+      console.log("refreshing balance");
+      if(!userId || !address) return;
+      const updatedBalance = await fetchAndRefreshBalance({userId:userId,address:address})
+      console.log("updatedBalance: ",updatedBalance)
+
+
+      setTimeout(() => {
+        setIsCooldown(false);
+      }, 5000);
+
+    }
   return (
     <div className='flex justify-center items-center flex-col gap-y-16'>
       <h1>Welcome!</h1>
@@ -116,6 +136,12 @@ const Page = () => {
       <div className='flex gap-x-8 w-[100%] justify-center items-center'>
 
         address:{!address && <Loader/>} {address && <WalletAddress address={address}/>}
+        <Button 
+        onClick={handleRefresh}
+        disabled={isCooldown}
+        className="bg-black text-hotPink hover:bg-accent hover:text-accent-foreground py-2 px-4 rounded-md text-xl" >
+          Refresh Balance
+        </Button>
       </div>
       {/* <div>
       <button className="relative overflow-hidden" onClick={()=>{console.log("yooo")}}>

@@ -307,6 +307,7 @@ export const newCopyTradingAddresses = pgTable("new_copy_trading_addresses", {
 	address: text("swapper_address").notNull(),
 	// wip: add the profile id here, and the followers
 	description: text("description").notNull(),
+	pnl: doublePrecision("pnl").default(0),
 })
 	
 export const newCopyTradingCoinsOfOwners = pgTable("new_copy_trading_coins_of_owners", {
