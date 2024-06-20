@@ -118,7 +118,7 @@ const Page = () => {
           {/* <div className="ml-auto font-medium">+${amountInDollars}</div> */}
         </div>
         {/* <InputFile/> */}
-        <div className='m-4 flex items-center justify-center'>
+        <div className='m-4 flex items-center  justify-center'>
             <EditProfileDialog>
               <div className="text-hotPink bg-black text-md hover:bg-accent p-4 rounded-lg">
                   EDIT PROFILE

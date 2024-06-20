@@ -110,7 +110,7 @@ const UpdateProfileForm = () => {
     //     console.log("file: ",file)
     // },[file])
     return (
-        <div className='flex justify-center items-center w-full'>
+        <div className='flex justify-centeritems-center w-full'>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                     <FormField
@@ -153,6 +153,9 @@ const UpdateProfileForm = () => {
                         {
                             isSubmitting && <Loader/>
                         }
+                        <Button className="text-hotPink bg-black text-md hover:bg-accent" onClick={() => {}}>
+                            close
+                        </Button>
                 </form>
             </Form>
         </div>
