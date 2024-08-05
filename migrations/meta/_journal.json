@@ -36,6 +36,27 @@
       "when": 1718324306153,
       "tag": "0004_lazy_magus",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1721988042938,
+      "tag": "0005_gorgeous_patch",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1721990197498,
+      "tag": "0006_broad_korg",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1722160811877,
+      "tag": "0007_even_scalphunter",
+      "breakpoints": true
     }
   ]
 }

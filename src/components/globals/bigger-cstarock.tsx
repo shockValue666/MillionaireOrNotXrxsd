@@ -1,29 +1,44 @@
 "use client";
 import React, { useEffect, useRef, useState } from 'react'
 import { Progress } from "@/components/ui/progress"
+//the progress represents the cock
 import { SubmitHandler, useForm } from 'react-hook-form';
+//form for the inches bet
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+//form components
 import { Input } from '../ui/input';
-import { useToast } from '../ui/use-toast';
+//input for bet or inches 
+import {  useToast } from '../ui/use-toast';
+//toast to notify
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+//input validation
 import { Button } from '../ui/button';
 import SlotCounter from 'react-slot-counter';
+//dick length result
 import LocalBalanceAndPoints from './local-balance-and-points';
+//local poitns
 import { createCumBet, updateCumBet, updateProfile } from '@/lib/supabase/queries';
+//supabase database save for each bet in the table called: cum_bets
 import { v4 } from 'uuid';
+//for the id of the bet
 import { useAppState } from '@/lib/providers/state-provider';
+//state provider
 import { EmojiSelect } from './emoji-select';
+//idk why
 import { CustomInputForAmount } from '../ui/custom-input-for-amount';
 import Picker from './picker';
 import CumfettiButton from './cumfetti-button';
 import Cumfetti from './cumfetti';
+//represents the cum 
 
 
+//GENERAL RULE IS BIGGER COCK WINS
 
 export const delay = (ms:number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // utils/scaleParticleCount.js
+//configuration for the cum 
 export const scaleParticleCount = (inchesValue:number) => {
   const minParticles = 10; // Minimum particles for inchesValue 1
   const maxParticles = 300; // Maximum particles for inchesValue 12
@@ -32,7 +47,7 @@ export const scaleParticleCount = (inchesValue:number) => {
   return Math.round(minParticles + (maxParticles - minParticles) * Math.pow((inchesValue - 1) / 11, scale));
 };
 
-
+//needed for the cum bet amount
 export const BiggerCoSchema = z.object(
     {
         amount:z.string().describe("amount"),
@@ -41,13 +56,18 @@ export const BiggerCoSchema = z.object(
 
 const BiggerCo = () => {
   const [amount,setAmount] = useState("1");
+  //bet amount of cum_bet
   const [inchesValue,setInchesValue] = useState("0");
+  //inches of cock
   const [localBalance, setLocalBalance] = useState<string | null>("0")
   const [localPoints, setLocalPoints] = useState<number | null>(0);
   const [autoRoll,setAutoRoll] = useState(false)
   const [disableSetButton,setDisableSetButton] = useState(false)
   const [disableCumButton,setDisableCumButton] = useState(true)
 
+  const {toast} = useToast();
+
+  //needed for the cum
   const confettiRef = useRef<{ fire: (x: number, y: number) => void }>(null);
   
   const {profile,cumBet,dispatch} = useAppState();
@@ -59,9 +79,10 @@ const BiggerCo = () => {
     // defaultValues:{amount:amount ? amount : "1"}
   })
   const isLoading = form.formState.isSubmitting;
+  //runs when i set the amount of the cumbet
   const onSubmit:SubmitHandler<z.infer<typeof BiggerCoSchema>> = async (data) => {
     if(!profile || !profile?.balance || parseFloat(profile?.balance) < parseFloat(data.amount)){
-      console.log("no profile in bigger cock")
+      console.log("no profile in bigger cock or actually balance is smaller than the amountl ol")
       return;
     }
     console.log("data from bigger cock: ",data)
@@ -100,8 +121,19 @@ const BiggerCo = () => {
     })
 
 
+    toast({title:"Success",description:"Slot created successfully"})
+
+
   }
+
+  //my goal is to create a session of 10/20/100 cums in a row like slot games, but with cum bets instead
+
+  //runs when i click the cum button
   const cum = async () => {
+    toast({
+      title:"Cumming",
+      description:"CUMMING",
+    })
     console.log("cum")
     const result = Math.floor(Math.random()*12+1)
     let assignedValue;
@@ -114,7 +146,7 @@ const BiggerCo = () => {
 
     ///WIP UPDATE cumBet
     if(!profile || !cumBet){
-      console.log("profile or cumbet don't exist inside cum");
+      console.log("profile or cumbet don't exist inside cum", profile, cumBet);
       return;
     }
     if(result>cumBet.targetValue){
@@ -129,6 +161,7 @@ const BiggerCo = () => {
         payload:updateCumBetData[0]
       })
 
+      console.log("updatedData: ",updateCumBetData[0])
       //update profile BALANCE
       const {data:updateProfileData,error:updateProfileError} = await updateProfile({balance:(parseFloat(profile?.balance || "0")+cumBet.betAmount).toString()},profile.id)
       if(updateProfileError || !updateProfileData){
@@ -231,6 +264,7 @@ const BiggerCo = () => {
               )}
               />
               <Button 
+
               disabled={disableSetButton} 
               type="submit">set</Button>
           </form>

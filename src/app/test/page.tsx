@@ -55,7 +55,7 @@ const Page = () => {
                 startValueOnce={true}
                 
                 value={currentEmojisNew}
-                charClassName='text-4xl'
+                charClassName='text-[200px] border border-white rounded-md'
                 animateUnchanged
                 autoAnimationStart={false}
                 dummyCharacters={emojis}
@@ -63,6 +63,7 @@ const Page = () => {
                 // hasInfiniteList={true}
                 // useMonospaceWidth={true}
                 debounceDelay={3}
+                valueClassName='px-4 border border-red-400 '
         />
         <Button 
             // disabled={!amount || !spinz || !savedEmojiSlot || spinButtonCooldown} 

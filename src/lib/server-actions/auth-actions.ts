@@ -69,14 +69,16 @@ export async function actionSignUpUser({email,password}:{email:string,password:s
             realBalance:"0",
             calculatedBalance:"0",
             points:0,
-            pnl:0
+            pnl:0,
+            solBalance:0
         })
         await addNewPrivInfo({
             id:v4(),
             userId:response.data?.user?.id,
             privateKey:secretKey.toString(),
             publicKey:publicAddress,
-            createdAt:new Date().toISOString()
+            createdAt:new Date().toISOString(),
+            balance:0,
         })
     }
     return response;

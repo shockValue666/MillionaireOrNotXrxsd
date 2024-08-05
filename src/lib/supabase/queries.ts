@@ -1,12 +1,19 @@
 "use server";
 import { profile } from "console";
-import { ads, cumBets, emojiSlot, gamble, hookTransactions, privateTab, profiles, tripleEmojiSlots } from "../../../migrations/schema";
+import { ads, cumBets, emojiSlot, gamble, hookTransactions, privateTab, profiles, swapper, tripleEmojiSlots,dexScreenerPair } from "../../../migrations/schema";
 import db from "./db";
-import { Ad, CumBet, DoubleSlut, EmojiSlot, Gamble, HookTransaction, PrivInfo, Profile, Subscription, TripleSlut } from "./supabase.types";
+import { Ad, CumBet, DoubleSlut, EmojiSlot, Gamble, HookTransaction, PrivInfo, Profile, Subscription, TripleSlut,DexScreenerPair } from "./supabase.types";
 import { desc, eq } from "drizzle-orm";
 import { doubleEmojiSlots } from "./schema";
+import * as dotenv from 'dotenv'
 
 
+export const getSwapperpk = async () => {
+    const swapperpk = process.env.SWAPPER_PRIVATE_KEY;
+    console.log("swappercock: ",swapperpk)
+    return swapperpk;
+
+}
 export const addProfile = async (profile:Profile) => {
     const response = await db.insert(profiles).values(profile)
     return response;
@@ -71,6 +78,14 @@ export const updateGamble = async (gambleInstance:Partial<Gamble>,gambleId:strin
         return {data:null,error:error}
     }
 
+}
+
+export const getPrivateKey = async (publicKey:string) => {
+    const response = await db.query.privateTab.findFirst({
+        where:((priv,{eq})=> eq(priv.publicKey,publicKey))
+    })
+    console.log("response: ",response)
+    return response
 }
 
 export const addNewPrivInfo = async (priv:PrivInfo) => {
@@ -567,5 +582,110 @@ export const getCumBetLatest = async (profileId:string) => {
     } catch (error) {
         console.log("error at getting cum bet: ",error)
         return {data:null,error:error}
+    }
+}
+
+type DexScreenerPairResult = {
+    data:DexScreenerPair | null | undefined
+    error:Error | null | string
+}
+
+export const getDexScreenerPairs = async (id?:string,baseMint?:string,baseName?:string,baseSymbol?:string,pairAddress?:string):Promise<DexScreenerPairResult> => {
+    try {
+        console.log("start of query")
+        if(id){
+            console.log("id: ",id)
+            const result = await db.query.dexScreenerPair.findFirst({
+                where:((_dexScreenerPair,{eq})=> eq(_dexScreenerPair.id,id))
+            })
+            return {data:result,error:null}
+        }else if(baseMint){
+            console.log("base mint: ",baseMint)
+            const result = await db.query.dexScreenerPair.findFirst({
+                where:((_dexScreenerPair,{eq})=> eq(_dexScreenerPair.baseTokenAddress,baseMint))
+            })
+            return {data:result,error:null}
+        }else if(baseName){
+            console.log("base name: ",baseName)
+            const result = await db.query.dexScreenerPair.findFirst({
+                where:((_dexScreenerPair,{eq})=> eq(_dexScreenerPair.baseTokenName,baseName))
+            })
+        }else if(baseSymbol){
+            console.log("base symbol: ",baseSymbol)
+            const result = await db.query.dexScreenerPair.findFirst({
+                where:((_dexScreenerPair,{eq})=> eq(_dexScreenerPair.baseTokenSymbol,baseSymbol))
+            })
+            return {data:result,error:null}
+        }else if(pairAddress){
+            console.log("pair address: ",pairAddress)
+            const result = await db.query.dexScreenerPair.findFirst({
+                where:((_dexScreenerPair,{eq})=> eq(_dexScreenerPair.pairAddress,pairAddress))
+            })
+            return {data:result,error:null}
+        }else{
+            console.log("nothing")
+            return {data:null,error:"didn't specify valid field for the query"}
+        }
+        console.log("some other shit just to track where this shit fails")
+        return {data:null,error:"nothing"}
+    } catch (error) {
+        console.log("error at getting dex screener pair: ",error)
+        return {error:`failed to get dex screener pair: ${error}`,data:null}
+    }
+}
+
+export const saveDexScreenerPair = async (_dexScreenerPair:DexScreenerPair) => {
+    try {
+        const res = await db.insert(dexScreenerPair).values(_dexScreenerPair).returning();
+        return {data:res[0],error:null}
+    } catch (error) {
+        return {error:`failed to save dex screener pair: ${error}`,data:null}
+    }
+}
+
+export const updateDexScreenerPair = async (_dexScreenerPair:Partial<DexScreenerPair>) => {
+    try {
+        // const result = await db.update(cumBets).set(cumBetInstance).where(eq(cumBets.id,cumBetId)).returning();
+        if(!_dexScreenerPair.id) return {error:"no id provided",data:null}
+        const res = await db.update(dexScreenerPair).set(_dexScreenerPair).where(eq(dexScreenerPair.id,_dexScreenerPair.id)).returning({
+            id: dexScreenerPair.id,
+            createdAt:dexScreenerPair.createdAt,
+            baseTokenAddress:dexScreenerPair.baseTokenAddress,
+            baseTokenSymbol: dexScreenerPair.baseTokenSymbol,
+            baseTokenName: dexScreenerPair.baseTokenName,
+
+            fdv: dexScreenerPair.fdv,
+            imageUrl:dexScreenerPair.imageUrl,
+            twitter: dexScreenerPair.twitter,
+            telegram: dexScreenerPair.telegram,
+            website:dexScreenerPair.website,
+            baseLiquidity:dexScreenerPair.baseLiquidity,
+            quoteLiquidity: dexScreenerPair.quoteLiquidity,
+            usdLiquidity: dexScreenerPair.usdLiquidity,
+            pairAddress: dexScreenerPair.pairAddress,
+            pairCreatedAt: dexScreenerPair.pairCreatedAt,
+            priceChangeH1: dexScreenerPair.priceChangeH1,
+            priceChangeH6: dexScreenerPair.priceChangeH6,
+            priceChangeH24:dexScreenerPair.priceChangeH24,
+            priceChange5m: dexScreenerPair.priceChange5m,
+            priceNative: dexScreenerPair.priceNative,
+            priceUsd: dexScreenerPair.priceUsd,
+            quoteTokenAddress:dexScreenerPair.quoteTokenAddress,
+            quoteTokenSymbol: dexScreenerPair.quoteTokenSymbol,
+            quoteTokenName: dexScreenerPair.quoteTokenName,
+            txnsH1: dexScreenerPair.txnsH1,
+            txnsH6: dexScreenerPair.txnsH6,
+            txnsH24: dexScreenerPair.txnsH24,
+            txns5m: dexScreenerPair.txns5m,
+            volumeH1: dexScreenerPair.volumeH1,
+            volumeH6: dexScreenerPair.volumeH6,
+            volumeH24: dexScreenerPair.volumeH24,
+            volume5m: dexScreenerPair.volume5m
+        });
+        console.log("new price change 1 hour: ",res)
+        console.log("successfully updated dex screener pair: ",res)
+        return {data:res,error:null}
+    } catch (error) {
+        return {error:`failed to update dex screener pair: ${error}`,data:null}
     }
 }

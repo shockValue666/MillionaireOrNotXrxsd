@@ -18,6 +18,8 @@ import LocalStats from './local-stats';
 import LocalBalanceAndPoints from './local-balance-and-points';
 import ApsCurrentSpin from './aps-current-spin';
 import JackPot from './jackpot';
+import { cn } from '@/lib/utils';
+import DevnetButtons from './devnetButtons';
 
 
 const emojis = ["😈", "💀", "💩", "💰","🤑"];
@@ -519,60 +521,6 @@ const EmojiSlots = () => {
         })
     }
 
-    //handle half balance
-        //handleHalf balance
-    // const handleHalfBalance = async () => {
-
-    //     if(!profile || !profile?.balance || profile.balance==="0"){
-    //         console.log("no profile");
-    //         toast({title:"Error",description:"Please fill all fields",variant:"destructive"})
-    //         return;
-    //     }
-    //     setTotalBetAmount(parseFloat(profile?.balance)/2);
-    //     setTotalSpinCount(10);
-    //     setAmountPerSpin(parseFloat(profile?.balance)/(2*10));
-
-    //     const res = await createEmojiSlot({
-    //         id:v4(),
-    //         amount:parseFloat(profile?.balance)/2,
-    //         spinz:10,
-    //         createdAt:new Date().toISOString(),
-    //         profileId:profile?.id,
-    //         currentAmount:parseFloat(profile?.balance)/2,
-    //         currentSpin:0,
-    //         currentEmojis:['💰','💰','💰','💰','💰'].toString(),
-    //         payPerSpin:parseFloat(profile?.balance)/(2*10),
-    //         entryAmount:parseFloat(profile?.balance)/2,
-    //         pnl:0,
-    //         points:0
-    //         })
-    //     if(res.data){
-    //         // setSavedEmojiSlot(true);
-    //         // toast({title:"Success",description:"Slot created successfully"})
-    //         console.log("created emoji slot: ",res.data[0])
-    //         console.log("red.data[0]: ",res.data[0])
-    //         dispatch({type:"SET_EMOJI_SLOT",payload:res.data[0]})
-    //         if(profile?.balance){
-    //             const {data:profileData,error} = await getAndSetBalance({balance:(parseFloat(profile.balance)-(parseFloat(profile?.balance)/2)).toString()},profile.id);
-    //             const {data:getAndSetPointsDataGlobal, error:getAndSetPointsErrorErrorGlobal} = await getAndSetPoints({points:parseFloat(profile.balance)/2},profile.id)
-    //             if(error || getAndSetPointsErrorErrorGlobal){
-    //                 toast({title:"Error",description:"Failed to update balance",variant:"destructive"})
-    //                 console.log("error updating balance: ",error && getAndSetPointsErrorErrorGlobal)
-    //             }
-    //             if(profileData && getAndSetPointsDataGlobal){
-    //                 console.log("successfully updated the balance: ",profileData)
-    //                 dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(profile.balance)-(parseFloat(profile?.balance)/2)).toString()}})
-    //                 // dispatch({type: "UPDATE_USER",payload:{...profile, points:parseFloat(profile.balance)/2}})
-    //             }
-    //         }
-    //         setLocalBalance(res.data[0].entryAmount.toString()) //here
-    //         // setRollButtonVisibility(true)
-    //         setCreateNewGame(false);
-    //     }else{
-    //         toast({title:"Error",description:"Slot creation failed",variant:"destructive"})
-    //     }
-
-    // }
     const handleHalfBalance = async () => {
 
         if(!profile || !profile?.balance || profile.balance==="0"){
@@ -628,22 +576,7 @@ const EmojiSlots = () => {
     }
 
 
-    //renew the balance
-    const reNewTheBalance = async () => {
-        setResetRewardsButtonVisibility(false)
-        if(!profile) return;
-        const {data,error} = await getAndSetBalance({balance:"0"},profile.id);
-        dispatch({type:"UPDATE_USER",payload:{...profile, balance:"0"}})
-        setResetRewardsButtonVisibility(true)
-    }
-    //airdrop amount
-    const airdropAmount = async () => {
-        setAirdropButtonVisibility(false)
-        if(!profile || !profile.balance) return;
-        const {data,error} = await getAndSetBalance({balance:(parseFloat(profile.balance)+1000).toString()},profile.id);
-        dispatch({type:"UPDATE_USER",payload:{...profile, balance:(parseFloat(profile.balance)+1000).toString()}})
-        setAirdropButtonVisibility(true)
-    }
+   
     //check if there is a saved Emoji slot game and either set it to the saved game or a new game
     useEffect(()=>{
         // console.log("emojiSlotFromAppState inside the fucking shit: ",emojiSlotFromAppState)
@@ -743,29 +676,12 @@ const EmojiSlots = () => {
         }
     },[emojiSlotFromAppState])
 
-    //space pressed
-    // useEffect(() => {
-    //     const handleKeyPress = (event: KeyboardEvent) => {
-    //         if (event.key === ' ') { // Check if the pressed key is space
-    //             event.preventDefault(); // Prevent default spacebar behavior (e.g., scrolling)
-    //             if(totalSpinCount && currentSpinCount && totalSpinCount>currentSpinCount){
-    //                 handleSpin(); // Call handleSpin function
-    //             }
-    //         }
-    //     };
-
-    //     // Add event listener for keydown event
-    //     document.addEventListener('keydown', handleKeyPress);
-
-    //     // Clean up event listener when component unmounts
-    //     return () => {
-    //         document.removeEventListener('keydown', handleKeyPress);
-    //     };
-    // }, [emojiSlotFromAppState,totalSpinCount,currentSpinCount]); // Empty dependency array to run this effect only once
+    //WIP handle space press event for slot spin
 
     
   return (
     <div className='w-[90%] md:w-[50%] text-center'>
+        <DevnetButtons resetRewardsButtonVisibility={resetRewardsButtonVisibility} setButtonVisibility={setButtonVisibility} setResetRewardsButtonVisibility={setResetRewardsButtonVisibility} airdropButtonVisibility={airdropButtonVisibility} setAirdropButtonVisibility={setAirdropButtonVisibility} />
         {/* {amountNotification && <p className='font-lg border border-yellow-500'>here it is: {amountNotification} {amountWonOrLostState}</p>} */}
         {/* {amountNotification &&  <div>cocksycker {emojiSlotFromAppState?.pnl} amountWonrOrLost: {amountWonOrLostState}</div>} */}
         {currentSpinCount && totalSpinCount && (<div className='py-4 '>
@@ -796,7 +712,7 @@ const EmojiSlots = () => {
                     <div>
                         <div>
                             {amountNotification  && amountWonOrLostState && <AmountNotification visible={amountNotification} message={amountWonOrLostState.toFixed(2).toString()}/>}
-                            {amountWonOrLostState===0 && amountNotification && <AmountNotification visible={amountNotification} message={amountWonOrLostState.toFixed(2).toString()}/>}
+                            {amountWonOrLostState===0 && amountNotification && <AmountNotification visible={amountNotification} message={amountWonOrLostState.toString()}/>}
                         </div>
                         {/* <div className=''> Balance: {localBalance && <p>{parseFloat(localBalance).toFixed(2)}</p>}</div>
                         <div className=''> Points: {localPoints && <p>{localPoints.toFixed(2)}</p>}</div> */}
@@ -805,10 +721,10 @@ const EmojiSlots = () => {
 
                     </div>
                 </div>
-                <div className='w-full flex flex-col items-center gap-y-6'> 
+                <div className='w-full border flex flex-col items-center gap-y-2'> 
                 {/* <div className='module-border-wrap'> */}
                     {/* <div className='module'> */}
-                        <div className='flex items-center gap-x-4'>
+                        <div className='flex items-center gap-x-4 text-[50px] md:text-[70px] lg:text-[100px]'>
                             {/* <div className=''>
                                 {amountPerSpin && <div className="text-left">APS: {amountPerSpin?.toFixed(3)}</div>}
                             </div> */}
@@ -816,13 +732,13 @@ const EmojiSlots = () => {
                                 startValue={currentEmojis}
                                 startValueOnce={true}
                                 value={currentEmojis}
-                                charClassName='text-4xl'
+                                charClassName='p-1'
                                 animateUnchanged
                                 autoAnimationStart={false}
                                 dummyCharacters={emojis}
                                 duration={0.4}
-                                separatorClassName='emojiSeparator'
-                                valueClassName='char'
+                                // separatorClassName='emojiSeparator'
+                                // valueClassName='text-4xl p-1'
                                 
                             />
                             {/* {currentSpinCount && totalSpinCount && (
@@ -888,18 +804,20 @@ const EmojiSlots = () => {
                         SPIN
                     </Button>} */}
                     <div className='grid grid-cols-2 lg:grid-cols-1 gap-4 items-center justify-items-center'>
-                        <Button 
+                        {/* <Button 
                         disabled={!setButtonVisibility} 
                         className='rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl'
                         onClick={() => {handleHalfBalance();}}>
                             <p className='hidden lg:block'>$1/2*BLNC  10SPINZ</p>
                             <p className='block lg:hidden' >1/2</p>
-                        </Button>
+                        </Button> */}
                         
                         <Button 
                         // disabled={!amount || !spinz || !savedEmojiSlot || spinButtonCooldown} 
-                        disabled={!rollButtonVisibility || disabledRollButton}
-                        className='rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl'
+                        disabled={!rollButtonVisibility || disabledRollButton || setButtonVisibility}
+                        className={cn('rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl',
+                            disabledRollButton && "hidden"
+                        )}
                         onClick={() => {handleSpin();}} onKeyDown={(e)=>{
                             // if(e.key===" "){
                             //     handleSpin();}
@@ -915,31 +833,21 @@ const EmojiSlots = () => {
                         <Button 
                         // disabled={!amount} 
                         disabled={!resetButtonVisibility}
-                        className='rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl'
+                        className={cn('rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl',
+                            setButtonVisibility && 'hidden',
+                        )}
                         onClick={() => {resetTheGame();}}>
                             RESET
                         </Button>
 
-                        <Button 
-                        // disabled={!amount} 
-                        disabled={!resetRewardsButtonVisibility}
-                        className='rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl'
-                        onClick={() => {reNewTheBalance();}}>
-                            <p className='hidden lg:block'>RENEW BALANCE</p>
-                            <p className='block lg:hidden'>0</p>
-                        </Button>
-                        <Button 
-                        // disabled={!amount} 
-                        disabled={!airdropButtonVisibility}
-                        className='rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl'
-                        onClick={() => {airdropAmount();}}>
-                            <p className='hidden lg:block'>AIRDROP</p> 1000
-                        </Button>
 
                         <Button 
                         // disabled={!amount} 
                         disabled={!autoSpinButtonVisibility}
-                        className='rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl'
+                        className={cn('rounded-full border border-hotPink w-full bg-black hover:bg-accent hover:text-accent-foreground text-hotPink text-2xl',
+                            setButtonVisibility && 'hidden',
+                            disabledRollButton && 'hidden',
+                        )}
                         onClick={() => {autoSpin();}}>
                             AUTOSPIN
                         </Button>

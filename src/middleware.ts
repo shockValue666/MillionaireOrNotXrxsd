@@ -16,5 +16,11 @@ export async function middleware(req:NextRequest){
         }
     }
 
+    if(req.nextUrl.pathname.startsWith('/trade')){
+        if(!session){
+            return NextResponse.redirect(new URL('/',req.url))
+        }
+    }
+
     return res;
 }

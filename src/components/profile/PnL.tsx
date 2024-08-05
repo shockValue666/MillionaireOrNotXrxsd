@@ -24,10 +24,12 @@ const PnL = () => {
             // const balance = await fetch('http://localhost:3000/api/balance',{
             //     method:'GET'
             // });
-            const balance = profile.balance;
+            const balance = profile.solBalance || 0;
             if(balance){
-                let estimBal =  parseFloat(balance);
-                setBalance(parseFloat(estimBal.toFixed(2)))
+                // let estimBal =  parseFloat(balance);
+                // setBalance(parseFloat(estimBal.toFixed(2)))
+                const newB = parseFloat(balance.toFixed(2))
+                setBalance(newB)
             }
             // setPnl(pnl)
             const gamesP = await getTotalSlotCount(profile.id)
